@@ -142,3 +142,6 @@ Repositorio gestionado con Git, utilizando las siguientes ramas:
 ## Estado del Proyecto
 
 En desarrollo como proyecto académico.
+
+back/demo : ./mvnw spring-boot:run
+frint/FrontMediCat: ng serve -o
