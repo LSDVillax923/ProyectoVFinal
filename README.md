@@ -142,6 +142,3 @@ Repositorio gestionado con Git, utilizando las siguientes ramas:
 ## Estado del Proyecto
 
 En desarrollo como proyecto académico.
-
-
-
