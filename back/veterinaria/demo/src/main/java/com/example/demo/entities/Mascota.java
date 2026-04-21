@@ -22,6 +22,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -49,7 +50,7 @@ public class Mascota {
     @NotNull(message = "La fecha de nacimiento no puede estar vacía")
     private LocalDate fechaNacimiento;
 
-    @Positive(message = "La edad debe ser un número positivo")
+    @PositiveOrZero(message = "La edad debe ser un número positivo o cero")
     private int edad;
 
     @Positive(message = "El peso debe ser un número positivo")
