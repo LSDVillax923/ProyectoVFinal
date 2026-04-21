@@ -1,0 +1,191 @@
+:root {
+    --color-primario: #0a7f86;
+    --color-primario-oscuro: #07686d;
+    --color-primario-claro: #6a8f93;
+    --color-fondo: #f2ede7;
+    --color-fondo-nav: #ece8e4;
+    --blanco: #ffffff;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.dashboard {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background:  #f2ede7;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.dashboard-header {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0.5rem 0;
+}
+
+.dashboard-subtitle {
+  color: #000000;
+  font-size: 0.95rem;
+}
+
+/* BOTÓN VOLVER */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #07686d;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-volver:hover {
+  background-color:#ffffff;
+  color: #07686d;
+}
+
+/* ALERTAS */
+.alert {
+  width: 100%;
+  max-width: 800px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* TARJETA DEL FORM */
+.form-card {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* GRID */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+/* GRUPOS */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* INPUTS */
+.form-group input {
+  padding: 0.6rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background-color:  #f2ede7;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #07686d;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ACCIONES */
+.form-acciones {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
+
+/* BOTÓN GUARDAR */
+.btn-guardar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #07686d;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-guardar:hover {
+  background: #2e9297;
+  color:#ffffff;
+}
+
+/* BOTÓN CANCELAR */
+.btn-cancelar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  background: #07686d;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.btn-cancelar:hover {
+  background: #2e9297;
+  color:#ffffff;
+}
+
+/* BLOQUEADO (TU ESTILO ORIGINAL MEJORADO) */
+.campo-bloqueado input {
+  background: #0080ff;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.campo-bloqueado__aviso {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+}

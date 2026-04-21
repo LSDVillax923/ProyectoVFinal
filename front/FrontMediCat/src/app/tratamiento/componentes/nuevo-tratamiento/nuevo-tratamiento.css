@@ -1,0 +1,275 @@
+:root {
+  --color-primario: #0a7f86;
+  --color-primario-oscuro: #07686d;
+  --color-primario-claro: #6a8f93;
+  --color-fondo: #f2ede7;
+  --color-fondo-nav: #ece8e4;
+  --blanco: #ffffff;
+}
+
+/* ===== LAYOUT ===== */
+.dashboard {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: auto;
+  border: #07686d;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  background-color: #ece8e4;
+}
+
+/* ===== HEADER ===== */
+.dashboard-header {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  margin: 0.3rem 0;
+  color: #07686d;
+}
+
+.dashboard-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color:#f2ede7;
+  background-color: #07686d;
+  padding: 0.4rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn-volver:hover {
+  background-color: #ffffff;
+  color: #0a7f86;
+}
+
+/* ===== CARD ===== */
+.form-card {
+  background:#ffffff;
+  border-radius: 14px;
+  padding: 1.6rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+/* ===== GRID ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+/* ===== INPUTS ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  color:  #000000;
+  margin-bottom: 0.3rem;
+}
+
+/* Inputs base */
+input,
+select,
+textarea {
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background:  #f2ede7;
+}
+
+/* Placeholder más suave */
+input::placeholder,
+textarea::placeholder {
+  color: #000000;
+}
+
+/* Focus bonito */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+/* ===== SECCIÓN MEDICAMENTOS ===== */
+.seccion-drogas {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.2rem;
+}
+
+.seccion-drogas__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.seccion-titulo {
+  margin: 0;
+}
+
+/* Botón agregar */
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--color-primary);
+  color:  #07686d;
+  background-color: #f2ede7;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-accion:hover {
+  background:  #07686d;
+  color: #f2ede7;
+}
+
+/* ===== DROGA ROW (CARDS) ===== */
+.droga-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  gap: 0.8rem;
+  align-items: end;
+  background: #f2ede7;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 0.8rem;
+  border: 1px solid var(--color-border);
+  transition: 0.2s;
+}
+
+.droga-row:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Botón eliminar */
+.btn-eliminar-droga {
+  background: #f2ede7;
+  border: none;
+  color: #991b1b;
+  padding: 0.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-eliminar-droga:hover {
+  background: #fecaca;
+}
+
+/* Estado vacío */
+.drogas-vacio {
+  text-align: center;
+  color: #000000;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  background-color: #f2ede7;
+}
+
+/* ===== BOTONES ===== */
+.form-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+/* Guardar */
+.btn-guardar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #07686d;
+  color: #f2ede7;
+  border: none;
+  padding: 0.65rem 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-guardar:hover {
+  background: #f2ede7;
+  color: #0f6f6c;
+}
+
+/* Cancelar */
+.btn-cancelar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  background: #07686d;
+  color: #f2ede7;
+  border: none;
+  padding: 0.65rem 1.1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-cancelar:hover {
+  background: #f2ede7;
+  color: #0f6f6c;
+}
+
+/* ===== ALERTAS ===== */
+.alert {
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
+  }
+
+  .droga-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

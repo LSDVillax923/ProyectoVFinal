@@ -1,0 +1,220 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(120deg, #d9d2c5, #f3ede7);
+}
+
+/* CONTENEDOR */
+.dashboard {
+  max-width: 1200px;
+  width: 92%;
+  margin: 40px auto;
+}
+
+/* HEADER */
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 34px;
+  font-weight: 700;
+  color: #0f6f6c;
+}
+
+.dashboard-subtitle {
+  font-size: 15px;
+  color: #6b8b8e;
+}
+
+/* BOTÓN VOLVER */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f6f6c;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+.btn-volver:hover {
+  opacity: 1;
+}
+
+/* TARJETA PRINCIPAL */
+.form-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+/* EFECTO DECORATIVO SUPERIOR */
+.form-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #0f6f6c, #19a7a2);
+}
+
+/* GRID MÁS ORDENADO */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px 25px;
+  margin-top: 10px;
+}
+
+/* GRUPOS */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* CAMPOS GRANDES */
+.form-group.full-width {
+  grid-column: 1 / -1;
+  margin-top: 5px;
+}
+
+/* LABEL */
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f6f6c;
+}
+
+/* INPUTS MODERNOS */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background: #f7f7f7;
+  font-size: 14px;
+  transition: all 0.25s ease;
+}
+
+/* HOVER INPUT */
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  background: #f1f1f1;
+}
+
+/* FOCUS INPUT */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  background: #fff;
+  border-color: #0f6f6c;
+  box-shadow: 0 0 0 3px rgba(15, 111, 108, 0.12);
+}
+
+/* TEXTAREA */
+.form-group textarea {
+  resize: none;
+  min-height: 90px;
+}
+
+/* MENSAJES */
+.alert {
+  padding: 12px 18px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background: #e8f8f0;
+  color: #1c8c4a;
+}
+
+.alert-error {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+/* ACCIONES */
+.form-acciones {
+  margin-top: 35px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-guardar {
+  background: linear-gradient(135deg, #0f6f6c, #17a2a0);
+  color: white;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-guardar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(15, 111, 108, 0.3);
+}
+
+.btn-guardar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* BOTÓN SECUNDARIO */
+.btn-cancelar {
+  background: #fff;
+  color: #0f6f6c;
+  border: 2px solid #0f6f6c;
+  padding: 12px 26px;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  background: #0f6f6c;
+  color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    padding: 25px;
+  }
+
+  .form-acciones {
+    justify-content: center;
+  }
+
+  .dashboard-title {
+    font-size: 26px;
+  }
+}

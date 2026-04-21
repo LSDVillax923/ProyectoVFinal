@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tratamientos Programados</title>
+  <link rel="stylesheet" th:href="@{/css/clientes.css}">
+</head>
+<body>
+  <header class="header">
+    <div class="header-container">
+      <a th:href="@{/inicio}" class="logo">
+        <img th:src="@{/img/Medicat.png}" alt="Medicat logo">
+      </a>
+      <nav class="nav">
+        <a th:href="@{/inicio}" class="nav-link">Inicio</a>
+        <a th:href="@{/clientes}" class="nav-link">Clientes</a>
+        <a th:href="@{/mascotas}" class="nav-link">Mascotas</a>
+        <a th:href="@{/tratamientos}" class="btn-nueva">Tratamientos Programados</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="dashboard-header">
+      <h1 class="dashboard-title">Tratamientos Programados</h1>
+      <p class="dashboard-subtitle">Consulta los tratamientos con fecha de hoy o posterior.</p>
+    </section>
+
+    <p>Total de tratamientos registrados: <strong th:text="${totalTratamientos}">0</strong></p>
+    <p>Total de tratamientos programados: <strong th:text="${totalTratamientosProgramados}">0</strong></p>
+
+    <section class="tabla-card">
+      <table class="tabla tabla-mascotas">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Mascota</th>
+            <th>Propietario</th>
+            <th>Veterinario</th>
+            <th>Drogas formuladas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(tratamientos)}">
+            <td colspan="6" style="text-align:center;">No hay tratamientos programados actualmente.</td>
+          </tr>
+          <tr th:each="tratamiento : ${tratamientos}">
+            <td th:text="${#temporals.format(tratamiento.fecha, 'dd/MM/yyyy')}">19/03/2026</td>
+            <td th:text="${tratamiento.descripcion}">Control general</td>
+            <td>
+              <a th:href="@{/mascotas/{id}(id=${tratamiento.mascota.id})}"
+                 th:text="${tratamiento.mascota.nombre}">
+                Mascota
+              </a>
+            </td>
+            <td th:text="${tratamiento.mascota.cliente.nombre + ' ' + tratamiento.mascota.cliente.apellido}">Cliente</td>
+            <td th:text="${tratamiento.veterinario.nombre}">Veterinario</td>
+            <td>
+              <span th:if="${#lists.isEmpty(tratamiento.drogas)}">Sin medicación asociada</span>
+              <ul th:unless="${#lists.isEmpty(tratamiento.drogas)}" style="margin:0; padding-left:18px;">
+                <li th:each="linea : ${tratamiento.drogas}"
+                    th:text="${linea.droga.nombre + ' x' + linea.cantidad}">
+                  Droga x1
+                </li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,261 @@
+/* ====== RESET ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ====== BODY ====== */
+body {
+  background: #f5f7fb;
+  color: #333;
+}
+
+/* ====== CONTENEDOR ====== */
+.dashboard {
+  padding: 30px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ====== HEADER ====== */
+.dashboard-header {
+  margin-bottom: 25px;
+}
+
+.dashboard-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.dashboard-subtitle {
+  color: #000000;
+  margin-top: 5px;
+}
+
+/* ====== ALERTAS ====== */
+.alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background: #e6f9f0;
+  color: #0f9d58;
+}
+
+.alert-error {
+  background: #ffecec;
+  color: #d93025;
+}
+
+/* ====== BUSQUEDA ====== */
+.busqueda-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.busqueda-form {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.input-grupo {
+  display: flex;
+  align-items: center;
+  background: #ece8e4;
+  border-radius: 8px;
+  padding: 8px 10px;
+  flex: 1;
+}
+
+.input-grupo input {
+  border: none;
+  background: transparent;
+  outline: none;
+  margin-left: 8px;
+  width: 100%;
+}
+
+.icono {
+  color: #6b7280;
+}
+
+.btn-limpiar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+}
+
+.filtro-estado {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #000000;
+}
+
+/* ====== TOOLBAR ====== */
+.tabla-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.btn-primary {
+  background:  #07686d;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  background: #0a7f86;
+}
+
+/* ====== TABLA ====== */
+.tabla-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla thead {
+  background: #0a7f86;
+}
+
+.tabla th {
+  text-align: left;
+  padding: 12px;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.tabla td {
+  padding: 12px;
+  border-top: 1px solid #f2ede7;
+}
+
+.tabla tbody tr:hover {
+  background: #f1f5f9;
+  transition: 0.2s;
+}
+
+/* ====== CLIENTE / MASCOTA ====== */
+.cliente-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: #ece8e4;
+  color: #07686d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* ====== DIAGNOSTICO ====== */
+.diagnostico-cell {
+  color: #374151;
+}
+
+/* ====== BADGES ====== */
+.badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Estados */
+.badge.activo {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.badge.pendiente {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+.badge.completado {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.badge.cancelado {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ====== ACCIONES ====== */
+.acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-accion {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  font-size: 13px;
+  color: #0a7f86;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn-accion:hover {
+  color: #1d4ed8;
+}
+
+/* ====== SIN RESULTADOS ====== */
+.sin-resultados {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .busqueda-form {
+    flex-direction: column;
+  }
+
+  .tabla-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .tabla {
+    font-size: 13px;
+  }
+}

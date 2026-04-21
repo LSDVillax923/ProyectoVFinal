@@ -1,0 +1,119 @@
+<div class="page-container">
+  
+  <div class="page-header">
+    <h1>Nueva Cita</h1>
+    <a routerLink="/citas" class="btn btn-secondary">← Volver</a>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="citaForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Error general -->
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+      <div class="form-row">
+        <!-- Cliente -->
+        <div class="form-group">
+          <label for="clienteId">Cliente *</label>
+          <select id="clienteId" formControlName="clienteId" class="form-control" [class.is-invalid]="isInvalid('clienteId')">
+            <option value="">Seleccione un cliente</option>
+            <option *ngFor="let c of clientes" [value]="c.id">
+              {{ c.nombre }} {{ c.apellido }} - {{ c.correo }}
+            </option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('clienteId')">
+            Seleccione un cliente
+          </div>
+        </div>
+
+        <!-- Mascota -->
+        <div class="form-group">
+          <label for="mascotaId">Mascota *</label>
+          <select id="mascotaId" formControlName="mascotaId" class="form-control" [class.is-invalid]="isInvalid('mascotaId')">
+            <option value="">Seleccione una mascota</option>
+            <option *ngFor="let m of mascotasFiltradas" [value]="m.id">
+              {{ m.nombre }} ({{ m.especie }} - {{ m.raza }})
+            </option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('mascotaId')">
+            Seleccione una mascota
+          </div>
+          <small *ngIf="citaForm.get('clienteId')?.value && mascotasFiltradas.length === 0" class="text-warning">
+            Este cliente no tiene mascotas registradas
+          </small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Veterinario -->
+        <div class="form-group">
+          <label for="veterinarioId">Veterinario *</label>
+          <select id="veterinarioId" formControlName="veterinarioId" class="form-control" [class.is-invalid]="isInvalid('veterinarioId')">
+            <option value="">Seleccione un veterinario</option>
+            <option *ngFor="let v of veterinarios" [value]="v.id">
+              {{ v.nombre }} - {{ v.especialidad }}
+            </option>
+          </select>
+          <div class="invalid-feedback" *ngIf="isInvalid('veterinarioId')">
+            Seleccione un veterinario
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Fecha -->
+        <div class="form-group">
+          <label for="fecha">Fecha *</label>
+          <input type="date" id="fecha" formControlName="fecha" class="form-control" [min]="minFecha" [class.is-invalid]="isInvalid('fecha')">
+          <div class="invalid-feedback" *ngIf="isInvalid('fecha')">
+            Seleccione una fecha válida
+          </div>
+        </div>
+
+        <!-- Hora Inicio -->
+        <div class="form-group">
+          <label for="horaInicio">Hora Inicio *</label>
+          <input type="time" id="horaInicio" formControlName="horaInicio" class="form-control" [class.is-invalid]="isInvalid('horaInicio')">
+          <div class="invalid-feedback" *ngIf="isInvalid('horaInicio')">
+            Seleccione hora de inicio
+          </div>
+        </div>
+
+        <!-- Hora Fin -->
+        <div class="form-group">
+          <label for="horaFin">Hora Fin *</label>
+          <input type="time" id="horaFin" formControlName="horaFin" class="form-control" [class.is-invalid]="isInvalid('horaFin')">
+          <div class="invalid-feedback" *ngIf="isInvalid('horaFin')">
+            Seleccione hora de fin
+          </div>
+        </div>
+      </div>
+
+      <!-- Motivo -->
+      <div class="form-group">
+        <label for="motivo">Motivo de la consulta *</label>
+        <select id="motivo" formControlName="motivo" class="form-control" [class.is-invalid]="isInvalid('motivo')">
+          <option value="">Seleccione un motivo</option>
+          <option value="Consulta general">Consulta general</option>
+          <option value="Vacunación">Vacunación</option>
+          <option value="Control">Control</option>
+          <option value="Cirugía">Cirugía</option>
+          <option value="Emergencia">Emergencia</option>
+          <option value="Peluquería">Peluquería</option>
+          <option value="Desparasitación">Desparasitación</option>
+        </select>
+        <div class="invalid-feedback" *ngIf="isInvalid('motivo')">
+          Seleccione un motivo
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ loading ? 'Guardando...' : 'Guardar Cita' }}
+        </button>
+        <a routerLink="/citas" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>

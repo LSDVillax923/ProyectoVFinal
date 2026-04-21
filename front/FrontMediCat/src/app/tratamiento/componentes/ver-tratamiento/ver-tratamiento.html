@@ -1,0 +1,81 @@
+<app-navbar></app-navbar>
+
+<main class="dashboard">
+  <section class="dashboard-header">
+    <a routerLink="/tratamientos" class="btn-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver a Tratamientos
+    </a>
+    <h1 class="dashboard-title">Detalle del Tratamiento</h1>
+  </section>
+
+  <p *ngIf="cargando" class="alert">Cargando tratamiento...</p>
+
+  <ng-container *ngIf="!cargando && tratamiento; else noEncontrado">
+    
+    <section class="detalle-card">
+      <div class="detalle-header">
+        <div>
+          <h2>{{ tratamiento.diagnostico }}</h2>
+          <span class="badge" [ngClass]="estadoClase(tratamiento.estado)">{{ tratamiento.estado }}</span>
+        </div>
+        <a *ngIf="puedeEditar" [routerLink]="['/tratamientos', tratamiento.id, 'editar']" class="btn-accion btn-accion--outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar
+        </a>
+      </div>
+
+      <div class="detalle-info">
+        <div class="detalle-campo">
+          <span class="detalle-label">Paciente</span>
+          <span>{{ tratamiento.mascota }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Veterinario</span>
+          <span>{{ tratamiento.veterinario }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Fecha</span>
+          <span>{{ tratamiento.fecha }}</span>
+        </div>
+        <div class="detalle-campo full-width">
+          <span class="detalle-label">Observaciones</span>
+          <span>{{ tratamiento.observaciones || '—' }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Medicamentos -->
+    <section class="tabla-card" *ngIf="tratamiento.drogas.length > 0">
+      <div class="tabla-toolbar" style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border-tertiary);">
+        <h2 class="dashboard-subtitle" style="margin:0">Medicamentos prescritos</h2>
+      </div>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Medicamento</th>
+            <th>Cantidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let droga of tratamiento.drogas">
+            <td>{{ droga.nombreDroga }}</td>
+            <td>{{ droga.cantidad }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="sin-drogas" *ngIf="tratamiento.drogas.length === 0">
+      <p>Este tratamiento no tiene medicamentos prescritos.</p>
+    </div>
+
+  </ng-container>
+
+  <ng-template #noEncontrado>
+    <div class="form-card">
+      <p class="alert alert-error">No se encontró el tratamiento solicitado.</p>
+      <a routerLink="/tratamientos" class="btn-volver">Ir al listado</a>
+    </div>
+  </ng-template>
+</main>

@@ -1,0 +1,281 @@
+/* ===== BASE ===== */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ddd5ca, #e9e2d8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+/* ===== HEADER ===== */
+.dashboard-header {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: 34px;
+  color: #000000;
+  font-weight: 700;
+}
+
+.dashboard-subtitle {
+  color: #000000;
+  font-size: 15px;
+}
+
+/* ===== CARD BUSQUEDA ===== */
+.busqueda-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+/* Contenedor del buscador */
+.busqueda-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Grupo input */
+.input-grupo {
+  position: relative;
+  width: 100%;
+  max-width: 500px; /* 👈 controla el ancho (clave) */
+}
+
+/* Icono */
+.input-grupo .icono {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+/* Input */
+.input-grupo input {
+  width: 100%;
+  padding: 13px 40px;
+  border-radius: 10px;
+  border: 1.5px solid #e3d2b8;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.input-grupo input:focus {
+  border-color: #0f6f6c;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15,111,108,0.15);
+  outline: none;
+}
+
+/* Botón limpiar */
+.btn-limpiar {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.btn-limpiar:hover {
+  color: #0f6f6c;
+}
+
+/* ===== TOOLBAR ===== */
+.tabla-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tabla-total {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Botón principal */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f6f6c;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #0a5250;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+/* ===== TABLA ===== */
+.tabla-card {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Header */
+.tabla th {
+  background: #f5f1ea;
+  padding: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+/* Filas */
+.tabla td {
+  padding: 14px;
+  border-top: 1px solid #eee;
+}
+
+.tabla tr {
+  transition: 0.2s;
+}
+
+.tabla tr:hover {
+  background-color: #f1ffe0;
+}
+
+/* ===== MEDICAMENTO ===== */
+.tabla td strong {
+  color: #0f6f6c;
+}
+
+/* ===== DESCRIPCIÓN ===== */
+.descripcion-cell {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* ===== BADGES STOCK ===== */
+.badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Ajusta estas clases según tu función stockClase() */
+.badge-alto {
+  background: #e6f7f5;
+  color: #0f6f6c;
+}
+
+.badge-medio {
+  background: #fff4d6;
+  color: #b45309;
+}
+
+.badge-bajo {
+  background: #fdecea;
+  color: #b91c1c;
+}
+
+/* ===== ACCIONES ===== */
+.acciones {
+  display: flex;
+  gap: 12px;
+}
+
+/* Editar */
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #0f6f6c;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn-accion:hover {
+  color: #0a5250;
+  transform: translateY(-1px);
+}
+
+/* Eliminar */
+.btn-eliminar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fdecea;
+  color: #b91c1c;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-eliminar:hover {
+  background: #f8d7da;
+  transform: translateY(-1px);
+}
+
+/* ===== ALERTAS ===== */
+.alert {
+  margin: 15px auto;
+  padding: 14px 20px;
+  border-radius: 10px;
+  max-width: 900px;
+  font-size: 14px;
+}
+
+.alert-success {
+  color: #2e7d32;
+  background: #e6f4ea;
+}
+
+.alert-error {
+  color: #c62828;
+  background: #fdecea;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .tabla-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

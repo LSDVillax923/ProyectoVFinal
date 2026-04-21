@@ -1,0 +1,106 @@
+<app-navbar></app-navbar>
+
+<main class="dashboard">
+  <section class="dashboard-header">
+    <a routerLink="/mascotas" class="btn-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al listado
+    </a>
+    <h1 class="dashboard-title">Editar Mascota</h1>
+    <p class="dashboard-subtitle" *ngIf="mascota.id">Modifica la información de {{ mascota.nombre }}</p>
+  </section>
+
+  <p *ngIf="mensaje" class="alert alert-success">{{ mensaje }}</p>
+  <p *ngIf="error" class="alert alert-error">{{ error }}</p>
+
+  <div class="form-card" *ngIf="!noEncontrada">
+    <form (ngSubmit)="guardarCambios()">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" name="nombre" type="text" [(ngModel)]="mascota.nombre" required />
+        </div>
+
+        <div class="form-group">
+          <label for="especie">Especie</label>
+          <input id="especie" name="especie" type="text" [(ngModel)]="mascota.especie" required />
+        </div>
+
+        <div class="form-group">
+          <label for="raza">Raza</label>
+          <input id="raza" name="raza" type="text" [(ngModel)]="mascota.raza" required />
+        </div>
+
+        <div class="form-group">
+          <label for="sexo">Sexo</label>
+          <select id="sexo" name="sexo" [(ngModel)]="mascota.sexo">
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="fechaNacimiento">Fecha de nacimiento</label>
+          <input id="fechaNacimiento" name="fechaNacimiento" type="date" [(ngModel)]="mascota.fechaNacimiento" />
+        </div>
+
+        <div class="form-group">
+          <label for="edad">Edad (años)</label>
+          <input id="edad" name="edad" type="number" min="0" [(ngModel)]="mascota.edad" required />
+        </div>
+
+        <div class="form-group">
+          <label for="peso">Peso (kg)</label>
+          <input id="peso" name="peso" type="number" min="0" step="0.1" [(ngModel)]="mascota.peso" required />
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select id="estado" name="estado" [(ngModel)]="mascota.estado">
+            <option value="ACTIVA">Activa</option>
+            <option value="TRATAMIENTO">En Tratamiento</option>
+            <option value="INACTIVA">Inactiva</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="enfermedad">Enfermedad / diagnóstico</label>
+          <input id="enfermedad" name="enfermedad" type="text" [(ngModel)]="mascota.enfermedad" placeholder="Dejar en blanco si está sano" />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="observaciones">Observaciones</label>
+          <textarea id="observaciones" name="observaciones" [(ngModel)]="mascota.observaciones" rows="3"></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="veterinarioAsignado">Veterinario asignado</label>
+          <select id="veterinarioAsignado" name="veterinarioAsignado" [(ngModel)]="mascota.veterinarioAsignado">
+            <option value="">Sin veterinario asignado</option>
+            <option *ngFor="let vet of veterinariosDisponibles" [value]="vet.nombre">
+              {{ vet.nombre }} — {{ vet.especialidad }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="form-acciones">
+        <button type="submit" class="btn-guardar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Guardar Cambios
+        </button>
+        <button type="button" class="btn-cancelar" (click)="cancelar()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-card" *ngIf="noEncontrada">
+    <p class="alert alert-error">No se encontró la mascota solicitada.</p>
+    <a routerLink="/mascotas" class="btn-volver">Volver al listado</a>
+  </div>
+</main>

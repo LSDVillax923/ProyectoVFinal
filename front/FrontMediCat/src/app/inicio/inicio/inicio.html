@@ -1,0 +1,510 @@
+<nav class="navegacion" aria-label="Menú principal">
+  <a class="logo">
+    <img src="assets/img/Medicat.png" alt="Logo de Medicat" />
+  </a>
+
+  <ul class="menu">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#equipo">Equipo</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li>
+      <a class="btn-cita" href="#contacto">
+        <i class="fa-solid fa-mobile-screen"></i> Agendar Cita
+      </a>
+    </li>
+    <li>
+      <a class="btn-cita" routerLink="/inicio/login">Iniciar Sesión</a>
+    </li>
+    <li>
+      <a class="btn-cita" routerLink="/inicio/registro">Crear Cuenta</a>
+    </li>
+  </ul>
+</nav>
+
+<main>
+  <!-- SECCIÓN INICIO -->
+  <section id="inicio" class="landing">
+    
+    <article>
+      <p class="etiqueta-bienvenida">Bienvenido a Medicat</p>
+      <h1>Cuidamos de tus mejores amigos como si fueran nuestra familia</h1>
+      <p class="descripcion">
+        Medicina veterinaria de vanguardia, trato humano y el equipo más avanzado para
+        garantizar la salud y bienestar de tu mascota en cada etapa de su vida.
+      </p>
+
+      <div class="acciones">
+        <a class="btn btn-primario" href="#contacto">
+          <i class="fa-regular fa-calendar"></i> Agendar Cita
+        </a>
+        <a class="btn btn-secundario" href="#servicios">Ver Servicios</a>
+      </div>
+    </article>
+
+    <figure class="landing-imagen">
+      <img src="assets/img/perro-inicio.jpeg" alt="Perro frente a la entrada" />
+    </figure>
+  
+  </section>
+
+  <!-- SECCIÓN SERVICIOS -->
+  <section id="servicios">
+    <h2>Nuestros Servicios</h2>
+    <span class="titulo_linea" aria-hidden="true"></span>
+    <p>
+      Ofrecemos una amplia gama de cuidados médicos y estéticos diseñados para cubrir
+      todas las necesidades de salud de tus mascotas.
+    </p>
+
+    <div class="servicios__grid" aria-label="Listado de servicios">
+      <article class="servicio-card">
+        <div class="servicio-card__icono fondo-celeste" aria-hidden="true">
+          <i class="fas fa-stethoscope"></i>
+        </div>
+        <h3>Consultas Generales</h3>
+        <p>
+          Revisiones exhaustivas para mantener a tu mascota saludable y detectar
+          cualquier problema a tiempo.
+        </p>
+      </article>
+
+      <article class="servicio-card">
+        <div class="servicio-card__icono fondo-celeste" aria-hidden="true">
+          <i class="fas fa-syringe"></i>
+        </div>
+        <h3>Vacunación y Desparasitación</h3>
+        <p>
+          Planes preventivos personalizados para proteger a tus mascotas de las
+          enfermedades más comunes.
+        </p>
+      </article>
+
+      <article class="servicio-card">
+        <div class="servicio-card__icono fondo-crema" aria-hidden="true">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <h3>Cirugías Especializadas</h3>
+        <p>
+          Contamos con quirófano equipado y tecnología láser para procedimientos
+          quirúrgicos seguros.
+        </p>
+      </article>
+
+      <article class="servicio-card">
+        <div class="servicio-card__icono fondo-rosa" aria-hidden="true">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3>Urgencias 24/7</h3>
+        <p>
+          Atención inmediata para situaciones críticas con personal médico disponible las
+          24 horas.
+        </p>
+      </article>
+
+      <article class="servicio-card">
+        <div class="servicio-card__icono fondo-crema" aria-hidden="true">
+          <i class="fas fa-flask"></i>
+        </div>
+        <h3>Laboratorio Propio</h3>
+        <p>
+          Resultados rápidos de análisis de sangre, orina y pruebas diagnósticas para
+          decisiones precisas.
+        </p>
+      </article>
+
+      <article class="servicio-card">
+        <div class="servicio-card__icono fondo-celeste" aria-hidden="true">
+          <i class="fas fa-cut"></i>
+        </div>
+        <h3>Peluquería Canina y Felina</h3>
+        <p>
+          Servicios de higiene y estética para que tus mascotas luzcan y se sientan
+          siempre bien.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECCIÓN NOSOTROS -->
+  <section id="nosotros">
+    <div class="nosotros__izquierda">
+      <h2>¿Por qué confiar en Medicat?</h2>
+      <p>
+        En Medicat entendemos que tu mascota es parte de tu familia. Por eso, hemos
+        diseñado un espacio donde la ciencia y el corazón se unen para ofrecer la mejor
+        atención posible.
+      </p>
+
+      <div class="nosotros__razones">
+        <div class="razon">
+          <span class="razon__icono"><i class="fa-solid fa-medal"></i></span>
+          <div>
+            <h4>Excelencia Médica</h4>
+            <p>
+              Contamos con los certificados de calidad más exigentes del sector
+              veterinario.
+            </p>
+          </div>
+        </div>
+
+        <div class="razon">
+          <span class="razon__icono"><i class="fa-solid fa-clock"></i></span>
+          <div>
+            <h4>Disponibilidad Total</h4>
+            <p>
+              Tu mascota nunca estará sola. Estamos disponibles las 24 horas, los 365
+              días del año.
+            </p>
+          </div>
+        </div>
+
+        <div class="razon">
+          <span class="razon__icono"><i class="fa-solid fa-user-group"></i></span>
+          <div>
+            <h4>Equipo Humano</h4>
+            <p>
+              Profesionales apasionados por los animales que brindan un trato empático y
+              cariñoso.
+            </p>
+          </div>
+        </div>
+
+        <div class="razon">
+          <span class="razon__icono"
+            ><i class="fa-solid fa-circle-check"></i
+          ></span>
+          <div>
+            <h4>Tecnología de Punta</h4>
+            <p>
+              Equipamiento diagnóstico de última generación para diagnósticos precisos y
+              rápidos.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nosotros__stats">
+      <div class="stat-card stat-oscuro">
+        <span class="stat-numero">+15k</span>
+        <span class="stat-label">Pacientes atendidos</span>
+      </div>
+      <div class="stat-card stat-crema">
+        <span class="stat-numero">8+</span>
+        <span class="stat-label">Especialidades médicas</span>
+      </div>
+      <div class="stat-card stat-verde">
+        <span class="stat-numero">24/7</span>
+        <span class="stat-label">Servicio de emergencias</span>
+      </div>
+      <div class="stat-card stat-crema">
+        <span class="stat-numero">98%</span>
+        <span class="stat-label">Satisfacción de clientes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN EQUIPO -->
+  <section id="equipo">
+    <h2> Nuestro Equipo Médico</h2>   
+    <span class="titulo_linea" aria-hidden="true"></span> 
+    <p>
+      Profesionales altamente calificados y apasionados por brindar el mejor cuidado a
+      tus compañeros peludos.
+    </p>
+
+    <div class="equipo__grid" aria-label="Listado del equipo médico">
+      <article class="tarjeta-medico">
+        <img src="assets/img/vet1.jpeg" alt="Dra. Elena Martínez, cirujana veterinaria" />
+        <div class="tarjeta-medico__contenido">
+          <h3>Dra. Elena Martínez</h3>
+          <h4>Cirujana Veterinaria</h4>
+          <p>
+            "Especialista en cirugía de tejidos blandos y ortopedia con más de 10 años de
+            experiencia."
+          </p>
+        </div>
+      </article>
+
+      <article class="tarjeta-medico">
+        <img src="assets/img/vet2.jpeg" alt="Dr. Ricardo Sánchez, médico internista" />
+        <div class="tarjeta-medico__contenido">
+          <h3>Dr. Ricardo Sánchez</h3>
+          <h4>Médico Internista</h4>
+          <p>
+            "Experto en diagnóstico por imagen y medicina preventiva para animales exóticos
+            y domésticos."
+          </p>
+        </div>
+      </article>
+
+      <article class="tarjeta-medico">
+        <img
+          src="assets/img/vet4.jpeg"
+          alt="Dra. Carla Gómez, especialista en dermatología"
+        />
+        <div class="tarjeta-medico__contenido">
+          <h3>Dra. Carla Gómez</h3>
+          <h4>Dermatóloga Veterinaria</h4>
+          <p>
+            "Apasionada por la salud de la piel y el bienestar integral de perros y gatos."
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECCIÓN RESEÑAS -->
+  <section id="resenas">
+    <h2>Lo que dicen nuestros clientes</h2>
+    <span class="servicios__linea" aria-hidden="true"></span>
+
+    <div class="resenas__grid">
+      <article class="resena-card">
+        <div class="resena-card__header">
+          <div class="estrellas">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+            ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+            ><i class="fa-solid fa-star"></i>
+          </div>
+          <i class="fa-solid fa-quote-right resena-comilla"></i>
+        </div>
+        <p class="resena-texto">
+          "La atención en Medicat es insuperable. Operaron a Luna de urgencia y el equipo
+          estuvo pendiente de ella las 24 horas. ¡Eternamente agradecida!"
+        </p>
+        <div class="resena-autor">
+          <div>
+            <strong>María García</strong>
+            <span>Dueño de Luna (Golden Retriever)</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="resena-card">
+        <div class="resena-card__header">
+          <div class="estrellas">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+            ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+            ><i class="fa-solid fa-star"></i>
+          </div>
+          <i class="fa-solid fa-quote-right resena-comilla"></i>
+        </div>
+        <p class="resena-texto">
+          "Llevo años trayendo a mis mascotas aquí. Lo que más valoro es la honestidad de
+          los médicos y lo modernos que son sus equipos."
+        </p>
+        <div class="resena-autor">
+          <div>
+            <strong>Juan Pérez</strong>
+            <span>Dueño de Simba (Gato Persa)</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="resena-card">
+        <div class="resena-card__header">
+          <div class="estrellas">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+            ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+            ><i class="fa-solid fa-star"></i>
+          </div>
+          <i class="fa-solid fa-quote-right resena-comilla"></i>
+        </div>
+        <p class="resena-texto">
+          "Excelente servicio de peluquería y vacunas. Toby siempre sale feliz y yo
+          tranquila sabiendo que está en las mejores manos."
+        </p>
+        <div class="resena-autor">
+          <div>
+            <strong>Laura Torres</strong>
+            <span>Dueño de Toby (Bulldog Francés)</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECCIÓN CONTACTO -->
+  <section id="contacto">
+    <h2>Contáctanos</h2>
+    <span class="servicios__linea" aria-hidden="true"></span>
+
+    <div class="container">
+      <!-- LADO IZQUIERDO -->
+      <div class="left">
+        <h3>Información de Contacto</h3>
+        <p>
+          Estamos aquí para ayudarte a ti y a tu mascota. No dudes en contactarnos por
+          cualquier medio.
+        </p>
+
+        <div class="info">
+          <div class="item">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            <div>
+              <h4>Llámanos</h4>
+              <span>+34 912 345 678</span>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <div>
+              <h4>Email</h4>
+              <span>contacto@medicat.com</span>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <div>
+              <h4>Ubicación</h4>
+              <span>Calle Veterinaria 123, Madrid, España</span>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+            <div>
+              <h4>Horario</h4>
+              <span>Lunes a Viernes: 09:00 - 20:00</span><br />
+              <strong>Urgencias: 24 Horas</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="mapa-contacto">
+          <h4>Encuéntranos en el mapa</h4>
+          <iframe
+            title="Ubicación de Medicat en Madrid"
+            src="https://www.google.com/maps?q=Calle%20Veterinaria%20123%2C%20Madrid%2C%20Espa%C3%B1a&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          >
+          </iframe>
+        </div>
+
+        <a
+          class="whatsapp"
+          href="https://wa.me/34912345678"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+          Chatear por WhatsApp
+        </a>
+      </div>
+
+      <!-- LADO DERECHO -->
+      <div class="right">
+        <h3>Envíanos un mensaje</h3>
+
+        <form action="/contacto" method="post">
+          <div class="row">
+            <div class="input-group">
+              <label for="nombre">Nombre Completo</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Ej. Juan Pérez"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="juan@ejemplo.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="asunto">Asunto</label>
+            <input type="text" id="asunto" name="asunto" value="Consulta General" />
+          </div>
+
+          <div class="input-group">
+            <label for="mensaje">Mensaje</label>
+            <textarea
+              id="mensaje"
+              name="mensaje"
+              rows="5"
+              placeholder="¿En qué podemos ayudarte?"
+              required
+            ></textarea>
+          </div>
+
+<button type="submit" class="submit-btn">Enviar Mensaje</button>
+        </form>
+
+        <img
+          src="assets/img/familaunida.jpeg"
+          alt="Familia feliz con su mascota"
+          class="contact-family-photo"
+        />
+      </div>
+    </div>
+  </section>
+
+  <hr />
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-contenido">
+    <div class="footer-col footer-col-logo">
+      <img src="assets/img/footer-img.jpeg" alt="Logo de Medicat" class="footer-logo" />
+      <p>
+        Cuidando la salud y bienestar de tus mascotas con la mejor tecnología y el equipo
+        más humano. Tu confianza, su salud.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Enlaces Rápidos</h4>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#equipo">Equipo Médico</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Servicios</h4>
+      <ul>
+        <li>Consultas</li>
+        <li>Vacunación</li>
+        <li>Cirugías</li>
+        <li>Laboratorio</li>
+        <li>Urgencias 24/7</li>
+        <li>Peluquería</li>
+      </ul>
+    </div>
+
+    <div class="footer-col footer-col-newsletter">
+      <h4>Boletín</h4>
+      <p>Suscríbete para recibir consejos de salud para tu mascota.</p>
+
+      <form class="newsletter-form" action="/newsletter" method="post">
+        <input type="email" name="email" placeholder="Tu email" required />
+        <button type="submit">Suscribirse</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 Medicat Clínica Veterinaria. Todos los derechos reservados.</p>
+  </div>
+</footer>

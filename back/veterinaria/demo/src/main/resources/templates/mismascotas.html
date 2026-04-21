@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Mascotas</title>
+  <link rel="stylesheet" th:href="@{/css/mascotas.css}">
+</head>
+<body>
+
+<header class="header">
+  <div class="header-container">
+    <a th:href="@{/inicio}" class="logo">
+      <img th:src="@{/img/Medicat.png}" alt="Medicat logo">
+    </a>
+    <nav class="nav">
+      <a th:href="@{/clientes/{id}/mismascotas(id=${cliente.id})}" class="nav-link">
+        Mis Mascotas
+      </a>
+      <a th:href="@{/inicio/login}" class="nav-link">Cerrar Sesión</a>
+    </nav>
+  </div>
+</header>
+
+<main class="dashboard">
+
+  <section class="dashboard-header">
+    <h1 class="dashboard-title">
+      Bienvenido, <span th:text="${cliente.nombre + ' ' + cliente.apellido}">Cliente</span>
+    </h1>
+    <p class="dashboard-subtitle">Estas son todas tus mascotas registradas</p>
+  </section>
+
+  <!-- Mensajes flash -->
+  <p th:if="${mensaje}" th:text="${mensaje}" class="flash-message flash-message-success"></p>
+  <p th:if="${error}" th:text="${error}" class="flash-message flash-message-error"></p>
+
+  <!-- Sin mascotas -->
+  <section class="tabla-card" th:if="${#lists.isEmpty(mascotas)}">
+    <p class="empty-state-message">No tienes mascotas registradas aún.</p>
+  </section>
+
+  <!-- Tabla de mascotas -->
+  <section class="tabla-card" th:unless="${#lists.isEmpty(mascotas)}">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Mascota</th>
+          <th>Especie / Raza</th>
+          <th>Edad</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="mascota : ${mascotas}">
+          <td>
+            <div class="mascota-info">
+              <div class="avatar">
+                <img class="avatar-img"
+                     th:src="@{/img/{foto}(foto=${mascota.foto})}"
+                     th:alt="${mascota.nombre}"
+                     onerror="this.onerror=null;this.src='/img/ladrador.jpg';">
+              </div>
+              <span th:text="${mascota.nombre}">Nombre</span>
+            </div>
+          </td>
+          <td>
+            <span th:text="${mascota.especie}">Especie</span> -
+            <span th:text="${mascota.raza}">Raza</span>
+          </td>
+          <td>
+            <span th:text="${mascota.edad}">0</span> años
+          </td>
+          <td>
+            <span class="badge"
+                  th:text="${mascota.estado}"
+                  th:classappend="${mascota.estado == 'activa'} ? ' badge-verde' :
+                                  (${mascota.estado == 'tratamiento'} ? ' badge-amarillo' : ' badge-rojo')">
+            </span>
+          </td>
+          <td class="acciones">
+            <a th:href="@{/mascotas/{id}(id=${mascota.id})}" class="btn-accion">Ver detalle</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar contraseña</title>
+    <link rel="stylesheet" th:href="@{/css/olvidar.css}">
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>¿Olvidaste tu contraseña?</h2>
+
+    <p>No te preocupes, te enviaremos instrucciones para recuperarla</p>
+
+    <!-- MENSAJE FLASH (éxito o error) -->
+   <p th:if="${mensaje}" th:text="${mensaje}" class="flash-message flash-message-success"></p>
+    <p th:if="${error}" th:text="${error}" class="flash-message flash-message-error"></p>
+    <form th:action="@{/inicio/forgot-password}" method="post">  
+
+        <label>Correo Electrónico</label>
+        <input type="email" placeholder="tu@email.com" name="email" required>
+
+        <button type="submit">Enviar Instrucciones</button>
+
+    </form>
+
+    <a th:href="@{/inicio/login}" class="back">  
+        ← Volver a Iniciar Sesión
+    </a>
+
+</div>
+
+</body>
+</html>

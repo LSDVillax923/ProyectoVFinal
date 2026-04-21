@@ -1,0 +1,107 @@
+<div class="page-container">
+  
+  <div class="page-header">
+    <h1>Gestión de Citas</h1>
+    <a routerLink="/citas/nueva" class="btn btn-primary">+ Nueva Cita</a>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-card">
+    <div class="filtros-grid">
+      <div class="filtro-item">
+        <label>Fecha</label>
+        <input type="date" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()" class="form-control">
+      </div>
+      <div class="filtro-item">
+        <label>Estado</label>
+        <select [(ngModel)]="filtroEstado" (change)="aplicarFiltros()" class="form-control">
+          <option value="">Todos</option>
+          <option *ngFor="let e of estados" [value]="e">{{ getTextoEstado(e) }}</option>
+        </select>
+      </div>
+      <div class="filtro-item">
+        <label>Veterinario</label>
+        <input type="text" [(ngModel)]="filtroVeterinario" (input)="aplicarFiltros()" placeholder="Buscar..." class="form-control">
+      </div>
+      <div class="filtro-item filtro-actions">
+        <button class="btn btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando citas...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="error-state">
+    <p>{{ error }}</p>
+    <button class="btn btn-primary" (click)="cargarCitas()">Reintentar</button>
+  </div>
+
+  <!-- Tabla de citas -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Mascota</th>
+          <th>Cliente</th>
+          <th>Veterinario</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cita of citasFiltradas">
+          <td>{{ formatearFecha(cita.fechaInicio).split(' ')[0] }}</td>
+          <td>{{ formatearHora(cita.fechaInicio) }} - {{ formatearHora(cita.fechaFin) }}</td>
+          <td>{{ cita.mascota.nombre || 'N/A' }}</td>
+          <td>{{ nombreCompleto(cita.cliente) }}</td>
+          <td>{{ cita.veterinario.nombre || 'No asignado' }}</td>
+          <td>{{ cita.motivo }}</td>
+          <td>
+            <span class="estado-badge" [ngClass]="getClaseEstado(cita.estado)">
+              {{ getTextoEstado(cita.estado) }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <a [routerLink]="['/citas', cita.id]" class="btn-icono" title="Ver">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </a>
+            <a [routerLink]="['/citas', cita.id, 'editar']" class="btn-icono" title="Editar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/>
+                <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/>
+              </svg>
+            </a>
+            <button *ngIf="cita.estado === 'PENDIENTE' || cita.estado === 'CONFIRMADA'" 
+                    class="btn-icono" title="Cancelar" (click)="cancelarCita(cita.id)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+            <button class="btn-icono btn-danger" title="Eliminar" (click)="eliminarCita(cita.id)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="citasFiltradas.length === 0">
+          <td colspan="8" class="empty-state">No hay citas registradas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

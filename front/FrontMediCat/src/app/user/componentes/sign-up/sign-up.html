@@ -1,0 +1,91 @@
+<div class="container">
+  <div class="left">
+    <img
+      class="img"
+      src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop"
+      alt="Gato"
+    />
+
+    <div class="text">
+      <h1>Únete a nuestra familia</h1>
+      <p>Comienza a cuidar mejor de tus mascotas.</p>
+    </div>
+  </div>
+
+  <div class="right">
+    <a routerLink="/inicio" class="back">← Volver al inicio</a>
+
+    <h2>Crear Cuenta</h2>
+    <p>Completa tus datos para registrarte</p>
+
+    <p *ngIf="mensaje" class="success">{{ mensaje }}</p>
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <form (ngSubmit)="registrar()" #registroForm="ngForm">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" [(ngModel)]="form.nombre" type="text" placeholder="Juan" required />
+
+      <label for="apellido">Apellido</label>
+      <input
+        id="apellido"
+        name="apellido"
+        [(ngModel)]="form.apellido"
+        type="text"
+        placeholder="Pérez"
+        required
+      />
+
+      <label for="correo">Correo Electrónico</label>
+      <input
+        id="correo"
+        name="correo"
+        [(ngModel)]="form.correo"
+        type="email"
+        placeholder="tu@email.com"
+        required
+      />
+
+      <label for="celular">Teléfono</label>
+      <input
+        id="celular"
+        name="celular"
+        [(ngModel)]="form.celular"
+        type="tel"
+        placeholder="+52..."
+        required
+      />
+
+      <label for="contrasenia">Contraseña</label>
+      <input
+        id="contrasenia"
+        name="contrasenia"
+        [(ngModel)]="form.contrasenia"
+        type="password"
+        placeholder="••••"
+        required
+      />
+
+      <label for="confirmar">Confirmar Contraseña</label>
+      <input
+        id="confirmar"
+        name="confirmar"
+        [(ngModel)]="form.confirmar"
+        type="password"
+        placeholder="••••"
+        required
+      />
+
+      <label class="terms">
+        <input name="terminos" [(ngModel)]="form.terminos" type="checkbox" required />
+        Acepto los términos y condiciones
+      </label>
+
+      <button type="submit" [disabled]="registroForm.invalid">Crear Cuenta</button>
+    </form>
+
+    <p class="login">
+      ¿Ya tienes cuenta?
+      <a routerLink="/inicio/login">Inicia sesión</a>
+    </p>
+  </div>
+</div>

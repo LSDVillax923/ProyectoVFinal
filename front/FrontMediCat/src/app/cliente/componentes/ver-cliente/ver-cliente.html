@@ -1,0 +1,83 @@
+<app-navbar></app-navbar>
+
+<main class="dashboard">
+  <section class="dashboard-header">
+    <a routerLink="/clientes" class="btn-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al listado
+    </a>
+    <h1 class="dashboard-title">Detalle del Cliente</h1>
+  </section>
+
+  <ng-container *ngIf="cliente; else clienteNoEncontrado">
+    <section class="detalle-card">
+      <div class="detalle-header">
+        <div class="avatar-lg">{{ cliente.nombre.charAt(0) }}</div>
+        <div>
+          <h2>{{ cliente.nombre }} {{ cliente.apellido }}</h2>
+          <span class="badge badge-activo">Activo</span>
+        </div>
+        <a [routerLink]="['/clientes', cliente.id, 'editar']" class="btn-accion btn-accion--outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar
+        </a>
+      </div>
+
+      <div class="detalle-info">
+        <div class="detalle-campo">
+          <span class="detalle-label">ID</span>
+          <span>{{ cliente.id }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Correo</span>
+          <span>{{ cliente.correo }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Celular</span>
+          <span>{{ cliente.celular }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Total de mascotas</span>
+          <span>{{ totalMascotas }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tabla-card">
+      <div class="tabla-toolbar">
+        <h2 class="dashboard-subtitle" style="margin:0">Mascotas registradas</h2>
+        <a [routerLink]="['/clientes', cliente.id, 'mismascotas']" class="btn-accion">
+          Ver todas
+        </a>
+      </div>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Mascota</th>
+            <th>Especie</th>
+            <th>Raza</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="mascotas.length === 0">
+            <td colspan="4" class="sin-resultados">Este cliente no tiene mascotas registradas.</td>
+          </tr>
+          <tr *ngFor="let mascota of mascotas">
+            <td>{{ mascota.nombre }}</td>
+            <td>{{ mascota.especie }}</td>
+            <td>{{ mascota.raza }}</td>
+            <td><span class="badge">{{ mascota.estado }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </ng-container>
+
+  <ng-template #clienteNoEncontrado>
+    <section class="form-card">
+      <p class="alert alert-error">No se encontró el cliente solicitado.</p>
+      <a routerLink="/clientes" class="btn-volver">Ir al listado de clientes</a>
+    </section>
+  </ng-template>
+</main>

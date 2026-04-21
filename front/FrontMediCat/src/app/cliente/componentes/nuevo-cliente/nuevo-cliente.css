@@ -1,0 +1,188 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ddd5ca, #e9e2d8);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== DASHBOARD ===== */
+.dashboard {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+/* ===== HEADER ===== */
+.dashboard-header {
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: 34px;
+  color: #0f6f6c;
+  margin: 10px 0 5px;
+  font-weight: 700;
+}
+
+.dashboard-subtitle {
+  color: #6b8f92;
+  font-size: 15px;
+}
+
+/* Botón volver */
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0f6f6c;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 10px;
+  transition: 0.2s;
+}
+
+.btn-volver:hover {
+  opacity: 0.7;
+}
+
+/* ===== CARD ===== */
+.form-card {
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  margin: 0 auto;
+}
+
+/* ===== GRID ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+/* ===== FORM ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #0f6f6c;
+  font-size: 13px;
+}
+
+/* Inputs más modernos */
+.form-group input {
+  padding: 13px 15px;
+  border: 1.5px solid #e3d2b8;
+  border-radius: 10px;
+  font-size: 14px;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+/* Focus bonito */
+.form-group input:focus {
+  border-color: #0f6f6c;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(15, 111, 108, 0.15);
+  outline: none;
+}
+
+/* Hover sutil */
+.form-group input:hover {
+  border-color: #cbbfae;
+}
+
+/* ===== BOTONES ===== */
+.form-acciones {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  justify-content: center;
+}
+
+.btn-guardar {
+  background: #0f6f6c;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-guardar:hover {
+  background: #0a5250;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.btn-cancelar {
+  background: transparent;
+  color: #0f6f6c;
+  padding: 12px 25px;
+  border: 1.5px solid #0f6f6c;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-cancelar:hover {
+  background: #eef7f7;
+  transform: translateY(-1px);
+}
+
+/* ===== ALERTAS ===== */
+.alert {
+  margin: 15px auto;
+  padding: 14px 20px;
+  border-radius: 10px;
+  max-width: 900px;
+  font-size: 14px;
+}
+
+.alert-success {
+  color: #2e7d32;
+  background: #e6f4ea;
+  border: 1px solid #b7e1c1;
+}
+
+.alert-error {
+  color: #c62828;
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-title {
+    font-size: 28px;
+  }
+
+  .form-card {
+    padding: 25px;
+  }
+}

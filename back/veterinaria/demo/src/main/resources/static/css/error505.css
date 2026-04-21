@@ -1,0 +1,49 @@
+body{
+    background-color:#F5EFE7;
+    font-family:'Segoe UI', sans-serif;
+}
+
+.error-container{
+    min-height:100vh;
+}
+
+.error-card{
+    background:white;
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.error-title{
+    color:#137C78;
+    font-weight:700;
+    font-size:42px;
+}
+
+.error-subtitle{
+    font-size:22px;
+    font-weight:600;
+}
+
+.error-text{
+    color:#6c757d;
+}
+
+.btn-custom{
+    background:#137C78;
+    color:white;
+    padding:12px 28px;
+    border-radius:30px;
+    font-weight:600;
+    border:none;
+    text-decoration:none;
+}
+
+.btn-custom:hover{
+    background:#0f6663;
+    color:white;
+}
+
+.client-img{
+    max-width:260px;
+}

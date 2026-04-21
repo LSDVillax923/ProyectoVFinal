@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    --color-primario: #0a7f86;
+    --color-primario-oscuro: #07686d;
+    --color-primario-claro: #6a8f93;
+    --color-fondo: #f2ede7;
+    --color-fondo-nav: #ece8e4;
+    --blanco: #ffffff;
+    --text-muted: #64748b;
+}
+
+/* El contenedor principal de tu HTML ahora controla el fondo de la página */
+.dashboard {
+    background-color: #f2ede7;
+    min-height: 100vh; /* Para que el color ocupe todo el alto de la pantalla */
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra la tarjeta horizontalmente */
+}
+
+/* Ajuste del header para que no se pegue arriba */
+.dashboard-header {
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 2rem;
+}
+
+.btn-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #07686d;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    background-color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.btn-volver:hover {
+    background-color: #07686d;
+    color: #ffffff;
+}
+
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color:#07686d;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin: 0;
+}
+
+.dashboard-subtitle {
+    color: #000000;
+}
+
+/* La tarjeta blanca donde vive el formulario */
+.form-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 900px; /* Ancho similar al de tu imagen de referencia */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-fondo-nav);
+    box-sizing: border-box;
+}
+
+/* Grid de dos columnas para los inputs */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* Este hace que el correo ocupe las dos columnas */
+.full-width {
+    grid-column: span 2;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #000000;
+}
+
+input, select {
+    padding: 14px 16px;
+    border: 1.5px solid var(--color-fondo-nav);
+    border-radius: 12px;
+    font-size: 1rem;
+    background-color: #f2ede7;
+    transition: all 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color:  #000000;
+    background-color:  #f2ede7;
+    box-shadow: 0 0 0 4px rgba(10, 127, 134, 0.1);
+}
+
+/* Estilo para los botones al final del form */
+.form-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid var(--color-fondo);
+}
+
+.btn-guardar, .btn-cancelar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-guardar {
+    background-color: #07686d;
+    color: #ffffff;
+}
+
+.btn-cancelar {
+    background-color:#07686d;
+    color: #ffffff;
+}
+
+.btn-guardar:hover { background-color: #07686d; }
+.btn-cancelar:hover { background-color:#07686d; color: #ffffff; }
+
+.alert {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.alert-success {
+  background-color: #07686d;
+    color: #ffffff;
+}
+
+.alert-error {
+  background-color: #fdecea;
+  color: #c62828;
+}
+
+/* Responsive: en celulares se pone en una sola columna */
+@media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+    .form-acciones { flex-direction: column; }
+    .btn-guardar, .btn-cancelar { width: 100%; justify-content: center; }
+}

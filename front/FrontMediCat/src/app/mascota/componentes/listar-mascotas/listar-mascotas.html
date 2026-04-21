@@ -1,0 +1,90 @@
+<app-navbar></app-navbar>
+
+<div class="contenedor-listar">
+  <header class="encabezado-seccion">
+    <h1>Gestión de Mascotas</h1>
+    <button class="btn-primario" routerLink="/mascotas/nueva">
+      <span class="icono">+</span> Nueva Mascota
+    </button>
+  </header>
+
+  <div class="dashboard-cards">
+    <div class="card">
+      <span class="card-titulo">Total</span>
+      <span class="card-valor">{{ totalMascotas }}</span>
+    </div>
+    <div class="card card-verde">
+      <span class="card-titulo">Activas</span>
+      <span class="card-valor">{{ saludables }}</span>
+    </div>
+    <div class="card card-amarillo">
+      <span class="card-titulo">En Tratamiento</span>
+      <span class="card-valor">{{ enTratamiento }}</span>
+    </div>
+    <div class="card card-rojo">
+      <span class="card-titulo">Inactivas</span>
+      <span class="card-valor">{{ inactivas }}</span>
+    </div>
+  </div>
+
+  <div class="barra-herramientas">
+    <div class="busqueda">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre..." 
+        [(ngModel)]="filtroNombre"
+      />
+    </div>
+    <div class="filtros">
+      <select [(ngModel)]="estadoSeleccionado">
+        <option value="">Todos los estados</option>
+        <option value="ACTIVA">Activa</option>
+        <option value="TRATAMIENTO">En Tratamiento</option>
+        <option value="INACTIVA">Inactiva</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tabla-responsiva">
+    <table>
+      <thead>
+        <tr>
+          <th>Foto</th>
+          <th>Nombre</th>
+          <th>Especie/Raza</th>
+          <th>Propietario</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let mascota of mascotasFiltradas">
+          <td>
+            <img [src]="mascota.foto || 'assets/default-pet.png'" alt="Foto" class="img-mini">
+          </td>
+          <td><strong>{{ mascota.nombre }}</strong></td>
+          <td>{{ mascota.especie }} - {{ mascota.raza }}</td>
+          <td>{{ mascota.propietario || 'Sin asignar' }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'badge-verde': mascota.estado === 'ACTIVA',
+              'badge-amarillo': mascota.estado === 'TRATAMIENTO',
+              'badge-rojo': mascota.estado === 'INACTIVA'
+            }">
+              {{ mascota.estado }}
+            </span>
+          </td>
+          <td class="acciones">
+            <button class="btn-icono" [routerLink]="['/mascotas', mascota.id]" title="Ver detalles">👁</button>
+            <button class="btn-icono" [routerLink]="['/mascotas', mascota.id, 'editar']" title="Editar">✎</button>
+            <button type="button" class="btn-eliminar" (click)="desactivarMascota(mascota)" title="Desactivar" *ngIf="mascota.estado !== 'INACTIVA'">
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="mascotasFiltradas.length === 0">
+          <td colspan="6" class="sin-resultados">No se encontraron mascotas con los criterios seleccionados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

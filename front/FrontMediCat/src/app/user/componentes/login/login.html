@@ -1,0 +1,64 @@
+<div class="login-page">
+  <div class="login-container">
+
+    <!-- LADO IZQUIERDO (IMAGEN) -->
+    <div class="login-illustration">
+      <img src="assets/img/labrador1.png" alt="Login ilustración" />
+    </div>
+
+    <!-- LADO DERECHO (FORMULARIO) -->
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="assets/img/Medicat.png" alt="Medicat" />
+      </div>
+
+      <h1 class="login-titulo">Iniciar sesión</h1>
+      <p class="login-subtitulo">Bienvenido a Medicat</p>
+
+      <div class="login-tabs">
+        <button type="button" class="login-tab" [class.activa]="tipoUsuario === 'CLIENTE'"
+          (click)="setTipoUsuario('CLIENTE')">Cliente</button>
+        <button type="button" class="login-tab" [class.activa]="tipoUsuario === 'VETERINARIO'"
+          (click)="setTipoUsuario('VETERINARIO')">Veterinario</button>
+        <button type="button" class="login-tab" [class.activa]="tipoUsuario === 'ADMIN'"
+          (click)="setTipoUsuario('ADMIN')">Administrador</button>
+      </div>
+
+      <p *ngIf="error" class="alert alert-error">{{ error }}</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email" formControlName="correo" placeholder="tu@correo.com" />
+        </div>
+
+        <div class="form-group">
+          <label>
+            Contraseña
+            <a routerLink="/inicio/forgot-password" class="login-forgot">¿Olvidaste?</a>
+          </label>
+
+          <div class="input-password">
+            <input [type]="mostrarContrasenia ? 'text' : 'password'"
+              formControlName="contrasenia" placeholder="••••••••" />
+
+            <button type="button" class="btn-toggle-password"
+              (click)="mostrarContrasenia = !mostrarContrasenia">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login" [disabled]="loading">
+          {{ loading ? 'Verificando...' : 'Iniciar sesión' }}
+        </button>
+      </form>
+
+      <p class="login-registro">
+        ¿No tienes cuenta?
+        <a routerLink="/inicio/registro">Regístrate aquí</a>
+      </p>
+    </div>
+
+  </div>
+</div>

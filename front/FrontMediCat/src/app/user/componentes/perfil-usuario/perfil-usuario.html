@@ -1,0 +1,49 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Mi Perfil</h1>
+  </div>
+
+  <div class="form-card">
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando...</p>
+    </div>
+
+    <form *ngIf="!loading" [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+      
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+      <div class="form-group">
+        <label for="nombre">Nombre completo *</label>
+        <input type="text" id="nombre" formControlName="nombre" class="form-control" [class.is-invalid]="isInvalid('nombre')">
+        <div class="invalid-feedback" *ngIf="isInvalid('nombre')">El nombre es obligatorio</div>
+      </div>
+
+      <div class="form-group">
+        <label for="correo">Correo electrónico *</label>
+        <input type="email" id="correo" formControlName="correo" class="form-control" [class.is-invalid]="isInvalid('correo')">
+        <div class="invalid-feedback" *ngIf="isInvalid('correo')">Correo válido obligatorio</div>
+      </div>
+
+      <div class="form-group">
+        <label for="contrasenia">Nueva contraseña (opcional)</label>
+        <input type="password" id="contrasenia" formControlName="contrasenia" class="form-control" [class.is-invalid]="isInvalid('contrasenia')">
+        <div class="invalid-feedback" *ngIf="isInvalid('contrasenia')">Mínimo 6 caracteres</div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmarContrasenia">Confirmar contraseña</label>
+        <input type="password" id="confirmarContrasenia" formControlName="confirmarContrasenia" class="form-control" [class.is-invalid]="perfilForm.hasError('mismatch')">
+        <div class="invalid-feedback" *ngIf="perfilForm.hasError('mismatch')">Las contraseñas no coinciden</div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+        </button>
+        <button type="button" class="btn btn-secondary" routerLink="/dashboard">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>

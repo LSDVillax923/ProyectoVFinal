@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado de Mascotas</title>
+  <link rel="stylesheet" th:href="@{/css/clientes.css}">
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-container">
+      <a th:href="@{/inicio}" class="logo">
+        <img th:src="@{/img/Medicat.png}" alt="Medicat logo">
+      </a>
+      <nav class="nav">
+        <a th:href="@{/inicio}"         class="nav-link">Inicio</a>
+        <a th:href="@{/clientes}"       class="nav-link">Clientes</a>
+        <a th:href="@{/tratamientos}"   class="nav-link">Tratamientos</a>
+        <a th:href="@{/mascotas/nueva}" class="btn-nueva">+ Nueva Mascota</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <!-- Encabezado -->
+    <section class="dashboard-header">
+      <h1 class="dashboard-title">Listado de Mascotas</h1>
+      <p class="dashboard-subtitle">Gestiona la información de las mascotas registradas</p>
+    </section>
+
+    <!-- Filtros -->
+    <form th:action="@{/mascotas}" method="get" class="filtros">
+      <div class="input-grupo">
+        <span class="icono" aria-hidden="true">🔍</span>
+        <input
+          type="text"
+          name="busqueda"
+          th:value="${busqueda}"
+          placeholder="Buscar por nombre, dueño o raza..."
+        />
+      </div>
+
+      <div class="input-grupo">
+        <span class="icono" aria-hidden="true">⚲</span>
+        <select name="estado">
+          <option value=""
+                  th:selected="${estadoSeleccionado == null or estadoSeleccionado == ''}">
+            Todos los estados
+          </option>
+          <option value="activa"
+                  th:selected="${estadoSeleccionado == 'activa'}">Activa</option>
+          <option value="tratamiento"
+                  th:selected="${estadoSeleccionado == 'tratamiento'}">En Tratamiento</option>
+          <option value="inactiva"
+                  th:selected="${estadoSeleccionado == 'inactiva'}">Inactiva</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-nueva">Buscar</button>
+      <a th:href="@{/mascotas}" class="btn-nueva">✕ Limpiar</a>
+    </form>
+
+    <!-- Alertas -->
+    <p th:if="${mensaje}" th:text="${mensaje}" class="alert alert-success"></p>
+    <p th:if="${error}"   th:text="${error}"   class="alert alert-error"></p>
+
+    <!-- Totales -->
+    <p>Total de mascotas: <strong th:text="${totalMascotas}">0</strong></p>
+    <p>
+      Activas: <strong th:text="${saludables}">0</strong> |
+      En tratamiento: <strong th:text="${tratamiento}">0</strong> |
+      Inactivas: <strong th:text="${inactivas}">0</strong>
+    </p>
+
+    <!-- Tabla -->
+    <section class="tabla-card">
+      <table class="tabla tabla-mascotas">
+
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Especie</th>
+            <th>Raza</th>
+            <th>Edad</th>
+            <th>Peso</th>
+            <th>Estado</th>
+            <th>Propietario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Sin resultados -->
+          <tr th:if="${#lists.isEmpty(mascotas)}">
+            <td colspan="8" style="text-align:center;">
+              <span th:if="${busqueda != null and !#strings.isEmpty(busqueda)
+                             or estadoSeleccionado != null and !#strings.isEmpty(estadoSeleccionado)}">
+                No se encontraron mascotas con esos filtros.
+              </span>
+              <span th:unless="${busqueda != null and !#strings.isEmpty(busqueda)
+                                 or estadoSeleccionado != null and !#strings.isEmpty(estadoSeleccionado)}">
+                No hay mascotas registradas.
+              </span>
+            </td>
+          </tr>
+
+          <!-- Filas -->
+          <tr th:each="mascota : ${mascotas}">
+            <td th:text="${mascota.nombre}">Nombre</td>
+            <td th:text="${mascota.especie}">Especie</td>
+            <td th:text="${mascota.raza}">Raza</td>
+            <td th:text="${mascota.edad}">0</td>
+            <td th:text="${mascota.peso} + ' kg'">0 kg</td>
+            <td>
+              <!-- CORRECCIÓN: th:class reemplaza la clase completa según el estado -->
+              <span th:text="${mascota.estado}"
+                    th:class="${mascota.estado == 'activa'}      ? 'badge badge-verde'    :
+                               (mascota.estado == 'tratamiento'  ? 'badge badge-amarillo' :
+                                                                   'badge badge-rojo')">
+              </span>
+            </td>
+            <td>
+              <span th:if="${mascota.cliente != null}"
+                    th:text="${mascota.cliente.nombre + ' ' + mascota.cliente.apellido}">
+                Propietario
+              </span>
+              <span th:unless="${mascota.cliente != null}">—</span>
+            </td>
+            <td>
+              <div class="acciones">
+                <a th:href="@{/mascotas/{id}(id=${mascota.id})}"        class="btn-accion">Ver</a>
+                <a th:href="@{/mascotas/{id}/editar(id=${mascota.id})}" class="btn-accion">Editar</a>
+                <form th:action="@{/mascotas/{id}/eliminar(id=${mascota.id})}"
+                      method="post" class="inline-form"
+                      onsubmit="return confirm('¿Desactivar esta mascota?')">
+                  <button class="btn-eliminar" type="submit">Desactivar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</body>
+</html>

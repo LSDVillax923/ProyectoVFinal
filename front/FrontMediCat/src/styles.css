@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5ece2;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  color: #333;
+}

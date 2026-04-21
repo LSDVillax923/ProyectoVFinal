@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Mascota</title>
+  <link rel="stylesheet" th:href="@{/css/mascotas.css}">
+  <link rel="stylesheet" th:href="@{/css/editarMascota.css}">
+</head>
+<body class="page-form-mascota">
+  
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-container">
+    <a th:href="@{/inicio}" class="logo">
+      <img th:src="@{/img/Medicat.png}" alt="Medicat logo">
+    </a>
+    <nav class="nav">
+      <a th:href="@{/inicio}" class="nav-link">Inicio</a>
+      <a th:href="@{/mascotas}" class="nav-link">Listado de Mascotas</a>
+    </nav>
+  </div>
+</header>
+
+<main class="dashboard">
+
+  <section class="dashboard-header dashboard-header--centered">
+    <h1 class="dashboard-title">Nueva Mascota</h1>
+    <p class="dashboard-subtitle">Completa el formulario para registrar una nueva mascota</p>
+  </section>
+
+  <div class="form-card">
+    <form th:action="@{/mascotas/nueva}" method="post">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Ej. Firulais" required>
+        </div>
+
+        <div class="form-group">
+          <label for="especie">Especie</label>
+          <input type="text" id="especie" name="especie" placeholder="Ej. Perro" required>
+        </div>
+
+        <div class="form-group">
+          <label for="raza">Raza</label>
+          <input type="text" id="raza" name="raza" placeholder="Ej. Labrador" required>
+        </div>
+
+        <div class="form-group">
+          <label for="edad">Edad (años)</label>
+          <input type="number" id="edad" name="edad" min="0" placeholder="Ej. 3" required>
+        </div>
+
+        <div class="form-group">
+          <label for="peso">Peso (kg)</label>
+          <input type="number" id="peso" name="peso" step="0.1" min="0" placeholder="Ej. 10.5" required>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select id="estado" name="estado" required>
+            <option value="" disabled selected>Selecciona un estado</option>
+            <option value="Sano">Sano</option>
+            <option value="En Tratamiento">En Tratamiento</option>
+            <option value="Requiere Atención">Requiere Atención</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="clienteId">Dueño</label>
+          <select id="clienteId" name="clienteId" required>
+            <option value="" disabled selected>Selecciona el dueño</option>
+            <option th:each="cliente : ${clientes}"
+                    th:value="${cliente.id}"
+                    th:text="${cliente.nombre + ' ' + cliente.apellido}">
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="enfermedad">Enfermedad</label>
+          <input type="text" id="enfermedad" name="enfermedad" placeholder="Ej. Sin enfermedad">
+        </div>
+
+         <div class="form-group">
+          <label for="tratamiento">Tratamiento asignado</label>
+          <select id="tratamiento" name="tratamiento">
+            <option value="">Sin tratamiento asignado</option>
+            <option th:each="tratamiento : ${tratamientosDisponibles}"
+                    th:value="${tratamiento}"
+                    th:text="${tratamiento}">
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="veterinarioAsignado">Veterinario asignado</label>
+          <select id="veterinarioAsignado" name="veterinarioAsignado">
+            <option value="">Sin veterinario asignado</option>
+            <option th:each="veterinario : ${veterinariosDisponibles}"
+                    th:value="${veterinario.nombre}"
+                    th:text="${veterinario.nombre + ' - ' + veterinario.especialidad}">
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="observaciones">Observaciones</label>
+          <textarea id="observaciones" name="observaciones" placeholder="Escribe observaciones relevantes..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-acciones">
+        <button type="submit" class="btn-guardar">✚ Registrar Mascota</button>
+        <a th:href="@{/mascotas}" class="btn-cancelar">✕ Cancelar</a>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+</body>
+</html>

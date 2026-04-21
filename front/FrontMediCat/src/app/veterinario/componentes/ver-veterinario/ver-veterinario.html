@@ -1,0 +1,53 @@
+<app-navbar></app-navbar>
+
+<main class="dashboard">
+  <section class="dashboard-header">
+    <a routerLink="/veterinarios" class="btn-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver a Veterinarios
+    </a>
+    <h1 class="dashboard-title">Detalle del Veterinario</h1>
+  </section>
+
+  <ng-container *ngIf="veterinario; else noEncontrado">
+    <section class="detalle-card">
+      <div class="detalle-header">
+        <div class="avatar-lg">{{ veterinario.nombre.charAt(0) }}</div>
+        <div>
+          <h2>{{ veterinario.nombre }}</h2>
+          <span class="badge badge-especialidad">{{ veterinario.especialidad }}</span>
+        </div>
+        <a [routerLink]="['/veterinarios', veterinario.id, 'editar']" class="btn-accion btn-accion--outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Editar
+        </a>
+      </div>
+
+      <div class="detalle-info">
+        <div class="detalle-campo">
+          <span class="detalle-label">ID</span>
+          <span>{{ veterinario.id }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Correo</span>
+          <span>{{ veterinario.correo }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Celular</span>
+          <span>{{ veterinario.celular }}</span>
+        </div>
+        <div class="detalle-campo">
+          <span class="detalle-label">Cédula</span>
+          <span>{{ veterinario.cedula }}</span>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <ng-template #noEncontrado>
+    <div class="form-card">
+      <p class="alert alert-error">No se encontró el veterinario solicitado.</p>
+      <a routerLink="/veterinarios" class="btn-volver">Volver al listado</a>
+    </div>
+  </ng-template>
+</main>

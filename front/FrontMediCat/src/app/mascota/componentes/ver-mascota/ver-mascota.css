@@ -1,0 +1,205 @@
+/* Paleta de MediCat */
+:host {
+  --color-primario: #0f6f6c;
+  --color-fondo: #ddd5ca;
+  --color-superficie: #f3ede7;
+  --color-borde: #e3d2b8;
+}
+
+.dashboard {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+/* ── Cabecera y Botones ── */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.btn-volver {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-accion--outline {
+  border: 2px solid var(--color-primario);
+  color: var(--color-primario);
+}
+
+.btn-accion--outline:hover {
+  background: var(--color-primario);
+  color: white;
+}
+
+/* ── Layout Principal (Grid) ── */
+.ver-mascota-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Columna Izquierda: Ficha ── */
+.mascota-ficha {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.mascota-ficha__foto {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  overflow: hidden;
+  border: 5px solid var(--color-superficie);
+}
+
+.mascota-ficha__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mascota-ficha__body h2 {
+  color: var(--color-primario);
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.mascota-ficha__raza {
+  color: #5c8c90;
+  margin-bottom: 1rem;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #f3ede7;
+  margin: 1.5rem 0;
+}
+
+.mascota-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.dato-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.dato-fila dt { color: #718096; }
+.dato-fila dd { font-weight: 800; color: #1a3a35; margin: 0; }
+
+.mascota-ficha__obs {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f9f6f2;
+  border-radius: 12px;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+/* ── Columna Derecha: Historial ── */
+.db-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.db-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.db-card__titulo {
+  color: var(--color-primario);
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.db-link {
+  color: var(--color-primario);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ── Items del Historial ── */
+.tratamiento-item {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  background: #fcfcfc;
+  border: 1px solid #f3ede7;
+  border-radius: 15px;
+  margin-bottom: 1rem;
+}
+
+.tratamiento-fecha {
+  background: var(--color-primario);
+  color: white;
+  padding: 0.6rem;
+  border-radius: 10px;
+  min-width: 65px;
+  text-align: center;
+}
+
+.fecha-dia { display: block; font-size: 1.4rem; font-weight: 800; line-height: 1; }
+.fecha-mes { font-size: 0.75rem; text-transform: uppercase; }
+
+.tratamiento-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.tratamiento-vet {
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+/* ── Badges de Colores (Referencia Imagen) ── */
+.badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* Colores dinámicos para estados */
+.badge-activa, .badge-completado { background: #dcfce7; color: #166534; }
+.badge-tratamiento, .badge-activo { background: #fef9c3; color: #854d0e; }
+.badge-inactiva, .badge-cancelado { background: #fee2e2; color: #991b1b; }
+
+@media (max-width: 768px) {
+  .ver-mascota-layout { grid-template-columns: 1fr; }
+}

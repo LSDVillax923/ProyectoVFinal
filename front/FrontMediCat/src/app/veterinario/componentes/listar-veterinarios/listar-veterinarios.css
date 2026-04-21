@@ -1,0 +1,220 @@
+/* Paleta de colores MediCat */
+:host {
+  --color-primario: #0f6f6c;
+  --color-fondo: #ddd5ca;
+  --color-superficie: #f3ede7;
+  --color-borde: #e3d2b8;
+  --color-texto-secundario: #5c8c90;
+  --sombra-card: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard {
+  width: min(1200px, 95%);
+  margin: 40px auto;
+}
+
+/* Header de la página */
+.dashboard-title {
+  font-size: 2.5rem;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.dashboard-subtitle {
+  color: #000000;
+  margin-bottom: 30px;
+}
+
+/* Barra de Búsqueda */
+.busqueda-card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: var(--sombra-card);
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-grupo {
+  display: flex;
+  align-items: center;
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: 12px;
+  padding: 10px 15px;
+  gap: 10px;
+  transition: border-color 0.3s ease;
+}
+
+.input-grupo:focus-within {
+  border-color: var(--color-primario);
+}
+
+.input-grupo input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* Toolbar de la Tabla */
+.tabla-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.btn-primary {
+  background: var(--color-primario);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  background: #0a5250;
+}
+
+/* Estilo de la Tabla (Como en la imagen de referencia) */
+.tabla-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--sombra-card);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla thead th {
+  background: var(--color-primario); /* Verde MediCat */
+  color: white;
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.tabla tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+/* Avatares y Nombres */
+.cliente-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border: 2px solid var(--color-borde);
+}
+
+/* Badges de Especialidad */
+.badge-especialidad {
+  background: #e0f2f1;
+  color: #00695c;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Botones de Acciones con colores de la imagen */
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-accion {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #f0f7f7;
+  color: var(--color-primario);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--color-borde);
+}
+
+.btn-eliminar {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #fff5f5;
+  color: #ef4444; /* Rojo para eliminación */
+  border: 1px solid #fee2e2;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-eliminar:hover {
+  background: #fee2e2;
+}
+
+
+.alert {
+  margin: 15px auto;
+  padding: 14px 20px;
+  border-radius: 10px;
+  max-width: 900px;
+  font-size: 14px;
+}
+
+.alert-success {
+  color: #2e7d32;
+  background: #e6f4ea;
+}
+
+.alert-error {
+  color: #c62828;
+  background: #fdecea;
+}
+
+
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .tabla thead { display: none; }
+  .tabla tbody tr { 
+    display: block; 
+    margin-bottom: 15px; 
+    border: 1px solid var(--color-borde); 
+    border-radius: 12px;
+  }
+  .tabla tbody td { 
+    display: flex; 
+    justify-content: space-between; 
+    text-align: right; 
+  }
+  .tabla tbody td::before { content: attr(data-label); font-weight: bold; }
+}

@@ -1,0 +1,107 @@
+<app-navbar></app-navbar>
+
+<main class="dashboard">
+  <section class="dashboard-header">
+    <a routerLink="/tratamientos" class="btn-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver a Tratamientos
+    </a>
+    <h1 class="dashboard-title">Nuevo Tratamiento</h1>
+    <p class="dashboard-subtitle">Registra un nuevo tratamiento médico</p>
+  </section>
+
+  <p *ngIf="mensaje" class="alert alert-success">{{ mensaje }}</p>
+  <p *ngIf="error" class="alert alert-error">{{ error }}</p>
+  <p *ngIf="cargando" class="alert">Procesando solicitud...</p>
+
+  <div class="form-card">
+    <form (ngSubmit)="guardarTratamiento()">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="mascotaId">Mascota</label>
+          <select id="mascotaId" name="mascotaId" [(ngModel)]="formData.mascotaId" (ngModelChange)="onMascotaChange($event)" required>
+            <option [ngValue]="0">Selecciona una mascota</option>
+            <option *ngFor="let m of mascotas" [ngValue]="m.id">{{ m.nombre }} — {{ m.propietario }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="veterinarioId">Veterinario responsable</label>
+          <select id="veterinarioId" name="veterinarioId" [(ngModel)]="formData.veterinarioId" (ngModelChange)="onVetChange($event)" required>
+            <option [ngValue]="0">Selecciona un veterinario</option>
+            <option *ngFor="let v of veterinarios" [ngValue]="v.id">{{ v.nombre }}</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="diagnostico">Diagnóstico</label>
+          <input type="text" id="diagnostico" name="diagnostico" [(ngModel)]="formData.diagnostico" placeholder="Descripción del diagnóstico" required />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="observaciones">Observaciones</label>
+          <textarea id="observaciones" name="observaciones" [(ngModel)]="formData.observaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha" name="fecha" [(ngModel)]="formData.fecha" required />
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select id="estado" name="estado" [(ngModel)]="formData.estado" required>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="COMPLETADO">Completado</option>
+            <option value="CANCELADO">Cancelado</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Medicamentos del tratamiento -->
+      <div class="seccion-drogas">
+        <div class="seccion-drogas__header">
+          <h3 class="seccion-titulo">Medicamentos</h3>
+          <button type="button" class="btn-accion" (click)="agregarDroga()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Agregar medicamento
+          </button>
+        </div>
+
+        <div class="droga-row" *ngFor="let droga of formData.drogas; let i = index">
+          <div class="form-group">
+            <label>Medicamento</label>
+            <select [(ngModel)]="droga.drogaId" [name]="'drogaId_' + i" (ngModelChange)="onDrogaChange(i, $event)">
+              <option [ngValue]="0">Selecciona</option>
+              <option *ngFor="let d of drogas" [ngValue]="d.id">{{ d.nombre }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input type="number" [(ngModel)]="droga.cantidad" [name]="'cantidad_' + i" min="1" />
+          </div>
+          <button type="button" class="btn-eliminar-droga" (click)="quitarDroga(i)" title="Quitar medicamento">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <p *ngIf="formData.drogas.length === 0" class="drogas-vacio">
+          No se han añadido medicamentos a este tratamiento.
+        </p>
+      </div>
+
+      <div class="form-acciones">
+        <button type="submit" class="btn-guardar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Guardar Tratamiento
+        </button>
+        <a routerLink="/tratamientos" class="btn-cancelar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</main>
