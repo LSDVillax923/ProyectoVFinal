@@ -56,13 +56,15 @@ public class DrogaServiceImpl implements DrogaService {
 
     @Override
     public void descontarUnidades(Long id, int cantidad) {
-        Droga droga = findById(id);
-        if (droga.getUnidadesDisponibles() < cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad a descontar debe ser mayor a 0");
+        }
+        int filasAfectadas = drogaRepository.descontarStockSiDisponible(id, cantidad);
+        if (filasAfectadas == 0) {
+            Droga droga = findById(id);
             throw new IllegalArgumentException("Stock insuficiente para " + droga.getNombre());
         }
-        droga.setUnidadesDisponibles(droga.getUnidadesDisponibles() - cantidad);
-        droga.setUnidadesVendidas(droga.getUnidadesVendidas() + cantidad);
-        drogaRepository.save(droga);
+        
     }
 
     private void validarDroga(Droga d) {
