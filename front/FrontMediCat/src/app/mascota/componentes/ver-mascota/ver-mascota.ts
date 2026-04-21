@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
 import { TratamientoService } from '../../../tratamiento/services/tratamiento-service';
 import { AuthService } from '../../../user/services/auth.service';
+import { MascotaRestService } from '../../services/mascota.service';
 import { Mascota } from '../../mascota';
 import { MascotaMapper, TratamientoMapper } from '../../../shared/api/model-mappers';
 import { Tratamiento } from '../../../tratamiento/tratamiento';
