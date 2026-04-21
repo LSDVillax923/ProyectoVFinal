@@ -93,6 +93,40 @@
   margin-bottom: 1rem;
 }
 
+.estado-editor {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.estado-editor label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a3a35;
+  margin-bottom: 0.35rem;
+}
+
+.estado-editor__acciones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.estado-editor__acciones select {
+  flex: 1;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  padding: 0.45rem 0.65rem;
+}
+
+.alerta-ok,
+.alerta-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+}
+
+.alerta-ok { color: #166534; }
+.alerta-error { color: #991b1b; }
+
 .divider {
   border: 0;
   border-top: 1px solid #f3ede7;

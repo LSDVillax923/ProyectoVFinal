@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
 import { AuthService } from '../../../user/services/auth.service';
@@ -19,7 +20,7 @@ const MESES: Record<string, string> = {
 @Component({
   selector: 'app-ver-mascota',
   standalone: true,
-  imports: [CommonModule, RouterLink, Navbar],
+  imports: [CommonModule, FormsModule, RouterLink, Navbar],
   templateUrl: './ver-mascota.html',
   styleUrl: './ver-mascota.css',
 })
@@ -32,6 +33,9 @@ export class VerMascota implements OnInit {
   mascota: Mascota | null = null;
   tratamientos: Tratamiento[] = [];
   errorMascota = '';
+  mensajeEstado = '';
+  errorEstado = '';
+  estadoSeleccionado: Mascota['estado'] = 'ACTIVA';
   esCliente = false;
   private mascotaId = 0;
 
@@ -42,7 +46,10 @@ export class VerMascota implements OnInit {
 
     this.mascotaService.getById(this.mascotaId).subscribe({
       next: (mascotaDto: MascotaDto) => {
-        this.mascota = MascotaMapper.fromDto(mascotaDto);
+        const mascotaMapeada = MascotaMapper.fromDto(mascotaDto);
+        this.mascota = mascotaMapeada;
+        this.estadoSeleccionado = mascotaMapeada.estado;
+        this.cargarTratamientos();
         this.cargarTratamientos();
       },
       error: () => {
@@ -88,4 +95,34 @@ export class VerMascota implements OnInit {
     const mes = fecha?.slice(5, 7) ?? '';
     return MESES[mes] ?? mes;
   }
+
+
+  guardarEstado(): void {
+    if (!this.mascota || this.esCliente) return;
+
+    this.mascotaService.patch(this.mascotaId, { estado: this.estadoSeleccionado }).subscribe({
+      next: () => {
+        this.mascota = {
+          ...this.mascota!,
+          estado: this.estadoSeleccionado,
+        };
+        this.mensajeEstado = `Estado actualizado a ${this.textoEstado(this.estadoSeleccionado)}.`;
+        this.errorEstado = '';
+      },
+      error: () => {
+        this.errorEstado = 'No se pudo actualizar el estado de la mascota.';
+        this.mensajeEstado = '';
+      },
+    });
+  }
+
+  private textoEstado(estado: Mascota['estado']): string {
+    const estadoTexto: Record<Mascota['estado'], string> = {
+      ACTIVA: 'Activa',
+      TRATAMIENTO: 'En tratamiento',
+      INACTIVA: 'Inactiva',
+    };
+    return estadoTexto[estado];
+  }
+  
 }

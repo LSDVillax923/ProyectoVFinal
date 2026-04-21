@@ -32,6 +32,23 @@
           <p class="mascota-ficha__raza">{{ mascota.raza }}</p>
           <span class="badge" [ngClass]="estadoClase">{{ mascota.estado }}</span>
 
+           <div class="estado-editor" *ngIf="!esCliente">
+            <label for="estadoMascota">Cambiar estado</label>
+            <div class="estado-editor__acciones">
+              <select id="estadoMascota" [(ngModel)]="estadoSeleccionado">
+                <option value="ACTIVA">Activa</option>
+                <option value="TRATAMIENTO">En tratamiento</option>
+                <option value="INACTIVA">Inactiva</option>
+              </select>
+              <button type="button" class="btn-accion btn-accion--outline" (click)="guardarEstado()">
+                Guardar
+              </button>
+            </div>
+            <p class="alerta-ok" *ngIf="mensajeEstado">{{ mensajeEstado }}</p>
+            <p class="alerta-error" *ngIf="errorEstado">{{ errorEstado }}</p>
+          </div>
+
+
           <hr class="divider" />
 
           <dl class="mascota-datos">
