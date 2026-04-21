@@ -53,6 +53,10 @@ public class TratamientoServiceImpl implements TratamientoService {
         Veterinario veterinario = veterinarioRepository.findById(veterinarioId)
                 .orElseThrow(() -> new IllegalArgumentException("Veterinario no encontrado"));
 
+                if (mascota.getEstado() != Mascota.EstadoMascota.ACTIVA) {
+            throw new IllegalArgumentException("No se puede asignar tratamiento a una mascota inactiva");
+        }
+
         tratamiento.setMascota(mascota);
         tratamiento.setVeterinario(veterinario);
         if (tratamiento.getEstado() == null) {
