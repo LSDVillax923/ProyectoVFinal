@@ -71,7 +71,7 @@ public class CitaServiceImpl implements CitaService {
             throw new IllegalArgumentException("La mascota no pertenece al cliente indicado");
         }
 
-        if (mascota.getEstado() != Mascota.EstadoMascota.ACTIVA) {
+        if (mascota.getEstado() == Mascota.EstadoMascota.INACTIVA) {
             throw new IllegalArgumentException("No se puede asignar una cita a una mascota inactiva");
         }
 
