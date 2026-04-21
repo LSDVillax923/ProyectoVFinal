@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
-import { TratamientoService } from '../../../tratamiento/services/tratamiento-service';
 import { AuthService } from '../../../user/services/auth.service';
 import { MascotaRestService } from '../../services/mascota.service';
 import { Mascota } from '../../mascota';
 import { MascotaMapper, TratamientoMapper } from '../../../shared/api/model-mappers';
 import { Tratamiento } from '../../../tratamiento/tratamiento';
 import { Navbar } from '../../../shared/components/navbar/navbar';
+import { Mascota as MascotaDto, Tratamiento as TratamientoDto } from '../../../shared/api/backend-contracts';
 
 const MESES: Record<string, string> = {
   '01': 'Ene', '02': 'Feb', '03': 'Mar', '04': 'Abr',
@@ -24,25 +24,24 @@ const MESES: Record<string, string> = {
   styleUrl: './ver-mascota.css',
 })
 export class VerMascota implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly mascotaService = inject(MascotaRestService);
+  private readonly tratamientoRestService = inject(TratamientoRestService);
+  private readonly authService = inject(AuthService);
+
   mascota: Mascota | null = null;
   tratamientos: Tratamiento[] = [];
   errorMascota = '';
   esCliente = false;
   private mascotaId = 0;
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly mascotaService: MascotaRestService,
-    private readonly tratamientoRestService: TratamientoRestService,
-    private readonly authService: AuthService,
-  ) {}
 
   ngOnInit(): void {
     this.mascotaId = Number(this.route.snapshot.paramMap.get('id'));
     this.esCliente = this.authService.getSesion()?.rol === 'CLIENTE';
 
     this.mascotaService.getById(this.mascotaId).subscribe({
-      next: (mascotaDto) => {
+      next: (mascotaDto: MascotaDto) => {
         this.mascota = MascotaMapper.fromDto(mascotaDto);
         this.cargarTratamientos();
       },
@@ -53,7 +52,7 @@ export class VerMascota implements OnInit {
   }
   private cargarTratamientos(): void {
     this.tratamientoRestService.findByMascotaId(this.mascotaId).subscribe({
-      next: (tratamientosDto) => {
+      next: (tratamientosDto: TratamientoDto[]) => {
         this.tratamientos = tratamientosDto.map(TratamientoMapper.fromDto);
       },
       error: () => {
