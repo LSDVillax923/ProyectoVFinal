@@ -41,6 +41,7 @@ export class NuevoTratamiento implements OnInit {
   cargando = false;
 
   mascotas: Mascota[] = [];
+  mascotasDisponibles: Mascota[] = [];
   veterinarios: Veterinario[] = [];
   drogas: Droga[] = [];
   noHayDrogasDisponibles = false;
@@ -75,6 +76,7 @@ export class NuevoTratamiento implements OnInit {
     this.mascotaRestService.getAll().subscribe({
       next: (dto) => {
         this.mascotas = dto.map(MascotaMapper.fromDto);
+        this.mascotasDisponibles = this.mascotas.filter((m) => m.estado !== 'INACTIVA');
         this.aplicarMascotaPreseleccionada();
       },
       error: () => { this.error = 'No se pudieron cargar las mascotas.'; },
@@ -101,6 +103,10 @@ export class NuevoTratamiento implements OnInit {
     if (!mascotaId) return;
     const mascota = this.mascotas.find((m) => m.id === mascotaId);
     if (!mascota) return;
+    if (mascota.estado === 'INACTIVA') {
+      this.error = 'La mascota seleccionada está inactiva y no puede recibir tratamientos.';
+      return;
+    }
     this.formData.mascotaId = mascotaId;
     this.onMascotaChange(mascotaId);
   }
@@ -209,6 +215,13 @@ export class NuevoTratamiento implements OnInit {
       this.error = 'Mascota, veterinario, diagnóstico y fecha son obligatorios.';
       return;
     }
+
+    const mascotaSeleccionada = this.mascotas.find((m) => m.id === mascotaId);
+    if (!mascotaSeleccionada || mascotaSeleccionada.estado === 'INACTIVA') {
+      this.error = 'No se puede crear un tratamiento para una mascota inactiva.';
+      return;
+    }
+    
     this.cargando = true;
     const payload = TratamientoMapper.toDto({ ...this.formData, id: 0 });
     this.tratamientoRestService.create(payload, { mascotaId, veterinarioId }).pipe(

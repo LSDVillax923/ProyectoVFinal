@@ -22,8 +22,11 @@
           <label for="mascotaId">Mascota</label>
           <select id="mascotaId" name="mascotaId" [(ngModel)]="formData.mascotaId" (ngModelChange)="onMascotaChange($event)" required>
             <option [ngValue]="0">Selecciona una mascota</option>
-            <option *ngFor="let m of mascotas" [ngValue]="m.id">{{ m.nombre }} — {{ m.propietario }}</option>
+            <option *ngFor="let m of mascotasDisponibles" [ngValue]="m.id">{{ m.nombre }} — {{ m.propietario }}</option>
           </select>
+          <small *ngIf="mascotasDisponibles.length === 0">
+            No hay mascotas activas disponibles para crear tratamientos.
+          </small>
         </div>
 
         <div class="form-group">
@@ -109,7 +112,7 @@
       </div>
 
       <div class="form-acciones">
-        <button type="submit" class="btn-guardar" [disabled]="noHayDrogasDisponibles">
+        <button type="submit" class="btn-guardar" [disabled]="noHayDrogasDisponibles || mascotasDisponibles.length === 0">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Guardar Tratamiento
         </button>
