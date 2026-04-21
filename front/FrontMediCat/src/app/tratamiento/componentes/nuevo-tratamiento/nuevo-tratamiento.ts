@@ -165,6 +165,12 @@ export class NuevoTratamiento implements OnInit {
     }
   }
 
+  cantidadesDisponiblesParaLinea(index: number): number[] {
+    const maximo = this.unidadesDisponiblesParaLinea(index);
+    if (maximo < 1) return [];
+    return Array.from({ length: maximo }, (_, i) => i + 1);
+  }
+
   quitarDroga(index: number): void {
     this.formData.drogas.splice(index, 1);
   }
