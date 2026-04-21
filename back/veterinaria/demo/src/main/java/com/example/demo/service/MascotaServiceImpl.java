@@ -102,6 +102,18 @@ public class MascotaServiceImpl implements MascotaService {
     }
 
     @Override
+    public Mascota patch(Long id, Mascota mascotaDetails) {
+        Mascota existing = findById(id);
+
+        if (mascotaDetails.getEstado() != null) {
+            existing.setEstado(mascotaDetails.getEstado());
+        }
+
+        return mascotaRepository.save(existing);
+    }
+
+
+    @Override
     public void deactivate(Long id) {
         Mascota mascota = findById(id);
         mascota.setEstado(Mascota.EstadoMascota.INACTIVA);

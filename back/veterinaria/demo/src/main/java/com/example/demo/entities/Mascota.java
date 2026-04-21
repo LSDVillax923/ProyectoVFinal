@@ -45,7 +45,7 @@ public class Mascota {
     @NotBlank(message = "La raza no puede estar vacía")
     private String raza;
 
-    private String sexo;       
+    private String sexo;
     
     @NotNull(message = "La fecha de nacimiento no puede estar vacía")
     private LocalDate fechaNacimiento;

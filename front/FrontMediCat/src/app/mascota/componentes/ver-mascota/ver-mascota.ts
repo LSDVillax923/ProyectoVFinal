@@ -50,7 +50,6 @@ export class VerMascota implements OnInit {
         this.mascota = mascotaMapeada;
         this.estadoSeleccionado = mascotaMapeada.estado;
         this.cargarTratamientos();
-        this.cargarTratamientos();
       },
       error: () => {
         this.errorMascota = 'No se encontró la mascota solicitada.';
@@ -124,5 +123,5 @@ export class VerMascota implements OnInit {
     };
     return estadoTexto[estado];
   }
-  
+
 }

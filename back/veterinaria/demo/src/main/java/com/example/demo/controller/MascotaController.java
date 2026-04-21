@@ -45,6 +45,11 @@ public class MascotaController {
         return ResponseEntity.ok(mascotaService.update(id, mascota));
     }
 
+     @PatchMapping("/{id}")
+    public ResponseEntity<Mascota> patch(@PathVariable Long id, @RequestBody Mascota mascota) {
+        return ResponseEntity.ok(mascotaService.patch(id, mascota));
+    }
+
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
         mascotaService.deactivate(id);

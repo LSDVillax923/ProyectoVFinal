@@ -56,7 +56,7 @@ export class EditarMascota implements OnInit {
           especie: encontrada.especie,
           raza: encontrada.raza,
           sexo: encontrada.sexo,
-          fechaNacimiento: encontrada.fechaNacimiento,
+          fechaNacimiento: this.normalizarFecha(encontrada.fechaNacimiento),
           edad: encontrada.edad,
           peso: encontrada.peso,
           estado: encontrada.estado,
@@ -75,8 +75,13 @@ export class EditarMascota implements OnInit {
   }
 
   guardarCambios(): void {
-    if (!this.mascota.nombre || !this.mascota.especie || !this.mascota.raza) {
-      this.error = 'Los campos nombre, especie y raza son obligatorios.';
+    if (!this.mascota.nombre || !this.mascota.especie || !this.mascota.raza || !this.mascota.fechaNacimiento) {
+      this.error = 'Los campos nombre, especie, raza y fecha de nacimiento son obligatorios.';
+      return;
+    }
+
+    if (this.mascota.peso <= 0) {
+      this.error = 'El peso debe ser mayor a 0.';
       return;
     }
 
@@ -86,10 +91,12 @@ export class EditarMascota implements OnInit {
       raza: this.mascota.raza,
       sexo: this.mascota.sexo as 'Macho' | 'Hembra',
       fechaNacimiento: this.mascota.fechaNacimiento,
+      edad: this.mascota.edad,
       peso: this.mascota.peso,
       estado: this.mascota.estado,
       enfermedad: this.mascota.enfermedad,
       observaciones: this.mascota.observaciones,
+      foto: this.mascota.foto,
       veterinarioAsignado: this.mascota.veterinarioAsignado,
     };
 
@@ -107,5 +114,10 @@ export class EditarMascota implements OnInit {
   cancelar(): void {
     this.router.navigate(['/mascotas']);
   }
+
+   private normalizarFecha(fecha?: string): string {
+    return fecha ? fecha.slice(0, 10) : '';
+  }
+
 
 }
