@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { Mascota } from '../../../mascota/mascota';
 import { Veterinario } from '../../../veterinario/veterinario';
 import { Droga } from '../../../droga/droga';
@@ -11,6 +12,7 @@ import { TratamientoRestService } from '../../services/tratamiento-rest.service'
 import { MascotaRestService } from '../../../mascota/services/mascota.service';
 import { VeterinarioRestService } from '../../../veterinario/services/veterinario-rest.service';
 import { DrogaRestService } from '../../../droga/services/droga.service';
+import { TratamientoDrogaRestService } from '../../../tratamiento-droga/services/tratamiento-droga-rest.service';
 import { DrogaMapper, MascotaMapper, TratamientoMapper, VeterinarioMapper } from '../../../shared/api/model-mappers';
 
 interface NuevoTratamientoForm {
@@ -51,6 +53,7 @@ export class NuevoTratamiento implements OnInit {
     private readonly mascotaRestService: MascotaRestService,
     private readonly veterinarioRestService: VeterinarioRestService,
     private readonly drogaRestService: DrogaRestService,
+    private readonly tratamientoDrogaRestService: TratamientoDrogaRestService,
   ) {}
 
   ngOnInit(): void {
@@ -120,12 +123,45 @@ export class NuevoTratamiento implements OnInit {
     }
     const nuevoId = Math.max(0, ...this.formData.drogas.map((d) => d.id ?? 0)) + 1;
     this.formData.drogas.push({ id: nuevoId, drogaId: 0, nombreDroga: '', cantidad: 1 });
+    this.error = '';
   }
 
   onDrogaChange(index: number, id: number): void {
     const droga = this.drogas.find((d) => d.id === id);
     if (droga) {
       this.formData.drogas[index].nombreDroga = droga.nombre;
+      const maximo = this.unidadesDisponiblesParaLinea(index);
+      if (this.formData.drogas[index].cantidad > maximo) {
+        this.formData.drogas[index].cantidad = Math.max(1, maximo);
+      }
+    }
+  }
+
+  unidadesDisponiblesParaLinea(index: number): number {
+    const linea = this.formData.drogas[index];
+    if (!linea?.drogaId) return 0;
+
+    const droga = this.drogas.find((d) => d.id === linea.drogaId);
+    if (!droga) return 0;
+
+    const usadasEnOtrasLineas = this.formData.drogas
+      .filter((d, i) => i !== index && d.drogaId === linea.drogaId)
+      .reduce((acum, d) => acum + (Number(d.cantidad) || 0), 0);
+
+    return Math.max(0, droga.unidadesDisponibles - usadasEnOtrasLineas);
+  }
+
+  onCantidadChange(index: number): void {
+    const maximo = this.unidadesDisponiblesParaLinea(index);
+    const cantidad = Number(this.formData.drogas[index].cantidad) || 0;
+
+    if (cantidad < 1) {
+      this.formData.drogas[index].cantidad = 1;
+      return;
+    }
+
+    if (cantidad > maximo) {
+      this.formData.drogas[index].cantidad = Math.max(1, maximo);
     }
   }
 
@@ -133,11 +169,35 @@ export class NuevoTratamiento implements OnInit {
     this.formData.drogas.splice(index, 1);
   }
 
+  private validarDrogas(): string | null {
+    for (let i = 0; i < this.formData.drogas.length; i++) {
+      const droga = this.formData.drogas[i];
+      if (!droga.drogaId) {
+        return `Selecciona un medicamento en la fila ${i + 1}.`;
+      }
+      if (!droga.cantidad || droga.cantidad < 1) {
+        return `La cantidad del medicamento en la fila ${i + 1} debe ser mayor a 0.`;
+      }
+      if (droga.cantidad > this.unidadesDisponiblesParaLinea(i)) {
+        return `No hay suficiente inventario para ${droga.nombreDroga || 'el medicamento seleccionado'}.`;
+      }
+    }
+    return null;
+  }
+
+
   guardarTratamiento(): void {
     if (this.noHayDrogasDisponibles) {
       this.error = 'No hay drogas disponibles en inventario. No se puede asignar un tratamiento.';
       return;
     }
+
+    const validacionDrogas = this.validarDrogas();
+    if (validacionDrogas) {
+      this.error = validacionDrogas;
+      return;
+    }
+
     const { mascotaId, veterinarioId, diagnostico, fecha } = this.formData;
     if (!mascotaId || !veterinarioId || !diagnostico || !fecha) {
       this.error = 'Mascota, veterinario, diagnóstico y fecha son obligatorios.';
@@ -145,7 +205,20 @@ export class NuevoTratamiento implements OnInit {
     }
     this.cargando = true;
     const payload = TratamientoMapper.toDto({ ...this.formData, id: 0 });
-    this.tratamientoRestService.create(payload, { mascotaId, veterinarioId }).subscribe({
+    this.tratamientoRestService.create(payload, { mascotaId, veterinarioId }).pipe(
+      switchMap((tratamientoCreado) => {
+        const lineas = this.formData.drogas.filter((d) => d.drogaId > 0 && d.cantidad > 0);
+        if (lineas.length === 0) {
+          return of(tratamientoCreado);
+        }
+
+        return forkJoin(
+          lineas.map((d) =>
+            this.tratamientoDrogaRestService.agregarDroga(tratamientoCreado.id, d.drogaId, d.cantidad),
+          ),
+        ).pipe(switchMap(() => of(tratamientoCreado)));
+      }),
+    ).subscribe({
       next: () => {
         this.mensaje = 'El tratamiento fue registrado correctamente.';
         this.error = '';
