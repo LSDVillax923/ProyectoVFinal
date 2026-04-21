@@ -77,6 +77,7 @@
           <td class="acciones">
             <button class="btn-icono" [routerLink]="['/mascotas', mascota.id]" title="Ver detalles">👁</button>
             <button class="btn-icono" [routerLink]="['/mascotas', mascota.id, 'editar']" title="Editar">✎</button>
+            <button class="btn-icono" [routerLink]="['/tratamientos/nuevo']" [queryParams]="{ mascotaId: mascota.id }" title="Nuevo tratamiento">+</button>
             <button type="button" class="btn-eliminar" (click)="desactivarMascota(mascota)" title="Desactivar" *ngIf="mascota.estado !== 'INACTIVA'">
             </button>
           </td>

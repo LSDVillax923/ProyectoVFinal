@@ -13,10 +13,12 @@ export interface SesionActiva {
 }
 
 const STORAGE_KEY = 'vet_session';
+const COOKIE_VET_KEY = 'vet_logueado';
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 @Injectable({ providedIn: 'root' })
 export class AuthRestService {
-  
+
   private sesion: SesionActiva | null = null;
 
   constructor(private http: HttpClient) {
@@ -37,6 +39,33 @@ export class AuthRestService {
   private guardarSesion(sesion: SesionActiva): void {
     this.sesion = sesion;
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(sesion));
+    if (sesion.rol === 'VETERINARIO') {
+      this.guardarVeterinarioEnCookie(sesion);
+    } else {
+      this.borrarVeterinarioCookie();
+    }
+  }
+
+  private guardarVeterinarioEnCookie(sesion: SesionActiva): void {
+    const valor = encodeURIComponent(JSON.stringify(sesion));
+    document.cookie = `${COOKIE_VET_KEY}=${valor}; path=/; max-age=${COOKIE_MAX_AGE_SECONDS}; SameSite=Lax`;
+  }
+
+  private borrarVeterinarioCookie(): void {
+    document.cookie = `${COOKIE_VET_KEY}=; path=/; max-age=0; SameSite=Lax`;
+  }
+
+  getVeterinarioLogueado(): SesionActiva | null {
+    const cookies = document.cookie ? document.cookie.split('; ') : [];
+    const entrada = cookies.find((c) => c.startsWith(`${COOKIE_VET_KEY}=`));
+    if (!entrada) return null;
+    try {
+      const valor = decodeURIComponent(entrada.substring(COOKIE_VET_KEY.length + 1));
+      const datos = JSON.parse(valor) as SesionActiva;
+      return datos.rol === 'VETERINARIO' ? datos : null;
+    } catch {
+      return null;
+    }
   }
 
   getSesion(): SesionActiva | null {
@@ -128,6 +157,7 @@ login(credentials: LoginRequest, tipoUsuario: 'CLIENTE' | 'VETERINARIO' | 'ADMIN
   logout(): void {
     this.sesion = null;
     sessionStorage.removeItem(STORAGE_KEY);
+    this.borrarVeterinarioCookie();
   }
 
   

@@ -14,6 +14,7 @@ import { VeterinarioRestService } from '../../../veterinario/services/veterinari
 import { DrogaRestService } from '../../../droga/services/droga.service';
 import { TratamientoDrogaRestService } from '../../../tratamiento-droga/services/tratamiento-droga-rest.service';
 import { DrogaMapper, MascotaMapper, TratamientoMapper, VeterinarioMapper } from '../../../shared/api/model-mappers';
+import { AuthService } from '../../../user/services/auth.service';
 
 interface NuevoTratamientoForm {
   mascotaId: number;
@@ -45,6 +46,7 @@ export class NuevoTratamiento implements OnInit {
   veterinarios: Veterinario[] = [];
   drogas: Droga[] = [];
   noHayDrogasDisponibles = false;
+  veterinarioBloqueado = false;
 
   formData: NuevoTratamientoForm = this.crearFormularioInicial();
 
@@ -55,6 +57,7 @@ export class NuevoTratamiento implements OnInit {
     private readonly veterinarioRestService: VeterinarioRestService,
     private readonly drogaRestService: DrogaRestService,
     private readonly tratamientoDrogaRestService: TratamientoDrogaRestService,
+    private readonly authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -82,7 +85,10 @@ export class NuevoTratamiento implements OnInit {
       error: () => { this.error = 'No se pudieron cargar las mascotas.'; },
     });
     this.veterinarioRestService.getAll().subscribe({
-      next: (dto) => { this.veterinarios = dto.map(VeterinarioMapper.fromDto); },
+      next: (dto) => {
+        this.veterinarios = dto.map(VeterinarioMapper.fromDto);
+        this.aplicarVeterinarioLogueado();
+      },
       error: () => { this.error = 'No se pudieron cargar los veterinarios.'; },
     });
     this.drogaRestService.findDisponibles().subscribe({
@@ -96,6 +102,16 @@ export class NuevoTratamiento implements OnInit {
       },
       error: () => { this.error = 'No se pudieron cargar las drogas.'; this.cargando = false; },
     });
+  }
+
+  private aplicarVeterinarioLogueado(): void {
+    const vetCookie = this.authService.getVeterinarioLogueado();
+    if (!vetCookie) return;
+    const vet = this.veterinarios.find((v) => v.id === vetCookie.id);
+    if (!vet) return;
+    this.formData.veterinarioId = vet.id;
+    this.formData.veterinario = vet.nombre;
+    this.veterinarioBloqueado = true;
   }
 
   private aplicarMascotaPreseleccionada(): void {
@@ -242,6 +258,7 @@ export class NuevoTratamiento implements OnInit {
         this.mensaje = 'El tratamiento fue registrado correctamente.';
         this.error = '';
         this.formData = this.crearFormularioInicial();
+        this.aplicarVeterinarioLogueado();
         this.cargando = false;
       },
       error: () => {

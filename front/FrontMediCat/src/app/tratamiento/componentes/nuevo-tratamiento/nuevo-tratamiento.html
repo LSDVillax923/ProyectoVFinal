@@ -31,10 +31,11 @@
 
         <div class="form-group">
           <label for="veterinarioId">Veterinario responsable</label>
-          <select id="veterinarioId" name="veterinarioId" [(ngModel)]="formData.veterinarioId" (ngModelChange)="onVetChange($event)" required>
+          <select id="veterinarioId" name="veterinarioId" [(ngModel)]="formData.veterinarioId" (ngModelChange)="onVetChange($event)" [disabled]="veterinarioBloqueado" required>
             <option [ngValue]="0">Selecciona un veterinario</option>
             <option *ngFor="let v of veterinarios" [ngValue]="v.id">{{ v.nombre }}</option>
           </select>
+          <small *ngIf="veterinarioBloqueado">(Asignado al veterinario logueado.)</small>
         </div>
 
         <div class="form-group full-width">
