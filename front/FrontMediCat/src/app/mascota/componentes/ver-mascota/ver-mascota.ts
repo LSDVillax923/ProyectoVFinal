@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { MascotaRestService } from '../../services/mascota.service';
+import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
 import { TratamientoService } from '../../../tratamiento/services/tratamiento-service';
 import { AuthService } from '../../../user/services/auth.service';
 import { Mascota } from '../../mascota';
-import { MascotaMapper } from '../../../shared/api/model-mappers';
+import { MascotaMapper, TratamientoMapper } from '../../../shared/api/model-mappers';
 import { Tratamiento } from '../../../tratamiento/tratamiento';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 
@@ -32,7 +32,7 @@ export class VerMascota implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly mascotaService: MascotaRestService,
-    private readonly tratamientoService: TratamientoService,
+    private readonly tratamientoRestService: TratamientoRestService,
     private readonly authService: AuthService,
   ) {}
 
@@ -43,10 +43,20 @@ export class VerMascota implements OnInit {
     this.mascotaService.getById(this.mascotaId).subscribe({
       next: (mascotaDto) => {
         this.mascota = MascotaMapper.fromDto(mascotaDto);
-        this.tratamientos = this.tratamientoService.getByMascotaId(this.mascotaId);
+        this.cargarTratamientos();
       },
       error: () => {
         this.errorMascota = 'No se encontró la mascota solicitada.';
+      },
+    });
+  }
+  private cargarTratamientos(): void {
+    this.tratamientoRestService.findByMascotaId(this.mascotaId).subscribe({
+      next: (tratamientosDto) => {
+        this.tratamientos = tratamientosDto.map(TratamientoMapper.fromDto);
+      },
+      error: () => {
+        this.tratamientos = [];
       },
     });
   }

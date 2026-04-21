@@ -82,7 +82,17 @@
         <div class="db-card">
           <div class="db-card__header">
             <h2 class="db-card__titulo">Historial de Tratamientos</h2>
-            <a routerLink="/tratamientos" class="db-link">Ver todos</a>
+            <div class="db-card__acciones">
+              <a
+                *ngIf="!esCliente && mascota"
+                [routerLink]="['/tratamientos/nuevo']"
+                [queryParams]="{ mascotaId: mascota.id }"
+                class="btn-accion btn-accion--outline"
+              >
+                Nuevo tratamiento
+              </a>
+              <a routerLink="/tratamientos" class="db-link">Ver todos</a>
+            </div>
           </div>
 
           <div *ngIf="tratamientos.length === 0" class="sin-resultados" style="padding: 1.5rem; text-align: center;">

@@ -189,6 +189,11 @@ textarea:focus {
   background-color: #f2ede7;
 }
 
+.drogas-vacio--error {
+  color: #991b1b;
+  font-weight: 600;
+}
+
 /* ===== BOTONES ===== */
 .form-acciones {
   display: flex;
@@ -214,6 +219,12 @@ textarea:focus {
 .btn-guardar:hover {
   background: #f2ede7;
   color: #0f6f6c;
+}
+
+.btn-guardar:disabled,
+.btn-accion:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Cancelar */

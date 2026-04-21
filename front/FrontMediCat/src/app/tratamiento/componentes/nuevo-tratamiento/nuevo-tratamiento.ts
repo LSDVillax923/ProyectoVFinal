@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Mascota } from '../../../mascota/mascota';
 import { Veterinario } from '../../../veterinario/veterinario';
 import { Droga } from '../../../droga/droga';
@@ -41,10 +41,12 @@ export class NuevoTratamiento implements OnInit {
   mascotas: Mascota[] = [];
   veterinarios: Veterinario[] = [];
   drogas: Droga[] = [];
+  noHayDrogasDisponibles = false;
 
   formData: NuevoTratamientoForm = this.crearFormularioInicial();
 
   constructor(
+    private readonly route: ActivatedRoute,
     private readonly tratamientoRestService: TratamientoRestService,
     private readonly mascotaRestService: MascotaRestService,
     private readonly veterinarioRestService: VeterinarioRestService,
@@ -68,17 +70,36 @@ export class NuevoTratamiento implements OnInit {
   private cargarCatalogos(): void {
     this.cargando = true;
     this.mascotaRestService.getAll().subscribe({
-      next: (dto) => { this.mascotas = dto.map(MascotaMapper.fromDto); },
+      next: (dto) => {
+        this.mascotas = dto.map(MascotaMapper.fromDto);
+        this.aplicarMascotaPreseleccionada();
+      },
       error: () => { this.error = 'No se pudieron cargar las mascotas.'; },
     });
     this.veterinarioRestService.getAll().subscribe({
       next: (dto) => { this.veterinarios = dto.map(VeterinarioMapper.fromDto); },
       error: () => { this.error = 'No se pudieron cargar los veterinarios.'; },
     });
-    this.drogaRestService.getAll().subscribe({
-      next: (dto) => { this.drogas = dto.map(DrogaMapper.fromDto); this.cargando = false; },
+    this.drogaRestService.findDisponibles().subscribe({
+      next: (dto) => {
+        this.drogas = dto.map(DrogaMapper.fromDto);
+        this.noHayDrogasDisponibles = this.drogas.length === 0;
+        if (this.noHayDrogasDisponibles) {
+          this.error = 'No hay drogas disponibles en inventario. No se puede asignar un tratamiento.';
+        }
+        this.cargando = false;
+      },
       error: () => { this.error = 'No se pudieron cargar las drogas.'; this.cargando = false; },
     });
+  }
+
+  private aplicarMascotaPreseleccionada(): void {
+    const mascotaId = Number(this.route.snapshot.queryParamMap.get('mascotaId'));
+    if (!mascotaId) return;
+    const mascota = this.mascotas.find((m) => m.id === mascotaId);
+    if (!mascota) return;
+    this.formData.mascotaId = mascotaId;
+    this.onMascotaChange(mascotaId);
   }
 
   onMascotaChange(id: number): void {
@@ -93,6 +114,10 @@ export class NuevoTratamiento implements OnInit {
   }
 
   agregarDroga(): void {
+    if (this.noHayDrogasDisponibles) {
+      this.error = 'No hay drogas disponibles en inventario. No se puede asignar un tratamiento.';
+      return;
+    }
     const nuevoId = Math.max(0, ...this.formData.drogas.map((d) => d.id ?? 0)) + 1;
     this.formData.drogas.push({ id: nuevoId, drogaId: 0, nombreDroga: '', cantidad: 1 });
   }
@@ -109,6 +134,10 @@ export class NuevoTratamiento implements OnInit {
   }
 
   guardarTratamiento(): void {
+    if (this.noHayDrogasDisponibles) {
+      this.error = 'No hay drogas disponibles en inventario. No se puede asignar un tratamiento.';
+      return;
+    }
     const { mascotaId, veterinarioId, diagnostico, fecha } = this.formData;
     if (!mascotaId || !veterinarioId || !diagnostico || !fecha) {
       this.error = 'Mascota, veterinario, diagnóstico y fecha son obligatorios.';

@@ -64,7 +64,7 @@
       <div class="seccion-drogas">
         <div class="seccion-drogas__header">
           <h3 class="seccion-titulo">Medicamentos</h3>
-          <button type="button" class="btn-accion" (click)="agregarDroga()">
+          <button type="button" class="btn-accion" (click)="agregarDroga()" [disabled]="noHayDrogasDisponibles">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Agregar medicamento
           </button>
@@ -73,27 +73,29 @@
         <div class="droga-row" *ngFor="let droga of formData.drogas; let i = index">
           <div class="form-group">
             <label>Medicamento</label>
-            <select [(ngModel)]="droga.drogaId" [name]="'drogaId_' + i" (ngModelChange)="onDrogaChange(i, $event)">
-              <option [ngValue]="0">Selecciona</option>
+            <select [(ngModel)]="droga.drogaId" [name]="'drogaId_' + i" (ngModelChange)="onDrogaChange(i, $event)" [disabled]="noHayDrogasDisponibles">
               <option *ngFor="let d of drogas" [ngValue]="d.id">{{ d.nombre }}</option>
             </select>
           </div>
           <div class="form-group">
             <label>Cantidad</label>
-            <input type="number" [(ngModel)]="droga.cantidad" [name]="'cantidad_' + i" min="1" />
+            <p *ngIf="formData.drogas.length === 0 && !noHayDrogasDisponibles" class="drogas-vacio">
           </div>
           <button type="button" class="btn-eliminar-droga" (click)="quitarDroga(i)" title="Quitar medicamento">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
-        <p *ngIf="formData.drogas.length === 0" class="drogas-vacio">
+        <p *ngIf="formData.drogas.length === 0 && !noHayDrogasDisponibles" class="drogas-vacio">
           No se han añadido medicamentos a este tratamiento.
+        </p>
+        <p *ngIf="noHayDrogasDisponibles" class="drogas-vacio drogas-vacio--error">
+          No hay drogas disponibles en inventario. No se puede asignar este tratamiento.
         </p>
       </div>
 
       <div class="form-acciones">
-        <button type="submit" class="btn-guardar">
+        <button type="submit" class="btn-guardar" [disabled]="noHayDrogasDisponibles">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Guardar Tratamiento
         </button>
