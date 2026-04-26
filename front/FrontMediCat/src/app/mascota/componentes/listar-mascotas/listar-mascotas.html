@@ -49,7 +49,7 @@
     <table>
       <thead>
         <tr>
-          <th>Foto</th>
+         <th>Avatar</th>
           <th>Nombre</th>
           <th>Especie/Raza</th>
           <th>Propietario</th>
@@ -60,7 +60,9 @@
       <tbody>
         <tr *ngFor="let mascota of mascotasFiltradas">
           <td>
-            <img [src]="mascota.foto || 'assets/img/default-pet.png'" alt="Foto" class="img-mini">
+            <div class="cliente-info">
+              <div class="avatar">{{ mascota.nombre.charAt(0) }}</div>
+            </div>
           </td>
           <td><strong>{{ mascota.nombre }}</strong></td>
           <td>{{ mascota.especie }} - {{ mascota.raza }}</td>

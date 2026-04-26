@@ -21,9 +21,9 @@
       <aside class="mascota-ficha">
         <div class="mascota-ficha__foto">
           <img
-            [src]="mascota.foto ? 'assets/img/' + mascota.foto : 'assets/img/default-pet.png'"
+            [src]="mascota.foto ? '/img/' + mascota.foto : 'assets/img/mascota-default.jpg'"
             [alt]="mascota.nombre"
-            onerror="this.src='assets/img/pet-.jpg'"
+            onerror="this.src='assets/img/mascota-default.jpg'"
           />
         </div>
 

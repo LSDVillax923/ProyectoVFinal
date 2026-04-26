@@ -222,6 +222,29 @@ tbody tr:hover {
   background: #e53935;
 }
 
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ece8e4;
+  color: #07686d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.cliente-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cliente-info small {
+  color: #777;
+}
+
 /* SIN RESULTADOS */
 .sin-resultados {
   text-align: center;
