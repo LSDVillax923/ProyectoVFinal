@@ -167,6 +167,57 @@
 .btn-agendar { background: transparent; color: #0d9488; border: 1px solid #0d9488; }
 .btn-ver:hover, .btn-agendar:hover { opacity: 0.85; }
 
+/* Estado vacío */
+.mm-empty {
+  background: #fff;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  border: 2px dashed #99e6df;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mm-empty__icono {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: #f0faf9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.mm-empty__titulo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+.mm-empty__texto {
+  font-size: 0.95rem;
+  color: #4a5568;
+  margin: 0;
+  max-width: 480px;
+}
+.mm-empty__contacto {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #0d9488;
+  font-weight: 600;
+}
+.mm-empty__contacto span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 /* Tarjeta agregar */
 .mm-card--agregar {
   display: flex;

@@ -15,10 +15,7 @@ import { Navbar } from '../../../shared/components/navbar/navbar';
 })
 export class MisMascotas implements OnInit {
   mascotas: Mascota[] = [];
-
-  readonly navBotones = [
-    { label: '+ Nueva Mascota', ruta: '/mascotas/nueva', tipo: 'primary' as const },
-  ];
+  navBotones: { label: string; ruta: string; tipo: 'primary' | 'secondary' }[] = [];
 
   constructor(
     private readonly authService: AuthService,
@@ -27,6 +24,13 @@ export class MisMascotas implements OnInit {
 
   ngOnInit(): void {
     const sesion = this.authService.getSesion();
+
+    if (sesion && sesion.rol !== 'CLIENTE') {
+      this.navBotones = [
+        { label: '+ Nueva Mascota', ruta: '/mascotas/nueva', tipo: 'primary' },
+      ];
+    }
+
     if (sesion) {
       this.mascotaService.findByClienteId(sesion.id).subscribe({
         next: (mascotas) => { this.mascotas = mascotas; },
