@@ -163,7 +163,7 @@ public class DataLoader implements CommandLineRunner {
 
     Mascota mascota = new Mascota(
             nombre, especie, raza, sexo, fechaNacimiento,
-            edad, peso, "default.jpg", estado,
+            edad, peso, "default-pet.png", estado,
             enfermedad, "Observación de mascota #" + i, cliente);
     
     mascotaRepository.save(mascota);

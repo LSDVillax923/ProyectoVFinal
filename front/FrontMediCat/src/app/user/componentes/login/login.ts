@@ -59,8 +59,13 @@ export class LoginComponent {
             this.router.navigate(['/inicio']);
         }
       },
-      error: (err: Error) => {
-        this.error = 'Credenciales inválidas. Intenta de nuevo.';
+      error: (err: { error?: { message?: string } } & Error) => {
+        const backendMessage = err?.error?.message;
+        if (backendMessage && backendMessage.toLowerCase().includes('desactivad')) {
+          this.error = backendMessage;
+        } else {
+          this.error = 'Credenciales inválidas. Intenta de nuevo.';
+        }
         console.error(err);
         this.loading = false;
       }

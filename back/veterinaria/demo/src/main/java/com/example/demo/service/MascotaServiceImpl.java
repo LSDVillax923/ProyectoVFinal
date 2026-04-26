@@ -60,7 +60,7 @@ public class MascotaServiceImpl implements MascotaService {
             mascota.setEstado(Mascota.EstadoMascota.ACTIVA);
         }
         if (mascota.getFoto() == null || mascota.getFoto().isBlank()) {
-            mascota.setFoto("default.jpg");
+            mascota.setFoto("default-pet.png");
         }
         
         validarMascota(mascota);

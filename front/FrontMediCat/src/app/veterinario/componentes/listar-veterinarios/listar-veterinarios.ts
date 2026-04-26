@@ -65,4 +65,21 @@ export class ListarVeterinarios implements OnInit {
       },
     });
   }
+
+  toggleEstadoVeterinario(vet: Veterinario): void {
+    const nuevoEstado = vet.estado === 'activo' ? 'inactivo' : 'activo';
+    const accion = nuevoEstado === 'activo' ? 'activar' : 'desactivar';
+    if (!confirm(`¿Deseas ${accion} a ${vet.nombre}?`)) return;
+
+    this.veterinarioRestService.cambiarEstado(vet.id, nuevoEstado).subscribe({
+      next: () => {
+        this.mensaje = `${vet.nombre} fue ${nuevoEstado === 'activo' ? 'activado' : 'desactivado'} correctamente.`;
+        this.error = '';
+        this.cargarVeterinarios();
+      },
+      error: () => {
+        this.error = `No se pudo ${accion} al veterinario.`;
+      },
+    });
+  }
 }

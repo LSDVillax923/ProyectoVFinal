@@ -77,9 +77,16 @@ public class VeterinarioServiceImpl implements VeterinarioService {
 
     @Override
     public Veterinario login(String correo, String contrasenia) {
-        return veterinarioRepository.findByCorreo(correo)
+        Veterinario vet = veterinarioRepository.findByCorreo(correo)
                 .filter(v -> v.getContrasenia().equals(contrasenia))
                 .orElse(null);
+        if (vet == null) {
+            return null;
+        }
+        if (vet.getEstado() != null && vet.getEstado().equalsIgnoreCase("inactivo")) {
+            throw new IllegalArgumentException("El veterinario está desactivado y no puede iniciar sesión.");
+        }
+        return vet;
     }
 
     @Override

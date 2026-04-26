@@ -317,6 +317,101 @@
 }
 
 /* ═══════════════════════════════ */
+/* MONEY STATS */
+/* ═══════════════════════════════ */
+.stat-card--money .stat-numero--money {
+  font-size: 1.6rem;
+  word-break: break-word;
+}
+
+/* ═══════════════════════════════ */
+/* TOP MEDICAMENTOS */
+/* ═══════════════════════════════ */
+.top-medicamentos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.top-medicamento-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  border-left: 4px solid #0a7f86;
+  transition: transform 0.2s ease;
+}
+
+.top-medicamento-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.top-medicamento-pos {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a7f86, #0fb5a3);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.top-medicamento-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-medicamento-info span {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+/* ═══════════════════════════════ */
+/* TABLA MEDICAMENTOS */
+/* ═══════════════════════════════ */
+.tabla-medicamentos {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tabla-medicamentos thead th {
+  background: #0a7f86;
+  color: white;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.tabla-medicamentos tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+
+.tabla-medicamentos tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.empty-state {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ═══════════════════════════════ */
 /* ANIMACIONES */
 /* ═══════════════════════════════ */
 @keyframes fadeUp {

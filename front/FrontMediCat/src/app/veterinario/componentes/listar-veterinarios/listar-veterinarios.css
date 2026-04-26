@@ -181,6 +181,55 @@
   background: #fee2e2;
 }
 
+.btn-toggle-estado {
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid transparent;
+}
+
+.btn-toggle-activar {
+  background: #e6f4ea;
+  color: #1aa04a;
+  border-color: #c4e8d1;
+}
+
+.btn-toggle-activar:hover {
+  background: #c4e8d1;
+}
+
+.btn-toggle-desactivar {
+  background: #fff4dc;
+  color: #b07b00;
+  border-color: #f3e2b3;
+}
+
+.btn-toggle-desactivar:hover {
+  background: #f3e2b3;
+}
+
+.badge-estado {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-estado-activo {
+  background: #e6f4ea;
+  color: #1aa04a;
+}
+
+.badge-estado-inactivo {
+  background: #fdecea;
+  color: #c62828;
+}
+
 
 .alert {
   margin: 15px auto;
