@@ -7,6 +7,7 @@ import { Navbar } from '../../../shared/components/navbar/navbar';
 import { AuthService } from '../../../user/services/auth.service';
 import { Mascota } from '../../mascota';
 import { MascotaRestService } from '../../services/mascota.service';
+import { urlFotoMascota } from '../../../shared/utils/helpers';
 
 @Component({
   selector: 'app-listar-mascotas',
@@ -114,5 +115,13 @@ export class ListarMascotas implements OnInit {
 
   borrarMascota(mascota: Mascota): void {
     this.desactivarMascota(mascota);
+  }
+
+  fotoUrl(mascota: Mascota): string {
+    return urlFotoMascota(mascota.foto);
+  }
+
+  tieneFoto(mascota: Mascota): boolean {
+    return !!mascota.foto && mascota.foto.startsWith('pet');
   }
 }

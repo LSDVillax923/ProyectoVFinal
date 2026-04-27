@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entities.Mascota;
 import com.example.demo.service.MascotaService;
@@ -65,5 +66,11 @@ public class MascotaController {
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<List<Mascota>> findByClienteId(@PathVariable Long clienteId) {
         return ResponseEntity.ok(mascotaService.findByClienteId(clienteId));
+    }
+
+    @PostMapping(value = "/{id}/foto", consumes = "multipart/form-data")
+    public ResponseEntity<Mascota> subirFoto(@PathVariable Long id,
+                                             @RequestParam("archivo") MultipartFile archivo) {
+        return ResponseEntity.ok(mascotaService.subirFoto(id, archivo));
     }
 }

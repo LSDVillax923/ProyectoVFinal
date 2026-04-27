@@ -37,6 +37,12 @@ export class MascotaRestService extends BaseCrudRestService<Mascota, MascotaRequ
     return this.http.post<Mascota>(this.baseUrl, mascota, { params });
   }
 
+  subirFoto(id: number, archivo: File): Observable<Mascota> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<Mascota>(ENDPOINTS.MASCOTAS_FOTO(id), formData);
+  }
+
   deactivate(id: number): Observable<void> {
     return this.http.patch<void>(ENDPOINTS.MASCOTAS_DEACTIVATE(id), {});
   }

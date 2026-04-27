@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.demo.entities.Mascota;
 
 public interface MascotaService {
@@ -14,4 +17,5 @@ public interface MascotaService {
     void delete(Long id);
     List<Mascota> buscarPorFiltros(String query, String estado);
     long countByEstado(List<Mascota> mascotas, String estado);
+    Mascota subirFoto(Long id, MultipartFile archivo);
 }

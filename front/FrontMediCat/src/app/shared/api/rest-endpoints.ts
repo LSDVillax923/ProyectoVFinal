@@ -2,6 +2,8 @@
 // CONFIGURACIÓN BASE
 // ============================================
 export const API_BASE_URL = 'http://localhost:8080/api';
+export const STATIC_BASE_URL = 'http://localhost:8080';
+export const MASCOTAS_FOTO_BASE = `${STATIC_BASE_URL}/img`;
 
 // ============================================
 // ENDPOINTS POR ENTIDAD
@@ -30,6 +32,7 @@ export const ENDPOINTS = {
   MASCOTAS: `${API_BASE_URL}/mascotas`,
   MASCOTAS_DEACTIVATE: (id: number) => `${API_BASE_URL}/mascotas/${id}/deactivate`,
   MASCOTAS_BY_CLIENTE: (clienteId: number) => `${API_BASE_URL}/mascotas/cliente/${clienteId}`,
+  MASCOTAS_FOTO: (id: number) => `${API_BASE_URL}/mascotas/${id}/foto`,
 
   // Droga
   DROGAS: `${API_BASE_URL}/drogas`,

@@ -1,10 +1,18 @@
 package com.example.demo.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entities.Cliente;
 import com.example.demo.entities.Mascota;
@@ -17,11 +25,16 @@ import com.example.demo.util.FechaUtils;
 @Transactional
 public class MascotaServiceImpl implements MascotaService {
 
+    private static final Set<String> EXTENSIONES_PERMITIDAS = Set.of("jpg", "jpeg", "png", "gif", "webp");
+
     @Autowired
     private MascotaRepository mascotaRepository;
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Value("${app.uploads.mascotas-dir:src/main/resources/static/img}")
+    private String mascotasDir;
 
     @Override
     public Mascota findById(Long id) {
@@ -136,6 +149,51 @@ public class MascotaServiceImpl implements MascotaService {
         return mascotas.stream()
                 .filter(m -> m.getEstado().name().equalsIgnoreCase(estado))
                 .count();
+    }
+
+    @Override
+    public Mascota subirFoto(Long id, MultipartFile archivo) {
+        if (archivo == null || archivo.isEmpty()) {
+            throw new IllegalArgumentException("El archivo de la foto es obligatorio");
+        }
+
+        Mascota mascota = findById(id);
+
+        String nombreOriginal = archivo.getOriginalFilename();
+        if (nombreOriginal == null || !nombreOriginal.contains(".")) {
+            throw new IllegalArgumentException("El archivo no tiene una extensión válida");
+        }
+
+        String extension = nombreOriginal
+                .substring(nombreOriginal.lastIndexOf('.') + 1)
+                .toLowerCase();
+
+        if (!EXTENSIONES_PERMITIDAS.contains(extension)) {
+            throw new IllegalArgumentException(
+                    "Extensión no permitida. Use: " + EXTENSIONES_PERMITIDAS);
+        }
+
+        try {
+            Path directorio = Paths.get(mascotasDir).toAbsolutePath().normalize();
+            Files.createDirectories(directorio);
+
+            String nombreFoto = "pet" + id + "." + extension;
+
+            for (String ext : EXTENSIONES_PERMITIDAS) {
+                Path anterior = directorio.resolve("pet" + id + "." + ext);
+                if (!ext.equals(extension)) {
+                    Files.deleteIfExists(anterior);
+                }
+            }
+
+            Path destino = directorio.resolve(nombreFoto);
+            Files.copy(archivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+
+            mascota.setFoto(nombreFoto);
+            return mascotaRepository.save(mascota);
+        } catch (IOException e) {
+            throw new MascotaException("No se pudo guardar la foto: " + e.getMessage());
+        }
     }
 
     private void validarMascota(Mascota m) {

@@ -235,6 +235,11 @@ tbody tr:hover {
   font-weight: bold;
 }
 
+.avatar-img {
+  object-fit: cover;
+  border: 1.5px solid #d9d2c5;
+}
+
 .cliente-info {
   display: flex;
   align-items: center;

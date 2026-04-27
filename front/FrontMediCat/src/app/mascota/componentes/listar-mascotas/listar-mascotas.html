@@ -61,7 +61,17 @@
         <tr *ngFor="let mascota of mascotasFiltradas">
           <td>
             <div class="cliente-info">
-              <div class="avatar">{{ mascota.nombre.charAt(0) }}</div>
+              @if (tieneFoto(mascota)) {
+                <img
+                  class="avatar avatar-img"
+                  [src]="fotoUrl(mascota)"
+                  [alt]="mascota.nombre"
+                  onerror="this.style.display='none'; this.nextElementSibling && (this.nextElementSibling.style.display='flex')"
+                />
+                <div class="avatar avatar-fallback" style="display:none">{{ mascota.nombre.charAt(0) }}</div>
+              } @else {
+                <div class="avatar">{{ mascota.nombre.charAt(0) }}</div>
+              }
             </div>
           </td>
           <td><strong>{{ mascota.nombre }}</strong></td>

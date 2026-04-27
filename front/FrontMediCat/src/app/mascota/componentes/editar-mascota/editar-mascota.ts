@@ -8,6 +8,7 @@ import { Veterinario } from '../../../veterinario/veterinario';
 import { Mascota } from '../../mascota';
 import { MascotaRequest } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
+import { urlFotoMascota } from '../../../shared/utils/helpers';
 
 @Component({
   selector: 'app-editar-mascota',
@@ -39,6 +40,13 @@ export class EditarMascota implements OnInit {
   noEncontrada = false;
   private mascotaId = 0;
 
+  fotoArchivo: File | null = null;
+  fotoPreview: string | null = null;
+  errorFoto = '';
+
+  private static readonly TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  private static readonly TAMANO_MAX_MB = 10;
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -62,6 +70,7 @@ export class EditarMascota implements OnInit {
           estado: encontrada.estado,
           enfermedad: encontrada.enfermedad,
           observaciones: encontrada.observaciones,
+          foto: encontrada.foto,
           veterinarioAsignado: encontrada.veterinarioAsignado ?? '',
           clienteId: encontrada.cliente?.id ?? 0,
         };
@@ -72,6 +81,43 @@ export class EditarMascota implements OnInit {
       },
     });
     this.veterinariosDisponibles = this.veterinarioService.getActivos();
+  }
+
+  get fotoActualUrl(): string {
+    return this.fotoPreview ?? urlFotoMascota(this.mascota.foto);
+  }
+
+  onFotoSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    this.errorFoto = '';
+
+    if (!archivo) {
+      this.fotoArchivo = null;
+      this.fotoPreview = null;
+      return;
+    }
+
+    if (!EditarMascota.TIPOS_PERMITIDOS.includes(archivo.type)) {
+      this.errorFoto = 'Formato no válido. Usa JPG, PNG, GIF o WEBP.';
+      this.fotoArchivo = null;
+      this.fotoPreview = null;
+      input.value = '';
+      return;
+    }
+
+    if (archivo.size > EditarMascota.TAMANO_MAX_MB * 1024 * 1024) {
+      this.errorFoto = `La imagen supera el tamaño máximo de ${EditarMascota.TAMANO_MAX_MB} MB.`;
+      this.fotoArchivo = null;
+      this.fotoPreview = null;
+      input.value = '';
+      return;
+    }
+
+    this.fotoArchivo = archivo;
+    const lector = new FileReader();
+    lector.onload = () => (this.fotoPreview = lector.result as string);
+    lector.readAsDataURL(archivo);
   }
 
   guardarCambios(): void {
@@ -102,8 +148,24 @@ export class EditarMascota implements OnInit {
 
     this.mascotaService.update(this.mascotaId, request).subscribe({
       next: () => {
-        this.mensaje = `Se actualizaron los datos de ${this.mascota.nombre}.`;
-        this.error = '';
+        if (this.fotoArchivo) {
+          this.mascotaService.subirFoto(this.mascotaId, this.fotoArchivo).subscribe({
+            next: (actualizada) => {
+              this.mascota.foto = actualizada.foto;
+              this.fotoArchivo = null;
+              this.fotoPreview = null;
+              this.mensaje = `Se actualizaron los datos y la foto de ${this.mascota.nombre}.`;
+              this.error = '';
+            },
+            error: () => {
+              this.mensaje = `Se actualizaron los datos de ${this.mascota.nombre}, pero no se pudo subir la nueva foto.`;
+              this.error = '';
+            },
+          });
+        } else {
+          this.mensaje = `Se actualizaron los datos de ${this.mascota.nombre}.`;
+          this.error = '';
+        }
       },
       error: () => {
         this.error = 'Error al actualizar la mascota.';

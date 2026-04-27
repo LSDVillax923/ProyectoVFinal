@@ -125,7 +125,7 @@
       <!-- Foto -->
       <div class="mm-card__foto">
         <img
-          [src]="'assets/img/' + m.foto"
+          [src]="fotoUrl(m.foto)"
           [alt]="m.nombre"
           onerror="this.src='assets/img/default-pet.png'"
         />

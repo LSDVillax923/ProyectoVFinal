@@ -5,6 +5,7 @@ import { AuthService } from '../../../user/services/auth.service';
 import { MascotaRestService } from '../../services/mascota.service';
 import { Mascota } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
+import { urlFotoMascota } from '../../../shared/utils/helpers';
 
 @Component({
   selector: 'app-mis-mascotas',
@@ -76,5 +77,9 @@ export class MisMascotas implements OnInit {
     if (this.esPerro(especie)) return 'Perro';
     if (this.esGato(especie)) return 'Gato';
     return especie;
+  }
+
+  fotoUrl(foto?: string): string {
+    return urlFotoMascota(foto);
   }
 }

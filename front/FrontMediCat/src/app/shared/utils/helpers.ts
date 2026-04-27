@@ -1,3 +1,5 @@
+import { MASCOTAS_FOTO_BASE } from '../api/rest-endpoints';
+
 export function formatCOP(valor: number): string {
   return new Intl.NumberFormat('es-CO', {
     style: 'currency',
@@ -63,4 +65,15 @@ export function iniciales(nombreCompleto: string): string {
     .slice(0, 2)
     .map((p) => p[0].toUpperCase())
     .join('');
+}
+
+/**
+ * Resuelve la URL de la foto de una mascota.
+ * Si el nombre del archivo empieza con "pet" se sirve desde el backend (uploads),
+ * de lo contrario se asume que es una imagen de assets.
+ */
+export function urlFotoMascota(foto?: string | null): string {
+  if (!foto) return 'assets/img/default-pet.png';
+  if (foto.startsWith('pet')) return `${MASCOTAS_FOTO_BASE}/${foto}`;
+  return `assets/img/${foto}`;
 }

@@ -10,6 +10,7 @@ import { MascotaMapper, TratamientoMapper } from '../../../shared/api/model-mapp
 import { Tratamiento } from '../../../tratamiento/tratamiento';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { Mascota as MascotaDto, Tratamiento as TratamientoDto } from '../../../shared/api/backend-contracts';
+import { urlFotoMascota } from '../../../shared/utils/helpers';
 
 const MESES: Record<string, string> = {
   '01': 'Ene', '02': 'Feb', '03': 'Mar', '04': 'Abr',
@@ -69,6 +70,10 @@ export class VerMascota implements OnInit {
 
   get volverUrl(): string[] {
     return this.esCliente ? ['/mis-mascotas'] : ['/mascotas'];
+  }
+
+  get fotoUrl(): string {
+    return urlFotoMascota(this.mascota?.foto);
   }
 
   get estadoClase(): string {

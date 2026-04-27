@@ -39,6 +39,13 @@ export class NuevaMascota implements OnInit {
   error = '';
   loading = false;
 
+  fotoArchivo: File | null = null;
+  fotoPreview: string | null = null;
+  errorFoto = '';
+
+  private static readonly TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  private static readonly TAMANO_MAX_MB = 10;
+
   constructor(
     private readonly mascotaService: MascotaRestService,
     private readonly clienteService: ClienteRestService,
@@ -66,6 +73,39 @@ export class NuevaMascota implements OnInit {
     });
   }
 
+  onFotoSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    this.errorFoto = '';
+
+    if (!archivo) {
+      this.fotoArchivo = null;
+      this.fotoPreview = null;
+      return;
+    }
+
+    if (!NuevaMascota.TIPOS_PERMITIDOS.includes(archivo.type)) {
+      this.errorFoto = 'Formato no válido. Usa JPG, PNG, GIF o WEBP.';
+      this.fotoArchivo = null;
+      this.fotoPreview = null;
+      input.value = '';
+      return;
+    }
+
+    if (archivo.size > NuevaMascota.TAMANO_MAX_MB * 1024 * 1024) {
+      this.errorFoto = `La imagen supera el tamaño máximo de ${NuevaMascota.TAMANO_MAX_MB} MB.`;
+      this.fotoArchivo = null;
+      this.fotoPreview = null;
+      input.value = '';
+      return;
+    }
+
+    this.fotoArchivo = archivo;
+    const lector = new FileReader();
+    lector.onload = () => (this.fotoPreview = lector.result as string);
+    lector.readAsDataURL(archivo);
+  }
+
   registrarMascota(): void {
     const { clienteId, nombre, especie, raza, sexo, fechaNacimiento, edad, peso, estado, enfermedad, veterinarioAsignado, observaciones } = this.mascotaForm;
 
@@ -90,14 +130,17 @@ export class NuevaMascota implements OnInit {
 
     this.loading = true;
     this.mascotaService.crearMascota(request, clienteId).subscribe({
-      next: () => {
-        this.mascotaRegistrada = `La mascota "${nombre}" fue registrada correctamente.`;
-        this.error = '';
-        this.mascotaForm = this.formInicial();
-        this.loading = false;
-        const sesion = this.authService.getSesion();
-        if (sesion?.rol === 'CLIENTE') {
-          this.mascotaForm.clienteId = sesion.id;
+      next: (creada) => {
+        if (this.fotoArchivo && creada?.id) {
+          this.mascotaService.subirFoto(creada.id, this.fotoArchivo).subscribe({
+            next: () => this.finalizarRegistro(nombre),
+            error: () => {
+              this.error = 'La mascota se creó, pero no se pudo subir la foto.';
+              this.loading = false;
+            },
+          });
+        } else {
+          this.finalizarRegistro(nombre);
         }
       },
       error: () => {
@@ -105,6 +148,20 @@ export class NuevaMascota implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  private finalizarRegistro(nombre: string): void {
+    this.mascotaRegistrada = `La mascota "${nombre}" fue registrada correctamente.`;
+    this.error = '';
+    this.errorFoto = '';
+    this.mascotaForm = this.formInicial();
+    this.fotoArchivo = null;
+    this.fotoPreview = null;
+    this.loading = false;
+    const sesion = this.authService.getSesion();
+    if (sesion?.rol === 'CLIENTE') {
+      this.mascotaForm.clienteId = sesion.id;
+    }
   }
 
   private formInicial(): NuevaMascotaForm {
