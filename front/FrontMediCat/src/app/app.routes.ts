@@ -60,9 +60,9 @@ export const routes: Routes = [
   // ── Admin ────────────────────────────────────────────
   { path: 'dashboard',               component: Dashboard,          canActivate: [authGuard, adminGuard] },
 
-  // Clientes — solo admin
+  // Clientes — admin y veterinario (crear), admin (gestión completa)
   { path: 'clientes',                component: ListarCliente,      canActivate: [authGuard, adminGuard] },
-  { path: 'clientes/nuevo',          component: NuevoCliente,       canActivate: [authGuard, adminGuard] },
+  { path: 'clientes/nuevo',          component: NuevoCliente,       canActivate: [authGuard, veterinarioGuard] },
   { path: 'clientes/:id',            component: VerCliente,         canActivate: [authGuard, adminGuard] },
   { path: 'clientes/:id/editar',     component: EditarCliente,      canActivate: [authGuard, adminGuard] },
   { path: 'clientes/:id/mismascotas',component: ListarMascotas,     canActivate: [authGuard, adminGuard] },
