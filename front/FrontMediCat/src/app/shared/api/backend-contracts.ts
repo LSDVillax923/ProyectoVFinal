@@ -207,6 +207,37 @@ export interface ValidationErrorResponse extends ErrorResponse {
 }
 
 // ============================================
+// DASHBOARD
+// ============================================
+export interface MedicamentoCantidad {
+  nombre: string;
+  cantidad: number;
+}
+
+export interface CitaResumen {
+  hora: string;
+  mascota: string;
+  duenio: string;
+  tipo: string;
+  estado: 'PENDIENTE' | 'CONFIRMADA' | 'REALIZADA' | 'CANCELADA';
+}
+
+export interface DashboardMetricas {
+  totalClientes: number;
+  totalMascotas: number;
+  mascotasEnTratamiento: number;
+  veterinariosActivos: number;
+  veterinariosInactivos: number;
+  tratamientosUltimoMes: number;
+  citasHoy: number;
+  ventasTotales: number;
+  gananciasTotales: number;
+  topMedicamentos: MedicamentoCantidad[];
+  medicamentosUltimoMes: MedicamentoCantidad[];
+  citasProximas: CitaResumen[];
+}
+
+// ============================================
 // FILTROS DE BÚSQUEDA
 // ============================================
 export interface MascotaFiltros {

@@ -50,6 +50,9 @@ export const ENDPOINTS = {
   TRATAMIENTO_DROGAS: `${API_BASE_URL}/tratamiento-drogas`,
   TRATAMIENTO_DROGAS_BY_TRATAMIENTO: (tratamientoId: number) => `${API_BASE_URL}/tratamiento-drogas/tratamiento/${tratamientoId}`,
 
+  // Dashboard
+  DASHBOARD_METRICAS: `${API_BASE_URL}/dashboard/metricas`,
+
   // Cita
   CITAS: `${API_BASE_URL}/citas`,
   CITAS_BY_VETERINARIO: (veterinarioId: number) => `${API_BASE_URL}/citas/veterinario/${veterinarioId}`,

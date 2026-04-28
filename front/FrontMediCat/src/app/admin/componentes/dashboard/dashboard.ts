@@ -1,23 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
 import { AuthRestService, SesionActiva } from '../../../user/services/auth-rest.service';
-import { ClienteRestService } from '../../../cliente/services/cliente.service';
-import { MascotaRestService } from '../../../mascota/services/mascota.service';
-import { CitaRestService } from '../../../cita/services/cita-rest.service';
-import { VeterinarioRestService } from '../../../veterinario/services/veterinario-rest.service';
-import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
-import { DrogaRestService } from '../../../droga/services/droga.service';
-import { Cita, Cliente, Droga, Mascota, Tratamiento, Veterinario } from '../../../shared/api/backend-contracts';
+import { DashboardRestService } from '../../services/dashboard-rest.service';
+import {
+  CitaResumen,
+  DashboardMetricas,
+  MedicamentoCantidad,
+} from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import {
-  formatearFecha,
   formatearMoneda,
   getClaseEstadoCita,
   getTextoEstadoCita,
-  nombreCompletoCliente,
-  getIniciales
+  getIniciales,
 } from '../../../shared/api/model-mappers';
 
 interface CitaDisplay {
@@ -41,21 +37,19 @@ interface AccesoRapido {
   ruta: string;
 }
 
-interface MedicamentoCantidad {
-  nombre: string;
-  cantidad: number;
-}
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink, Navbar],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  styleUrls: ['./dashboard.css'],
 })
 export class Dashboard implements OnInit {
+  private readonly authService = inject(AuthRestService);
+  private readonly dashboardService = inject(DashboardRestService);
+  private readonly router = inject(Router);
 
-  sesion: SesionActiva | null = null;
+  sesion: SesionActiva | null = this.authService.getSesion();
 
   totalClientes = 0;
   totalMascotas = 0;
@@ -72,14 +66,11 @@ export class Dashboard implements OnInit {
   gananciasTotales = 0;
 
   topMedicamentos: MedicamentoCantidad[] = [];
-
   citasProximas: CitaDisplay[] = [];
   actividad: ActividadReciente[] = [];
 
-  loadingClientes = false;
-  loadingMascotas = false;
-  loadingCitas = false;
   loadingMetricas = false;
+  errorMetricas = '';
 
   accesos: AccesoRapido[] = [
     {
@@ -114,162 +105,44 @@ export class Dashboard implements OnInit {
     },
   ];
 
-  constructor(
-    private readonly authService: AuthRestService,
-    private readonly clienteService: ClienteRestService,
-    private readonly mascotaService: MascotaRestService,
-    private readonly citaService: CitaRestService,
-    private readonly veterinarioService: VeterinarioRestService,
-    private readonly tratamientoService: TratamientoRestService,
-    private readonly drogaService: DrogaRestService,
-    private readonly router: Router
-  ) {
-    this.sesion = this.authService.getSesion();
-  }
-
   ngOnInit(): void {
-    this.cargarTotales();
-    this.cargarCitasProximas();
-    this.cargarMetricasNegocio();
+    this.cargarMetricas();
     this.cargarActividadReciente();
   }
 
-  private cargarTotales(): void {
-    this.loadingClientes = true;
-    this.clienteService.findAll().subscribe({
-      next: (clientes: Cliente[]) => {
-        this.totalClientes = clientes.length;
-        this.loadingClientes = false;
-      },
-      error: (err: Error) => {
-        console.error('Error cargando clientes:', err);
-        this.totalClientes = 0;
-        this.loadingClientes = false;
-      }
-    });
-
-    this.loadingMascotas = true;
-    this.mascotaService.findAll().subscribe({
-      next: (mascotas: Mascota[]) => {
-        this.totalMascotas = mascotas.length;
-        this.mascotasEnTratamiento = mascotas.filter((m: Mascota) => m.estado === 'TRATAMIENTO').length;
-        this.loadingMascotas = false;
-      },
-      error: (err: Error) => {
-        console.error('Error cargando mascotas:', err);
-        this.totalMascotas = 0;
-        this.mascotasEnTratamiento = 0;
-        this.loadingMascotas = false;
-      }
-    });
-  }
-
-  private cargarCitasProximas(): void {
-    this.loadingCitas = true;
-    const hoy = new Date();
-    const inicio = new Date(hoy);
-    inicio.setHours(0, 0, 0, 0);
-    const fin = new Date(hoy);
-    fin.setHours(23, 59, 59, 999);
-
-    this.citaService.findAll({
-      inicio: inicio.toISOString(),
-      fin: fin.toISOString()
-    }).subscribe({
-      next: (citas: Cita[]) => {
-        this.citasHoy = citas.length;
-        this.citasProximas = citas
-          .filter((c: Cita) => c.estado === 'PENDIENTE' || c.estado === 'CONFIRMADA')
-          .slice(0, 5)
-          .map((cita: Cita) => ({
-            hora: formatearFecha(cita.fechaInicio, 'hora'),
-            mascota: cita.mascota?.nombre || 'Sin mascota',
-            duenio: nombreCompletoCliente(cita.cliente),
-            tipo: cita.motivo,
-            estado: getTextoEstadoCita(cita.estado),
-            estadoClase: getClaseEstadoCita(cita.estado)
-          }));
-        this.loadingCitas = false;
-      },
-      error: (err: Error) => {
-        console.error('Error cargando citas:', err);
-        this.citasHoy = 0;
-        this.citasProximas = [];
-        this.loadingCitas = false;
-      }
-    });
-  }
-
-  private cargarMetricasNegocio(): void {
+  private cargarMetricas(): void {
     this.loadingMetricas = true;
-    forkJoin({
-      veterinarios: this.veterinarioService.getAll(),
-      tratamientos: this.tratamientoService.findAll(),
-      drogas: this.drogaService.getAll(),
-    }).subscribe({
-      next: ({ veterinarios, tratamientos, drogas }) => {
-        this.calcularVeterinarios(veterinarios);
-        this.calcularTratamientosUltimoMes(tratamientos);
-        this.calcularVentasYGanancias(drogas);
-        this.calcularTopMedicamentos(drogas);
+    this.errorMetricas = '';
+
+    this.dashboardService.obtenerMetricas().subscribe({
+      next: (m: DashboardMetricas) => {
+        this.totalClientes = m.totalClientes;
+        this.totalMascotas = m.totalMascotas;
+        this.mascotasEnTratamiento = m.mascotasEnTratamiento;
+        this.veterinariosActivos = m.veterinariosActivos;
+        this.veterinariosInactivos = m.veterinariosInactivos;
+        this.tratamientosUltimoMes = m.tratamientosUltimoMes;
+        this.citasHoy = m.citasHoy;
+        this.ventasTotales = m.ventasTotales;
+        this.gananciasTotales = m.gananciasTotales;
+        this.topMedicamentos = m.topMedicamentos;
+        this.medicamentosUltimoMes = m.medicamentosUltimoMes;
+        this.citasProximas = m.citasProximas.map((c: CitaResumen) => ({
+          hora: c.hora,
+          mascota: c.mascota,
+          duenio: c.duenio,
+          tipo: c.tipo,
+          estado: getTextoEstadoCita(c.estado),
+          estadoClase: getClaseEstadoCita(c.estado),
+        }));
         this.loadingMetricas = false;
       },
       error: (err: Error) => {
-        console.error('Error cargando métricas del negocio:', err);
+        console.error('Error cargando métricas del dashboard:', err);
+        this.errorMetricas = 'No se pudieron cargar las métricas del dashboard.';
         this.loadingMetricas = false;
-      }
+      },
     });
-  }
-
-  private calcularVeterinarios(veterinarios: Veterinario[]): void {
-    this.veterinariosActivos = veterinarios.filter((v) => v.estado === 'activo').length;
-    this.veterinariosInactivos = veterinarios.filter((v) => v.estado === 'inactivo').length;
-  }
-
-  private calcularTratamientosUltimoMes(tratamientos: Tratamiento[]): void {
-    const hoy = new Date();
-    const haceUnMes = new Date(hoy);
-    haceUnMes.setMonth(hoy.getMonth() - 1);
-
-    const recientes = tratamientos.filter((t) => {
-      if (!t.fecha) return false;
-      const fecha = new Date(t.fecha);
-      return !isNaN(fecha.getTime()) && fecha >= haceUnMes && fecha <= hoy;
-    });
-
-    this.tratamientosUltimoMes = recientes.length;
-
-    const conteoMedicamentos = new Map<string, number>();
-    recientes.forEach((t) => {
-      (t.drogas ?? []).forEach((td) => {
-        const nombre = td.droga?.nombre ?? 'Sin nombre';
-        const cantidad = td.cantidad ?? 0;
-        conteoMedicamentos.set(nombre, (conteoMedicamentos.get(nombre) ?? 0) + cantidad);
-      });
-    });
-
-    this.medicamentosUltimoMes = Array.from(conteoMedicamentos.entries())
-      .map(([nombre, cantidad]) => ({ nombre, cantidad }))
-      .sort((a, b) => b.cantidad - a.cantidad);
-  }
-
-  private calcularVentasYGanancias(drogas: Droga[]): void {
-    this.ventasTotales = drogas.reduce(
-      (acc, d) => acc + (d.precioVenta ?? 0) * (d.unidadesVendidas ?? 0),
-      0,
-    );
-    this.gananciasTotales = drogas.reduce(
-      (acc, d) => acc + ((d.precioVenta ?? 0) - (d.precioCompra ?? 0)) * (d.unidadesVendidas ?? 0),
-      0,
-    );
-  }
-
-  private calcularTopMedicamentos(drogas: Droga[]): void {
-    this.topMedicamentos = [...drogas]
-      .filter((d) => (d.unidadesVendidas ?? 0) > 0)
-      .sort((a, b) => (b.unidadesVendidas ?? 0) - (a.unidadesVendidas ?? 0))
-      .slice(0, 3)
-      .map((d) => ({ nombre: d.nombre, cantidad: d.unidadesVendidas ?? 0 }));
   }
 
   private cargarActividadReciente(): void {
@@ -283,7 +156,7 @@ export class Dashboard implements OnInit {
         svgPath: '<path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5"/>',
         texto: 'Dashboard cargado exitosamente',
         hace: 'Ahora',
-      }
+      },
     ];
   }
 
@@ -296,17 +169,6 @@ export class Dashboard implements OnInit {
     return getIniciales(this.sesion.nombre);
   }
 
-  estadoClase(estado: string): string {
-    const map: Record<string, string> = {
-      'Confirmada': 'estado-confirmada',
-      'Pendiente': 'estado-pendiente',
-      'Emergencia': 'estado-emergencia',
-      'Realizada': 'estado-realizada',
-      'Cancelada': 'estado-cancelada',
-    };
-    return map[estado] ?? '';
-  }
-
   cerrarSesion(): void {
     this.authService.logout();
     this.router.navigate(['/inicio/login']);
@@ -317,7 +179,7 @@ export class Dashboard implements OnInit {
   }
 
   get isLoading(): boolean {
-    return this.loadingClientes || this.loadingMascotas || this.loadingCitas || this.loadingMetricas;
+    return this.loadingMetricas;
   }
 
   get tieneCitasProximas(): boolean {
