@@ -31,58 +31,69 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Mascota {
 
+    // ID único autogenerado
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Nombre de la mascota (no vacío)
     @NotBlank(message = "El nombre de la mascota no puede estar vacío")
     @Column(name = "mascota", nullable = false)
     private String nombre;
     
+    // Especie (no vacía)
     @NotBlank(message = "La especie no puede estar vacía")
     private String especie;
 
+    // Raza (no vacía)
     @NotBlank(message = "La raza no puede estar vacía")
     private String raza;
 
+    // Sexo de la mascota
     private String sexo;
     
+    // Fecha de nacimiento (obligatoria)
     @NotNull(message = "La fecha de nacimiento no puede estar vacía")
     private LocalDate fechaNacimiento;
 
+    // Edad (mayor o igual a 0)
     @PositiveOrZero(message = "La edad debe ser un número positivo o cero")
     private int edad;
 
+    // Peso (valor positivo)
     @Positive(message = "El peso debe ser un número positivo")
     private double peso;
 
+    // URL o ruta de la foto
     private String foto;
 
+    // Estado de la mascota (enum)
     @Enumerated(EnumType.STRING)
     private EstadoMascota estado; 
     
+    // Información médica básica
     private String enfermedad;
     private String observaciones;
     private String tratamiento;
     private String veterinarioAsignado;
     
-    // Relación con Cliente (lado propietario)
+    // Relación con cliente (muchas mascotas pertenecen a un cliente)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
-    @JsonIgnoreProperties({"mascotas", "citas"})   // Evita serializar las listas del cliente
+    @JsonIgnoreProperties({"mascotas", "citas"})
     private Cliente cliente;
 
-    // Relación con Tratamiento
+    // Lista de tratamientos
     @JsonIgnore
     @OneToMany(mappedBy = "mascota", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Tratamiento> tratamientos = new ArrayList<>();
 
-    // Relación con Cita 
+    // Lista de citas
     @JsonIgnore
     @OneToMany(mappedBy = "mascota", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Cita> citas = new ArrayList<>();
 
-    // Constructor básico (sin colecciones)
+    // Constructor básico
     public Mascota(String nombre, String especie, String raza, String sexo, LocalDate fechaNacimiento,
                    int edad, double peso, String foto, EstadoMascota estado, String enfermedad,
                    String observaciones, Cliente cliente) {
@@ -102,7 +113,7 @@ public class Mascota {
         this.citas = new ArrayList<>();
     }
 
-    // Enum interno para estado
+    // Estados posibles de la mascota
     public enum EstadoMascota {
         ACTIVA, TRATAMIENTO, INACTIVA
     }

@@ -10,7 +10,9 @@ import com.example.demo.entities.Admin;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
 
+    // Buscar un admin por su correo
     Optional<Admin> findByCorreo(String correo);
 
+    // Verificar si existe un admin con ese correo
     boolean existsByCorreo(String correo);
 }

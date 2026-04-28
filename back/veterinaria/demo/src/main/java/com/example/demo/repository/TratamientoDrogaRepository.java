@@ -10,7 +10,9 @@ import com.example.demo.entities.TratamientoDroga;
 @Repository
 public interface TratamientoDrogaRepository extends JpaRepository<TratamientoDroga, Long> {
 
+    // Obtener drogas asociadas a un tratamiento
     List<TratamientoDroga> findByTratamientoId(Long tratamientoId);
 
+    // Obtener tratamientos donde se usa una droga específica
     List<TratamientoDroga> findByDrogaId(Long drogaId);
 }

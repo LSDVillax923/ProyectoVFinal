@@ -17,23 +17,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Droga {
 
+    // ID único autogenerado
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Nombre de la droga (no vacío)
     @NotBlank(message = "El nombre no puede estar vacío")
     private String nombre;
 
+    // Precio de compra (valor positivo)
     @Positive(message = "El precio de compra debe ser un número positivo")
     private float precioCompra;
     
+    // Precio de venta (valor positivo)
     @Positive(message = "El precio de venta debe ser un número positivo")
     private float precioVenta;
 
-    @Min(value = 0, message = "Las unidades vendidas no pueden ser negativas")
+    // Cantidad disponible (no negativa)
+    @Min(value = 0, message = "Las unidades no pueden ser negativas")
     private int unidadesDisponibles;
 
-    @Min(value = 0, message = "Las unidades vendidas no pueden ser negativas")
+    // Cantidad vendida (no negativa)
+    @Min(value = 0, message = "Las unidades no pueden ser negativas")
     private int unidadesVendidas;
-
 }

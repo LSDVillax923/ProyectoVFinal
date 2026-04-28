@@ -81,7 +81,7 @@ body {
 }
 
 .btn-cita {
-    background-color: var(--color-primario);
+    background-color: #ece8e4;
     color: white;
     padding: 10px 22px;
     border-radius: 999px;
@@ -94,7 +94,7 @@ body {
 }
 
 .btn-cita:hover {
-    background-color: var(--color-primario-oscuro);
+    background-color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(10, 127, 134, 0.3);
 }
@@ -117,7 +117,8 @@ body {
     padding: 6px 18px;
     border-radius: 999px;
     display: inline-block;
-    color: var(--color-primario);
+    background-color: #ffffff;
+    color: #07686d;
     margin-bottom: 16px;
     font-weight: 600;
 }
@@ -156,8 +157,8 @@ body {
 }
 
 .btn-primario {
-    background: var(--color-primario);
-    color: rgb(1, 1, 1);
+    background: white;
+    color: #07686d;
 }
 
 .btn-primario:hover {
@@ -170,8 +171,8 @@ body {
 
 .btn-secundario {
     border: 2px solid var(--color-primario);
-    color: var(--color-primario);
-    background: transparent;
+    background: white;
+    color: #07686d;
 }
 
 .btn-secundario:hover {
@@ -184,7 +185,7 @@ body {
 }
 
 .landing-imagen {
-    max-width: 520px;
+    max-width: 720px;
     justify-self: center;
 }
 

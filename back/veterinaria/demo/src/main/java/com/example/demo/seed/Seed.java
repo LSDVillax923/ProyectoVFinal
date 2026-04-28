@@ -25,21 +25,26 @@ public class Seed implements CommandLineRunner {
 
     private final DrogaRepository drogaRepository;
 
+    // Se ejecuta al iniciar la aplicación
     @Override
     public void run(String... args) throws Exception {
+        // Evita duplicar datos si ya existen registros
         if (drogaRepository.count() > 0) {
             log.info("Seed: Drogas ya existen. Omitiendo.");
             return;
         }
+
         log.info("Seed: Cargando medicamentos desde Excel...");
         cargarMedicamentosDesdeExcel();
         log.info("Seed: {} medicamentos cargados.", drogaRepository.count());
     }
 
+    // Carga los medicamentos desde un archivo Excel
     private void cargarMedicamentosDesdeExcel() {
         String rutaArchivo = "MEDICAMENTOS_VETERINARIA - Copy.xlsx";
 
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(rutaArchivo)) {
+
             if (is == null) {
                 log.error("Seed: Archivo no encontrado en resources/{}", rutaArchivo);
                 return;
@@ -49,32 +54,41 @@ public class Seed implements CommandLineRunner {
                 Sheet sheet = workbook.getSheetAt(0);
                 int guardadas = 0;
 
+                // Recorre las filas del Excel (saltando encabezado)
                 for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                     Row row = sheet.getRow(i);
                     if (row == null || row.getCell(0) == null) continue;
 
                     try {
                         Droga droga = new Droga();
+
+                        // Asignación de datos desde Excel
                         droga.setNombre(obtenerTexto(row.getCell(0)));
                         droga.setPrecioVenta(obtenerNumero(row.getCell(1)));
                         droga.setPrecioCompra(obtenerNumero(row.getCell(2)));
                         droga.setUnidadesDisponibles((int) obtenerNumero(row.getCell(3)));
                         droga.setUnidadesVendidas((int) obtenerNumero(row.getCell(4)));
+
                         drogaRepository.save(droga);
                         guardadas++;
+
                     } catch (Exception e) {
                         log.warn("Seed: Error en fila {}: {}", i + 1, e.getMessage());
                     }
                 }
+
                 log.info("Seed: {} medicamentos guardados.", guardadas);
             }
+
         } catch (Exception e) {
             log.error("Seed: Error leyendo Excel: {}", e.getMessage(), e);
         }
     }
 
+    // Convierte una celda a texto
     private String obtenerTexto(Cell cell) {
         if (cell == null) return "";
+
         return switch (cell.getCellType()) {
             case STRING  -> cell.getStringCellValue().trim();
             case NUMERIC -> String.valueOf((long) cell.getNumericCellValue());
@@ -82,13 +96,18 @@ public class Seed implements CommandLineRunner {
         };
     }
 
+    // Convierte una celda a número flotante
     private float obtenerNumero(Cell cell) {
         if (cell == null) return 0f;
+
         return switch (cell.getCellType()) {
             case NUMERIC -> (float) cell.getNumericCellValue();
             case STRING  -> {
-                try { yield Float.parseFloat(cell.getStringCellValue().trim()); }
-                catch (NumberFormatException e) { yield 0f; }
+                try {
+                    yield Float.parseFloat(cell.getStringCellValue().trim());
+                } catch (NumberFormatException e) {
+                    yield 0f;
+                }
             }
             default -> 0f;
         };
