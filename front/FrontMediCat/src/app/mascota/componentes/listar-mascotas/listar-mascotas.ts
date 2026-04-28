@@ -23,6 +23,7 @@ export class ListarMascotas implements OnInit {
   error = '';
   clienteId: number | null = null;
   esCliente = false;
+  esVeterinario = false;
   private todasMascotas: Mascota[] = [];
 
   constructor(
@@ -33,6 +34,7 @@ export class ListarMascotas implements OnInit {
 
   ngOnInit(): void {
     const sesion = this.authService.getSesion();
+    this.esVeterinario = sesion?.rol === 'VETERINARIO';
 
     if (sesion?.rol === 'CLIENTE') {
       this.clienteId = sesion.id;

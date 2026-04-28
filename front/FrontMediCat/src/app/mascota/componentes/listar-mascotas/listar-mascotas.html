@@ -3,9 +3,14 @@
 <div class="contenedor-listar">
   <header class="encabezado-seccion">
     <h1>Gestión de Mascotas</h1>
-    <button class="btn-primario" routerLink="/mascotas/nueva">
-      <span class="icono">+</span> Nueva Mascota
-    </button>
+    <div class="acciones-encabezado">
+      <button class="btn-primario" *ngIf="esVeterinario" routerLink="/clientes/nuevo">
+        <span class="icono">+</span> Nuevo Cliente
+      </button>
+      <button class="btn-primario" routerLink="/mascotas/nueva">
+        <span class="icono">+</span> Nueva Mascota
+      </button>
+    </div>
   </header>
 
   <div class="dashboard-cards">

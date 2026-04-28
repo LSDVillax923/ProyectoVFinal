@@ -30,6 +30,13 @@ body {
   color: #333;
 }
 
+.acciones-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+
 /* BOTÓN PRINCIPAL */
 .btn-primario {
   background: #0f6f6c;
