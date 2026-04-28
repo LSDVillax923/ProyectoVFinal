@@ -8,7 +8,7 @@ import { AuthService, SesionActiva } from '../../../user/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrl: './navbar.css',  // ← asegúrate que el archivo se llame exactamente navbar.css
 })
 export class Navbar {
   @Input() botones: any[] = [];

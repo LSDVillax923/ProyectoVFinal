@@ -181,6 +181,20 @@ body {
   font-weight: bold;
 }
 
+/* ====== LINK MASCOTA ====== */
+.db-link {
+  color: #07686d;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700; /* 600 → 700 para negrilla completa */
+  transition: color 0.2s;
+}
+
+.db-link:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
 /* ====== DIAGNOSTICO ====== */
 .diagnostico-cell {
   color: #374151;
