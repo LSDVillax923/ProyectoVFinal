@@ -81,16 +81,6 @@
         </div>
 
         <div class="form-group full-width">
-          <label for="veterinarioAsignado">Veterinario asignado</label>
-          <select id="veterinarioAsignado" name="veterinarioAsignado" [(ngModel)]="mascotaForm.veterinarioAsignado">
-            <option value="">Sin veterinario asignado</option>
-            <option *ngFor="let vet of veterinariosDisponibles" [value]="vet.nombre">
-              {{ vet.nombre }} — {{ vet.especialidad }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group full-width">
           <label for="observaciones">Observaciones</label>
           <textarea id="observaciones" name="observaciones" [(ngModel)]="mascotaForm.observaciones" rows="3" placeholder="Observaciones relevantes..."></textarea>
         </div>
