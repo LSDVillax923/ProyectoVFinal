@@ -41,7 +41,7 @@ import { NuevaCitaComponent } from './cita/componentes/nueva-cita/nueva-cita';
 import { VerCitaComponent } from './cita/componentes/ver-cita/ver-cita';
 import { EditarCitaComponent } from './cita/componentes/editar-cita/editar-cita';
 
-import { PerfilUsuarioComponent } from './user/componentes/perfil-usuario/perfil-usuario';
+
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'inicio' },
@@ -102,7 +102,7 @@ export const routes: Routes = [
   { path: 'citas/:id', component: VerCitaComponent },
   { path: 'citas/:id/editar', component: EditarCitaComponent },
 
-  { path: 'perfil', component: PerfilUsuarioComponent },
+  
 
   { path: '**', redirectTo: 'inicio' },
 ];
