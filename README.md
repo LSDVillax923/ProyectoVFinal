@@ -2,6 +2,7 @@
 
 Proyecto académico desarrollado para la materia **Desarrollo Web**.
 
+
 ## Descripción del Proyecto
 
 MediCat es una aplicación web diseñada para digitalizar la gestión de una clínica veterinaria especializada en hospitalización de perros y gatos.
@@ -35,6 +36,10 @@ El sistema cuenta con tres tipos de usuarios:
 * Visualiza detalles y tratamientos
 * No puede modificar información
 
+<img width="1156" height="799" alt="image" src="https://github.com/user-attachments/assets/bd0d660f-1444-411b-aa90-aeae282c035a" />
+<img width="1181" height="622" alt="image" src="https://github.com/user-attachments/assets/84e122fd-6be6-4af6-92b3-08e3f1208518" />
+
+
 ### Veterinario
 
 * Accede al portal veterinario
@@ -44,12 +49,23 @@ El sistema cuenta con tres tipos de usuarios:
 * Consultar historial médico
 * Visualizar mascotas tratadas
 
+<img width="1413" height="872" alt="image" src="https://github.com/user-attachments/assets/60373a8a-1e8e-4b18-8ad0-474941c5e369" />
+<img width="1398" height="810" alt="image" src="https://github.com/user-attachments/assets/5db7a5df-00d7-4f37-be57-1ec88d36229e" />
+<img width="1166" height="812" alt="image" src="https://github.com/user-attachments/assets/fc07dd0c-876f-4b4a-a98f-c9cd80c64e9c" />
+
+
+
 ### Administrador
 
 * Accede al portal administrador
 * CRUD de veterinarios
 * Visualiza dashboard con KPIs
 * Controla estados laborales (activo/inactivo)
+
+<img width="1479" height="566" alt="image" src="https://github.com/user-attachments/assets/2c552a80-5bc3-4cd5-8603-f428be9ca8b1" />
+<img width="1506" height="790" alt="image" src="https://github.com/user-attachments/assets/03e893dc-7ed6-428c-9a73-6496c1377e25" />
+<img width="1471" height="576" alt="image" src="https://github.com/user-attachments/assets/60db7aee-1a3e-47f7-b1aa-5db251f950be" />
+
 
 ## Arquitectura del Proyecto
 
