@@ -63,7 +63,7 @@
           <td>
             <div class="cliente-info">
               <div class="avatar">{{ t.mascota.charAt(0) }}</div>
-              <span>{{ t.mascota }}</span>
+              <a [routerLink]="['/mascotas', t.mascotaId]" class="db-link">{{ t.mascota }}</a>
             </div>
           </td>
           <td class="diagnostico-cell">{{ t.diagnostico }}</td>
