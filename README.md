@@ -4,18 +4,6 @@ Proyecto académico desarrollado para la materia **Desarrollo Web**.
 
 <img width="1919" height="866" alt="image" src="https://github.com/user-attachments/assets/72c811c2-9a74-4a83-bf8c-3161ae5bed58" />
 
-<img width="1900" height="775" alt="image" src="https://github.com/user-attachments/assets/0c065820-b97d-4e3d-b5f0-f38b28635d6c" />
-
-<img width="1899" height="748" alt="image" src="https://github.com/user-attachments/assets/ea670746-6dc8-44e3-9b72-524d797a7c42" />
-
-<img width="1898" height="460" alt="image" src="https://github.com/user-attachments/assets/0422a1c0-8e21-4f8a-83d5-4f38e638cef9" />
-
-<img width="809" height="758" alt="image" src="https://github.com/user-attachments/assets/a1d9aae9-1c38-4897-9581-d958ed69bfcd" />
-
-<img width="1899" height="494" alt="image" src="https://github.com/user-attachments/assets/2c64241e-3d2e-42e4-bcfd-144ba396214d" />
-
-<img width="1898" height="735" alt="image" src="https://github.com/user-attachments/assets/bb70a65d-8350-4d37-849a-a5f82633a520" />
-
 
 ## Descripción del Proyecto
 
@@ -93,6 +81,11 @@ El sistema está dividido en:
 * Frontend: SPA desarrollada en Angular
 * Backend: API REST
 * Base de datos: Modelo relacional
+
+##Diagrama de Entidad Relación
+
+<img width="1215" height="556" alt="image" src="https://github.com/user-attachments/assets/25fef992-1305-434e-adf2-5269eee01792" />
+
 
 ### Estructura del repositorio
 
