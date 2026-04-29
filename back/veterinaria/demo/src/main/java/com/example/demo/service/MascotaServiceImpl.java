@@ -196,6 +196,16 @@ public class MascotaServiceImpl implements MascotaService {
         }
     }
 
+    @Override
+    public long contar() {
+        return mascotaRepository.count();
+    }
+
+    @Override
+    public long contarPorEstado(Mascota.EstadoMascota estado) {
+        return mascotaRepository.countByEstado(estado);
+    }
+
     private void validarMascota(Mascota m) {
         if (m.getNombre() == null || m.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre es obligatorio");

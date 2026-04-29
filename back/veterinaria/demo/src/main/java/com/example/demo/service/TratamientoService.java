@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.example.demo.entities.Tratamiento;
@@ -32,4 +33,7 @@ public interface TratamientoService {
 
     /** Lista tratamientos programados */
     List<Tratamiento> findProgramados();
+
+    /** KPI dashboard: cuenta tratamientos cuya fecha cae en el rango (incluyente) */
+    long contarPorRango(LocalDate inicio, LocalDate fin);
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.MedicamentoCantidadDto;
 import com.example.demo.entities.Droga;
 import com.example.demo.service.DrogaService;
 
@@ -52,5 +53,21 @@ public class DrogaController {
     public ResponseEntity<Void> descontarUnidades(@PathVariable Long id, @RequestParam int cantidad) {
         drogaService.descontarUnidades(id, cantidad);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/ventas-totales")
+    public ResponseEntity<Double> ventasTotales() {
+        return ResponseEntity.ok(drogaService.ventasTotales());
+    }
+
+    @GetMapping("/ganancias-totales")
+    public ResponseEntity<Double> gananciasTotales() {
+        return ResponseEntity.ok(drogaService.gananciasTotales());
+    }
+
+    @GetMapping("/top-mas-vendidos")
+    public ResponseEntity<List<MedicamentoCantidadDto>> topMasVendidos(
+            @RequestParam(defaultValue = "3") int limite) {
+        return ResponseEntity.ok(drogaService.topMasVendidos(limite));
     }
 }

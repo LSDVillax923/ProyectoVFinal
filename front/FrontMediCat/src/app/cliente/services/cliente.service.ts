@@ -54,4 +54,8 @@ getAll(): Observable<Cliente[]> {
   override delete(id: number): Observable<void> {
     return super.delete(id);
   }
+
+  count(): Observable<number> {
+    return this.http.get<number>(ENDPOINTS.CLIENTES_COUNT);
+  }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.CitaResumenDto;
 import com.example.demo.entities.Cita;
 import com.example.demo.service.CitaService;
 
@@ -74,5 +75,20 @@ public class CitaController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         citaService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin) {
+        return ResponseEntity.ok(citaService.contarPorRango(inicio, fin));
+    }
+
+    @GetMapping("/proximas")
+    public ResponseEntity<List<CitaResumenDto>> proximas(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin,
+            @RequestParam(defaultValue = "5") int limite) {
+        return ResponseEntity.ok(citaService.proximasEnRango(inicio, fin, limite));
     }
 }

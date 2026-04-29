@@ -20,4 +20,7 @@ public interface VeterinarioRepository extends JpaRepository<Veterinario, Long> 
     boolean existsByCedula(String cedula);
 
     List<Veterinario> findByEstado(String estado);
+
+    // KPI dashboard: cuenta veterinarios por estado ("activo" / "inactivo")
+    long countByEstadoIgnoreCase(String estado);
 }

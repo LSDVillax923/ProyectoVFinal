@@ -13,4 +13,7 @@ public interface VeterinarioService {
     void delete(Long id);
     Veterinario login(String correo, String contrasenia);
     void incrementarAtenciones(Long id);
+
+    /** KPI dashboard: cuenta veterinarios por estado ("activo" / "inactivo") */
+    long contarPorEstado(String estado);
 }

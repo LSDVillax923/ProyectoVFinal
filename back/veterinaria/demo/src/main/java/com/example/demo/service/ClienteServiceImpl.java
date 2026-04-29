@@ -79,6 +79,12 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteRepository.buscarPorFiltros(query);
     }
 
+    /** KPI dashboard: total de clientes registrados */
+    @Override
+    public long contar() {
+        return clienteRepository.count();
+    }
+
     /** Validaciones básicas del cliente */
     private void validarCliente(Cliente cliente) {
         if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {

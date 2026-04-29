@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseCrudRestService } from '../../shared/api/base-crud-rest.service';
-import { Tratamiento, TratamientoRequest } from '../../shared/api/backend-contracts';
+import { MedicamentoCantidad, Tratamiento, TratamientoRequest } from '../../shared/api/backend-contracts';
 import { ENDPOINTS } from '../../shared/api/rest-endpoints';
 
 @Injectable({ providedIn: 'root' })
@@ -61,5 +61,18 @@ export class TratamientoRestService extends BaseCrudRestService<Tratamiento, Tra
 
   override delete(id: number): Observable<void> {
     return super.delete(id);
+  }
+
+  count(inicio: string, fin: string): Observable<number> {
+    const params = new HttpParams().set('inicio', inicio).set('fin', fin);
+    return this.http.get<number>(ENDPOINTS.TRATAMIENTOS_COUNT, { params });
+  }
+
+  medicamentosVendidos(inicio: string, fin: string): Observable<MedicamentoCantidad[]> {
+    const params = new HttpParams().set('inicio', inicio).set('fin', fin);
+    return this.http.get<MedicamentoCantidad[]>(
+      ENDPOINTS.TRATAMIENTO_DROGAS_MEDICAMENTOS_VENDIDOS,
+      { params },
+    );
   }
 }

@@ -43,4 +43,10 @@ public interface MascotaService {
 
     /** Sube foto de la mascota */
     Mascota subirFoto(Long id, MultipartFile archivo);
+
+    /** KPI dashboard: total de mascotas registradas */
+    long contar();
+
+    /** KPI dashboard: total de mascotas en un estado dado */
+    long contarPorEstado(Mascota.EstadoMascota estado);
 }

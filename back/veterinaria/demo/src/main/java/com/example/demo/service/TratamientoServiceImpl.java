@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,6 +87,11 @@ public class TratamientoServiceImpl implements TratamientoService {
     @Override
     public List<Tratamiento> findProgramados() {
         return tratamientoRepository.findTratamientosProgramados();
+    }
+
+    @Override
+    public long contarPorRango(LocalDate inicio, LocalDate fin) {
+        return tratamientoRepository.countByFechaBetween(inicio, fin);
     }
 
     private void validarTratamiento(Tratamiento t) {

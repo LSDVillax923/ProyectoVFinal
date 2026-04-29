@@ -26,4 +26,7 @@ public interface MascotaRepository extends JpaRepository<Mascota, Long> {
            "LOWER(m.cliente.apellido) LIKE LOWER(CONCAT('%', :query, '%'))) AND " +
            "(:estado IS NULL OR LOWER(m.estado) = LOWER(:estado))")
     List<Mascota> buscarPorFiltros(@Param("query") String query, @Param("estado") String estado);
+
+    // KPI dashboard: cuenta mascotas por estado (TRATAMIENTO, ACTIVA, INACTIVA)
+    long countByEstado(Mascota.EstadoMascota estado);
 }

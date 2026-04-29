@@ -44,4 +44,9 @@ export class VeterinarioRestService extends BaseCrudRestService<Veterinario, Vet
   override delete(id: number): Observable<void> {
     return super.delete(id);
   }
+
+  count(estado: 'activo' | 'inactivo'): Observable<number> {
+    const params = new HttpParams().set('estado', estado);
+    return this.http.get<number>(ENDPOINTS.VETERINARIOS_COUNT, { params });
+  }
 }

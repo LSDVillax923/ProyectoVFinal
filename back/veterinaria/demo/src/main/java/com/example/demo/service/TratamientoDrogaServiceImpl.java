@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.demo.dto.MedicamentoCantidadDto;
 import com.example.demo.entities.Droga;
 import com.example.demo.entities.Tratamiento;
 import com.example.demo.entities.TratamientoDroga;
@@ -60,5 +62,10 @@ public class TratamientoDrogaServiceImpl implements TratamientoDrogaService {
         TratamientoDroga td = findById(id);
         // Si se desea devolver stock, se podría implementar
         tdRepository.delete(td);
+    }
+
+    @Override
+    public List<MedicamentoCantidadDto> medicamentosEntre(LocalDate inicio, LocalDate fin) {
+        return tdRepository.sumarMedicamentosEntre(inicio, fin);
     }
 }

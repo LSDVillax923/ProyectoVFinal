@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseCrudRestService } from '../../shared/api/base-crud-rest.service';
-import { Cita, CitaRequest, CitaFiltros } from '../../shared/api/backend-contracts';
+import { Cita, CitaRequest, CitaFiltros, CitaResumen } from '../../shared/api/backend-contracts';
 import { ENDPOINTS } from '../../shared/api/rest-endpoints';
 
 @Injectable({ providedIn: 'root' })
@@ -57,5 +57,18 @@ export class CitaRestService extends BaseCrudRestService<Cita, CitaRequest> {
 
   override findById(id: number): Observable<Cita> {
     return super.findById(id);
+  }
+
+  count(inicio: string, fin: string): Observable<number> {
+    const params = new HttpParams().set('inicio', inicio).set('fin', fin);
+    return this.http.get<number>(ENDPOINTS.CITAS_COUNT, { params });
+  }
+
+  proximas(inicio: string, fin: string, limite = 5): Observable<CitaResumen[]> {
+    const params = new HttpParams()
+      .set('inicio', inicio)
+      .set('fin', fin)
+      .set('limite', limite.toString());
+    return this.http.get<CitaResumen[]>(ENDPOINTS.CITAS_PROXIMAS, { params });
   }
 }

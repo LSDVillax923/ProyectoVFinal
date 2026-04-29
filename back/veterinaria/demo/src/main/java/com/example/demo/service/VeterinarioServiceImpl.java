@@ -96,6 +96,11 @@ public class VeterinarioServiceImpl implements VeterinarioService {
         veterinarioRepository.save(vet);
     }
 
+    @Override
+    public long contarPorEstado(String estado) {
+        return veterinarioRepository.countByEstadoIgnoreCase(estado);
+    }
+
     private void validarVeterinario(Veterinario v) {
         if (v.getNombre() == null || v.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre es obligatorio");

@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.demo.dto.CitaResumenDto;
 import com.example.demo.entities.Cliente;
 import com.example.demo.entities.Mascota;
 import com.example.demo.entities.Veterinario;
@@ -18,6 +20,8 @@ import com.example.demo.repository.CitaRepository;
 @Service
 @Transactional
 public class CitaServiceImpl implements CitaService {
+
+    private static final DateTimeFormatter HORA_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
     @Autowired
     private CitaRepository citaRepository;
@@ -149,5 +153,40 @@ public class CitaServiceImpl implements CitaService {
         return citaRepository.findAll().stream()
                 .filter(c -> !c.getFechaFin().isBefore(inicio) && !c.getFechaInicio().isAfter(fin))
                 .toList();
+    }
+
+    @Override
+    public long contarPorRango(LocalDateTime inicio, LocalDateTime fin) {
+        return citaRepository.countByFechaInicioBetween(inicio, fin);
+    }
+
+    @Override
+    public List<CitaResumenDto> proximasEnRango(LocalDateTime inicio, LocalDateTime fin, int limite) {
+        int n = limite > 0 ? limite : 5;
+        List<Cita.EstadoCita> estados = List.of(Cita.EstadoCita.PENDIENTE, Cita.EstadoCita.CONFIRMADA);
+        return citaRepository
+                .findByFechaInicioBetweenAndEstadoInOrderByFechaInicioAsc(inicio, fin, estados)
+                .stream()
+                .limit(n)
+                .map(this::toResumen)
+                .toList();
+    }
+
+    private CitaResumenDto toResumen(Cita cita) {
+        Mascota mascota = cita.getMascota();
+        Cliente cliente = cita.getCliente();
+        String hora = cita.getFechaInicio() != null
+                ? cita.getFechaInicio().format(HORA_FORMATTER)
+                : "";
+        String nombreMascota = mascota != null ? mascota.getNombre() : "Sin mascota";
+        String duenio = cliente != null
+                ? (safe(cliente.getNombre()) + " " + safe(cliente.getApellido())).trim()
+                : "";
+        String estado = cita.getEstado() != null ? cita.getEstado().name() : "";
+        return new CitaResumenDto(hora, nombreMascota, duenio, cita.getMotivo(), estado);
+    }
+
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import com.example.demo.dto.CitaResumenDto;
 import com.example.demo.entities.Cita;
 
 public interface CitaService {
@@ -15,4 +16,10 @@ public interface CitaService {
     void cancelar(Long id);
     void delete(Long id);
     List<Cita> findCitasEnRango(LocalDateTime inicio, LocalDateTime fin);
+
+    /** KPI dashboard: cuenta citas en un rango (típicamente día actual) */
+    long contarPorRango(LocalDateTime inicio, LocalDateTime fin);
+
+    /** KPI dashboard: próximas citas (PENDIENTE/CONFIRMADA) del rango, máximo {@code limite} */
+    List<CitaResumenDto> proximasEnRango(LocalDateTime inicio, LocalDateTime fin, int limite);
 }

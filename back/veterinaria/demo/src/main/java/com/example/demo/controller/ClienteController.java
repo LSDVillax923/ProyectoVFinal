@@ -66,4 +66,9 @@ public class ClienteController {
     public ResponseEntity<List<Mascota>> getMascotasByCliente(@PathVariable Long id) {
         return ResponseEntity.ok(mascotaService.findByClienteId(id));
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(clienteService.contar());
+    }
 }

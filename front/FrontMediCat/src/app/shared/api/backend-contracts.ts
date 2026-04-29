@@ -207,7 +207,7 @@ export interface ValidationErrorResponse extends ErrorResponse {
 }
 
 // ============================================
-// DASHBOARD
+// DTOs DE AGREGACIÓN (compartidos por varios endpoints)
 // ============================================
 export interface MedicamentoCantidad {
   nombre: string;
@@ -220,21 +220,6 @@ export interface CitaResumen {
   duenio: string;
   tipo: string;
   estado: 'PENDIENTE' | 'CONFIRMADA' | 'REALIZADA' | 'CANCELADA';
-}
-
-export interface DashboardMetricas {
-  totalClientes: number;
-  totalMascotas: number;
-  mascotasEnTratamiento: number;
-  veterinariosActivos: number;
-  veterinariosInactivos: number;
-  tratamientosUltimoMes: number;
-  citasHoy: number;
-  ventasTotales: number;
-  gananciasTotales: number;
-  topMedicamentos: MedicamentoCantidad[];
-  medicamentosUltimoMes: MedicamentoCantidad[];
-  citasProximas: CitaResumen[];
 }
 
 // ============================================

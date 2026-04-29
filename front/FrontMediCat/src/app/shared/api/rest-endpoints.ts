@@ -22,22 +22,28 @@ export const ENDPOINTS = {
   CLIENTES: `${API_BASE_URL}/clientes`,
   CLIENTES_LOGIN: `${API_BASE_URL}/clientes/login`,
   CLIENTES_MASCOTAS: (id: number) => `${API_BASE_URL}/clientes/${id}/mascotas`,
+  CLIENTES_COUNT: `${API_BASE_URL}/clientes/count`,
 
   // Veterinario
   VETERINARIOS: `${API_BASE_URL}/veterinarios`,
   VETERINARIOS_LOGIN: `${API_BASE_URL}/veterinarios/login`,
   VETERINARIOS_ESTADO: (id: number) => `${API_BASE_URL}/veterinarios/${id}/estado`,
+  VETERINARIOS_COUNT: `${API_BASE_URL}/veterinarios/count`,
 
   // Mascota
   MASCOTAS: `${API_BASE_URL}/mascotas`,
   MASCOTAS_DEACTIVATE: (id: number) => `${API_BASE_URL}/mascotas/${id}/deactivate`,
   MASCOTAS_BY_CLIENTE: (clienteId: number) => `${API_BASE_URL}/mascotas/cliente/${clienteId}`,
   MASCOTAS_FOTO: (id: number) => `${API_BASE_URL}/mascotas/${id}/foto`,
+  MASCOTAS_COUNT: `${API_BASE_URL}/mascotas/count`,
 
   // Droga
   DROGAS: `${API_BASE_URL}/drogas`,
   DROGAS_DISPONIBLES: `${API_BASE_URL}/drogas?disponibles=true`,
   DROGAS_DESCONTAR: (id: number) => `${API_BASE_URL}/drogas/${id}/descontar`,
+  DROGAS_VENTAS_TOTALES: `${API_BASE_URL}/drogas/ventas-totales`,
+  DROGAS_GANANCIAS_TOTALES: `${API_BASE_URL}/drogas/ganancias-totales`,
+  DROGAS_TOP_MAS_VENDIDOS: `${API_BASE_URL}/drogas/top-mas-vendidos`,
 
   // Tratamiento
   TRATAMIENTOS: `${API_BASE_URL}/tratamientos`,
@@ -45,13 +51,12 @@ export const ENDPOINTS = {
   TRATAMIENTOS_BY_MASCOTA: (mascotaId: number) => `${API_BASE_URL}/tratamientos/mascota/${mascotaId}`,
   TRATAMIENTOS_BY_VETERINARIO: (veterinarioId: number) => `${API_BASE_URL}/tratamientos/veterinario/${veterinarioId}`,
   TRATAMIENTOS_BY_CLIENTE: (clienteId: number) => `${API_BASE_URL}/tratamientos/cliente/${clienteId}`,
+  TRATAMIENTOS_COUNT: `${API_BASE_URL}/tratamientos/count`,
 
   // TratamientoDroga
   TRATAMIENTO_DROGAS: `${API_BASE_URL}/tratamiento-drogas`,
   TRATAMIENTO_DROGAS_BY_TRATAMIENTO: (tratamientoId: number) => `${API_BASE_URL}/tratamiento-drogas/tratamiento/${tratamientoId}`,
-
-  // Dashboard
-  DASHBOARD_METRICAS: `${API_BASE_URL}/dashboard/metricas`,
+  TRATAMIENTO_DROGAS_MEDICAMENTOS_VENDIDOS: `${API_BASE_URL}/tratamiento-drogas/medicamentos-vendidos`,
 
   // Cita
   CITAS: `${API_BASE_URL}/citas`,
@@ -59,4 +64,6 @@ export const ENDPOINTS = {
   CITAS_BY_MASCOTA: (mascotaId: number) => `${API_BASE_URL}/citas/mascota/${mascotaId}`,
   CITAS_BY_CLIENTE: (clienteId: number) => `${API_BASE_URL}/citas/cliente/${clienteId}`,
   CITAS_CANCELAR: (id: number) => `${API_BASE_URL}/citas/${id}/cancelar`,
+  CITAS_COUNT: `${API_BASE_URL}/citas/count`,
+  CITAS_PROXIMAS: `${API_BASE_URL}/citas/proximas`,
 };

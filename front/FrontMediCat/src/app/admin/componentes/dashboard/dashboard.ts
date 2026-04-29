@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { AuthRestService, SesionActiva } from '../../../user/services/auth-rest.service';
-import { DashboardRestService } from '../../services/dashboard-rest.service';
-import {
-  CitaResumen,
-  DashboardMetricas,
-  MedicamentoCantidad,
-} from '../../../shared/api/backend-contracts';
+import { ClienteRestService } from '../../../cliente/services/cliente.service';
+import { MascotaRestService } from '../../../mascota/services/mascota.service';
+import { VeterinarioRestService } from '../../../veterinario/services/veterinario-rest.service';
+import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
+import { DrogaRestService } from '../../../droga/services/droga.service';
+import { CitaRestService } from '../../../cita/services/cita-rest.service';
+import { CitaResumen, MedicamentoCantidad } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import {
   formatearMoneda,
@@ -46,7 +48,12 @@ interface AccesoRapido {
 })
 export class Dashboard implements OnInit {
   private readonly authService = inject(AuthRestService);
-  private readonly dashboardService = inject(DashboardRestService);
+  private readonly clienteService = inject(ClienteRestService);
+  private readonly mascotaService = inject(MascotaRestService);
+  private readonly veterinarioService = inject(VeterinarioRestService);
+  private readonly tratamientoService = inject(TratamientoRestService);
+  private readonly drogaService = inject(DrogaRestService);
+  private readonly citaService = inject(CitaRestService);
   private readonly router = inject(Router);
 
   sesion: SesionActiva | null = this.authService.getSesion();
@@ -114,20 +121,39 @@ export class Dashboard implements OnInit {
     this.loadingMetricas = true;
     this.errorMetricas = '';
 
-    this.dashboardService.obtenerMetricas().subscribe({
-      next: (m: DashboardMetricas) => {
-        this.totalClientes = m.totalClientes;
-        this.totalMascotas = m.totalMascotas;
-        this.mascotasEnTratamiento = m.mascotasEnTratamiento;
-        this.veterinariosActivos = m.veterinariosActivos;
-        this.veterinariosInactivos = m.veterinariosInactivos;
-        this.tratamientosUltimoMes = m.tratamientosUltimoMes;
-        this.citasHoy = m.citasHoy;
-        this.ventasTotales = m.ventasTotales;
-        this.gananciasTotales = m.gananciasTotales;
-        this.topMedicamentos = m.topMedicamentos;
-        this.medicamentosUltimoMes = m.medicamentosUltimoMes;
-        this.citasProximas = m.citasProximas.map((c: CitaResumen) => ({
+    const hoy = new Date();
+    const inicioDia = this.inicioDelDia(hoy);
+    const finDia = this.finDelDia(hoy);
+    const haceUnMes = this.fechaIso(this.restarMeses(hoy, 1));
+    const hoyIso = this.fechaIso(hoy);
+
+    forkJoin({
+      totalClientes: this.clienteService.count(),
+      totalMascotas: this.mascotaService.count(),
+      mascotasEnTratamiento: this.mascotaService.count('TRATAMIENTO'),
+      veterinariosActivos: this.veterinarioService.count('activo'),
+      veterinariosInactivos: this.veterinarioService.count('inactivo'),
+      tratamientosUltimoMes: this.tratamientoService.count(haceUnMes, hoyIso),
+      medicamentosUltimoMes: this.tratamientoService.medicamentosVendidos(haceUnMes, hoyIso),
+      ventasTotales: this.drogaService.ventasTotales(),
+      gananciasTotales: this.drogaService.gananciasTotales(),
+      topMedicamentos: this.drogaService.topMasVendidos(3),
+      citasHoy: this.citaService.count(inicioDia, finDia),
+      citasProximas: this.citaService.proximas(inicioDia, finDia, 5),
+    }).subscribe({
+      next: (res) => {
+        this.totalClientes = res.totalClientes;
+        this.totalMascotas = res.totalMascotas;
+        this.mascotasEnTratamiento = res.mascotasEnTratamiento;
+        this.veterinariosActivos = res.veterinariosActivos;
+        this.veterinariosInactivos = res.veterinariosInactivos;
+        this.tratamientosUltimoMes = res.tratamientosUltimoMes;
+        this.medicamentosUltimoMes = res.medicamentosUltimoMes;
+        this.ventasTotales = res.ventasTotales;
+        this.gananciasTotales = res.gananciasTotales;
+        this.topMedicamentos = res.topMedicamentos;
+        this.citasHoy = res.citasHoy;
+        this.citasProximas = res.citasProximas.map((c: CitaResumen) => ({
           hora: c.hora,
           mascota: c.mascota,
           duenio: c.duenio,
@@ -188,5 +214,33 @@ export class Dashboard implements OnInit {
 
   get tieneActividad(): boolean {
     return this.actividad.length > 0;
+  }
+
+  // ─── Helpers de fechas ────────────────────────────────────────────────
+  private fechaIso(d: Date): string {
+    return d.toISOString().split('T')[0];
+  }
+
+  private inicioDelDia(d: Date): string {
+    const fecha = new Date(d);
+    fecha.setHours(0, 0, 0, 0);
+    return this.toLocalDateTimeIso(fecha);
+  }
+
+  private finDelDia(d: Date): string {
+    const fecha = new Date(d);
+    fecha.setHours(23, 59, 59, 999);
+    return this.toLocalDateTimeIso(fecha);
+  }
+
+  private toLocalDateTimeIso(fecha: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())}T${pad(fecha.getHours())}:${pad(fecha.getMinutes())}:${pad(fecha.getSeconds())}`;
+  }
+
+  private restarMeses(d: Date, meses: number): Date {
+    const fecha = new Date(d);
+    fecha.setMonth(fecha.getMonth() - meses);
+    return fecha;
   }
 }

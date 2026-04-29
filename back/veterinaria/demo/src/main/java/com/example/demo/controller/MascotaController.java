@@ -73,4 +73,12 @@ public class MascotaController {
                                              @RequestParam("archivo") MultipartFile archivo) {
         return ResponseEntity.ok(mascotaService.subirFoto(id, archivo));
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count(@RequestParam(required = false) Mascota.EstadoMascota estado) {
+        long total = (estado == null)
+                ? mascotaService.contar()
+                : mascotaService.contarPorEstado(estado);
+        return ResponseEntity.ok(total);
+    }
 }

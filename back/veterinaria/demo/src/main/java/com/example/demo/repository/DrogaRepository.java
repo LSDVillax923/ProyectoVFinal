@@ -30,4 +30,16 @@ public interface DrogaRepository extends JpaRepository<Droga, Long> {
               AND d.unidadesDisponibles >= :cantidad
             """)
     int descontarStockSiDisponible(@Param("id") Long id, @Param("cantidad") int cantidad);
+
+    // KPI dashboard: ventas totales acumuladas (precioVenta * unidadesVendidas)
+    @Query("SELECT COALESCE(SUM(d.precioVenta * d.unidadesVendidas), 0) FROM Droga d")
+    double sumarVentasTotales();
+
+    // KPI dashboard: ganancias totales ((precioVenta - precioCompra) * unidadesVendidas)
+    @Query("SELECT COALESCE(SUM((d.precioVenta - d.precioCompra) * d.unidadesVendidas), 0) FROM Droga d")
+    double sumarGananciasTotales();
+
+    // KPI dashboard: top medicamentos más vendidos (orden desc por unidadesVendidas)
+    List<Droga> findByUnidadesVendidasGreaterThanOrderByUnidadesVendidasDesc(
+            int cantidad, org.springframework.data.domain.Pageable pageable);
 }

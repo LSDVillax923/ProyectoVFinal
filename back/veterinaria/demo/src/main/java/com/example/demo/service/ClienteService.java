@@ -29,4 +29,7 @@ public interface ClienteService {
 
     /** Busca clientes por filtros */
     List<Cliente> buscarPorFiltros(String query);
+
+    /** KPI dashboard: total de clientes registrados */
+    long contar();
 }

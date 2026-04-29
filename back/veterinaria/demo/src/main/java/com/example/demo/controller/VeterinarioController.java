@@ -62,4 +62,9 @@ public class VeterinarioController {
         }
         return ResponseEntity.ok(vet);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count(@RequestParam String estado) {
+        return ResponseEntity.ok(veterinarioService.contarPorEstado(estado));
+    }
 }

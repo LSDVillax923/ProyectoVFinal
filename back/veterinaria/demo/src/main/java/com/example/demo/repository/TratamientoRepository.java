@@ -38,4 +38,7 @@ public interface TratamientoRepository extends JpaRepository<Tratamiento, Long> 
     @EntityGraph(attributePaths = {"mascota", "mascota.cliente", "veterinario", "drogas", "drogas.droga"})
     @Query("SELECT t FROM Tratamiento t WHERE t.fecha >= CURRENT_DATE ORDER BY t.fecha ASC")
     List<Tratamiento> findTratamientosProgramados();
+
+    // KPI dashboard: cuenta tratamientos en un rango de fechas
+    long countByFechaBetween(LocalDate inicio, LocalDate fin);
 }

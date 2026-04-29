@@ -3,9 +3,11 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.MedicamentoCantidadDto;
 import com.example.demo.entities.Droga;
 import com.example.demo.errors.DrogaException;
 import com.example.demo.repository.DrogaRepository;
@@ -75,6 +77,29 @@ public class DrogaServiceImpl implements DrogaService {
             Droga droga = findById(id);
             throw new IllegalArgumentException("Stock insuficiente para " + droga.getNombre());
         }
+    }
+
+    /** KPI dashboard: ventas totales acumuladas */
+    @Override
+    public double ventasTotales() {
+        return drogaRepository.sumarVentasTotales();
+    }
+
+    /** KPI dashboard: ganancias totales acumuladas */
+    @Override
+    public double gananciasTotales() {
+        return drogaRepository.sumarGananciasTotales();
+    }
+
+    /** KPI dashboard: top medicamentos más vendidos */
+    @Override
+    public List<MedicamentoCantidadDto> topMasVendidos(int limite) {
+        int n = limite > 0 ? limite : 3;
+        return drogaRepository
+                .findByUnidadesVendidasGreaterThanOrderByUnidadesVendidasDesc(0, PageRequest.of(0, n))
+                .stream()
+                .map(d -> new MedicamentoCantidadDto(d.getNombre(), d.getUnidadesVendidas()))
+                .toList();
     }
 
     /** Validaciones básicas */

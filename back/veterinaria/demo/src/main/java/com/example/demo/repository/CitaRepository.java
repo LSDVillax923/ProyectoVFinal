@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,13 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
     List<Cita> findCitasSolapadas(@Param("vetId") Long vetId,
                                   @Param("inicio") LocalDateTime inicio,
                                   @Param("fin") LocalDateTime fin);
+
+    // KPI dashboard: cuenta citas dentro de un rango (ej. citas de hoy)
+    long countByFechaInicioBetween(LocalDateTime inicio, LocalDateTime fin);
+
+    // KPI dashboard: próximas citas en un rango con estados específicos, ordenadas asc
+    List<Cita> findByFechaInicioBetweenAndEstadoInOrderByFechaInicioAsc(
+            LocalDateTime inicio,
+            LocalDateTime fin,
+            Collection<Cita.EstadoCita> estados);
 }

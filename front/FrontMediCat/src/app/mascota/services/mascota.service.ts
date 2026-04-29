@@ -62,4 +62,12 @@ export class MascotaRestService extends BaseCrudRestService<Mascota, MascotaRequ
   override delete(id: number): Observable<void> {
     return super.delete(id);
   }
+
+  count(estado?: 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA'): Observable<number> {
+    let params = new HttpParams();
+    if (estado) {
+      params = params.set('estado', estado);
+    }
+    return this.http.get<number>(ENDPOINTS.MASCOTAS_COUNT, { params });
+  }
 }
