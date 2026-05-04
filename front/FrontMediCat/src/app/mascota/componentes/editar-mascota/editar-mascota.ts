@@ -3,8 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MascotaRestService } from '../../services/mascota.service';
-import { VeterinarioService } from '../../../veterinario/services/veterinario.service';
-import { Veterinario } from '../../../veterinario/veterinario';
 import { Mascota } from '../../mascota';
 import { MascotaRequest } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
@@ -30,11 +28,9 @@ export class EditarMascota implements OnInit {
     estado: 'ACTIVA',
     enfermedad: '',
     observaciones: '',
-    veterinarioAsignado: '',
     clienteId: 0,
   };
 
-  veterinariosDisponibles: Veterinario[] = [];
   mensaje = '';
   error = '';
   noEncontrada = false;
@@ -51,7 +47,6 @@ export class EditarMascota implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly mascotaService: MascotaRestService,
-    private readonly veterinarioService: VeterinarioService,
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +66,6 @@ export class EditarMascota implements OnInit {
           enfermedad: encontrada.enfermedad,
           observaciones: encontrada.observaciones,
           foto: encontrada.foto,
-          veterinarioAsignado: encontrada.veterinarioAsignado ?? '',
           clienteId: encontrada.cliente?.id ?? 0,
         };
       },
@@ -80,7 +74,6 @@ export class EditarMascota implements OnInit {
         this.error = 'No se encontró la mascota solicitada.';
       },
     });
-    this.veterinariosDisponibles = this.veterinarioService.getActivos();
   }
 
   get fotoActualUrl(): string {
@@ -143,7 +136,6 @@ export class EditarMascota implements OnInit {
       enfermedad: this.mascota.enfermedad,
       observaciones: this.mascota.observaciones,
       foto: this.mascota.foto,
-      veterinarioAsignado: this.mascota.veterinarioAsignado,
     };
 
     this.mascotaService.update(this.mascotaId, request).subscribe({

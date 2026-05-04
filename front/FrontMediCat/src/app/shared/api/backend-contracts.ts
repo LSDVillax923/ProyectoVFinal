@@ -79,7 +79,6 @@ export interface Mascota {
   observaciones: string;
   foto: string;
   estado: 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA';
-  veterinarioAsignado?: string;
   cliente: Cliente | null;
 }
 
@@ -95,7 +94,6 @@ export interface MascotaRequest {
   observaciones?: string;
   foto?: string;
   estado?: 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA';
-  veterinarioAsignado?: string;
 }
 
 // ============================================

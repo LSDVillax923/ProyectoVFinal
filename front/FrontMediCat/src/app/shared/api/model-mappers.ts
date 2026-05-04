@@ -20,7 +20,6 @@ export function mascotaToRequest(mascota: BackendMascota): MascotaRequest {
     observaciones: mascota.observaciones,
     foto: mascota.foto,
     estado: mascota.estado,
-    veterinarioAsignado: mascota.veterinarioAsignado
   };
 }
 
@@ -565,7 +564,6 @@ export const MascotaMapper = {
       propietario: dto.cliente
         ? `${dto.cliente.nombre} ${dto.cliente.apellido}`.trim()
         : '',
-      veterinarioAsignado: dto.veterinarioAsignado,
     };
   },
 };

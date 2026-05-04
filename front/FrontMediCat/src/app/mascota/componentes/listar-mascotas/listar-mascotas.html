@@ -95,7 +95,16 @@
             <button class="btn-icono" [routerLink]="['/mascotas', mascota.id]" title="Ver detalles">👁</button>
             <button class="btn-icono" [routerLink]="['/mascotas', mascota.id, 'editar']" title="Editar">✎</button>
             <button class="btn-icono" [routerLink]="['/tratamientos/nuevo']" [queryParams]="{ mascotaId: mascota.id }" title="Nuevo tratamiento">+</button>
-            <button type="button" class="btn-eliminar" (click)="desactivarMascota(mascota)" title="Desactivar" *ngIf="mascota.estado !== 'INACTIVA'">
+            <button
+              type="button"
+              class="btn-icono"
+              [ngClass]="mascota.estado === 'INACTIVA' ? 'btn-icono--success' : 'btn-icono--warn'"
+              (click)="toggleEstadoMascota(mascota)"
+              [title]="mascota.estado === 'INACTIVA' ? 'Reactivar' : 'Desactivar'">
+              {{ mascota.estado === 'INACTIVA' ? '↻' : '⊘' }}
+            </button>
+            <button type="button" class="btn-icono btn-icono--danger" (click)="eliminarMascotaPermanente(mascota)" title="Eliminar permanente">
+              🗑
             </button>
           </td>
         </tr>

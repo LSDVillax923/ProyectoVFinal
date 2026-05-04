@@ -60,12 +60,12 @@ export const routes: Routes = [
   // ── Admin ────────────────────────────────────────────
   { path: 'dashboard',               component: Dashboard,          canActivate: [authGuard, adminGuard] },
 
-  // Clientes — admin y veterinario (crear), admin (gestión completa)
+  // Clientes — CRUD completo para admin y veterinario
   { path: 'clientes',                component: ListarCliente,      canActivate: [authGuard, veterinarioGuard] },
   { path: 'clientes/nuevo',          component: NuevoCliente,       canActivate: [authGuard, veterinarioGuard] },
-  { path: 'clientes/:id',            component: VerCliente,         canActivate: [authGuard, adminGuard] },
-  { path: 'clientes/:id/editar',     component: EditarCliente,      canActivate: [authGuard, adminGuard] },
-  { path: 'clientes/:id/mismascotas',component: ListarMascotas,     canActivate: [authGuard, adminGuard] },
+  { path: 'clientes/:id',            component: VerCliente,         canActivate: [authGuard, veterinarioGuard] },
+  { path: 'clientes/:id/mismascotas',component: ListarMascotas,     canActivate: [authGuard, veterinarioGuard] },
+  { path: 'clientes/:id/editar',     component: EditarCliente,      canActivate: [authGuard, veterinarioGuard] },
 
   // Veterinarios — solo admin
   { path: 'veterinarios',            component: ListarVeterinarios, canActivate: [authGuard, adminGuard] },

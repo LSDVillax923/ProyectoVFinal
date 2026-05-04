@@ -2,11 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Cliente, MascotaRequest, Veterinario } from '../../../shared/api/backend-contracts';
+import { Cliente, MascotaRequest } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { ClienteRestService } from '../../../cliente/services/cliente.service';
 import { MascotaRestService } from '../../services/mascota.service';
-import { VeterinarioRestService } from '../../../veterinario/services/veterinario-rest.service';
 import { AuthRestService } from '../../../user/services/auth-rest.service';
 
 interface NuevaMascotaForm {
@@ -20,7 +19,6 @@ interface NuevaMascotaForm {
   estado: string;
   clienteId: number | null;
   enfermedad: string;
-  veterinarioAsignado: string;
   observaciones: string;
 }
 
@@ -33,7 +31,6 @@ interface NuevaMascotaForm {
 })
 export class NuevaMascota implements OnInit {
   clientes: Cliente[] = [];
-  veterinariosDisponibles: Veterinario[] = [];
   mascotaForm: NuevaMascotaForm = this.formInicial();
   mascotaRegistrada = '';
   error = '';
@@ -49,7 +46,6 @@ export class NuevaMascota implements OnInit {
   constructor(
     private readonly mascotaService: MascotaRestService,
     private readonly clienteService: ClienteRestService,
-    private readonly veterinarioService: VeterinarioRestService,
     private readonly authService: AuthRestService,
   ) {}
 
@@ -67,10 +63,6 @@ export class NuevaMascota implements OnInit {
         error: () => {},
       });
     }
-    this.veterinarioService.findAll({ estado: 'activo' }).subscribe({
-      next: (v) => this.veterinariosDisponibles = v,
-      error: () => {},
-    });
   }
 
   onFotoSeleccionada(event: Event): void {
@@ -107,7 +99,7 @@ export class NuevaMascota implements OnInit {
   }
 
   registrarMascota(): void {
-    const { clienteId, nombre, especie, raza, sexo, fechaNacimiento, edad, peso, estado, enfermedad, veterinarioAsignado, observaciones } = this.mascotaForm;
+    const { clienteId, nombre, especie, raza, sexo, fechaNacimiento, edad, peso, estado, enfermedad, observaciones } = this.mascotaForm;
 
     if (!clienteId || !nombre || !especie || !raza || !estado) {
       this.error = 'Completa todos los campos obligatorios.';
@@ -125,7 +117,6 @@ export class NuevaMascota implements OnInit {
       estado: estado as 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA',
       enfermedad,
       observaciones,
-      veterinarioAsignado,
     };
 
     this.loading = true;
@@ -168,7 +159,7 @@ export class NuevaMascota implements OnInit {
     return {
       nombre: '', especie: '', raza: '', sexo: '', fechaNacimiento: '',
       edad: null, peso: null, estado: '', clienteId: null, enfermedad: '',
-      veterinarioAsignado: '', observaciones: '',
+      observaciones: '',
     };
   }
 }
