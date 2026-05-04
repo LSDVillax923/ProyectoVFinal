@@ -35,12 +35,13 @@
         <div class="form-group">
           <label for="celular">Celular</label>
           <input type="text" id="celular" name="celular" [(ngModel)]="formData.celular" autocomplete="tel" required />
+          <small class="form-hint">"Obligatorio" mas de 10 digitos</small>
         </div>
 
         <div class="form-group">
           <label for="contrasenia">Contraseña</label>
           <input type="password" id="contrasenia" name="contrasenia" [(ngModel)]="formData.contrasenia" autocomplete="new-password" />
-          <small class="form-hint">Deja en blanco para no cambiar la contraseña</small>
+          <small class="form-hint">"Obligatorio"Cambiar contraseña o dejar la misma</small>
         </div>
 
         <div class="form-group full-width">
