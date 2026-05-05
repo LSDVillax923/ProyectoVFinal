@@ -174,3 +174,14 @@ En desarrollo como proyecto académico.
 back/demo : ./mvnw spring-boot:run
 frint/FrontMediCat: ng serve -o
 
+
+para las pruebas 
+
+Desde la carpeta backend: 
+-> cd back/veterinaria/demo
+-> ./mvnw test
+
+Desde la carpeta frontend:
+-> cd front/FrontMediCat
+-> npm install
+-> npm test -- --watch=false
