@@ -13,5 +13,4 @@ export interface Mascota {
   estado: 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA';
   clienteId: number;
   propietario?: string;
-  veterinarioAsignado?: string;
 }

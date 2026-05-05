@@ -103,8 +103,7 @@ public class MascotaServiceImpl implements MascotaService {
         existing.setPeso(mascotaDetails.getPeso());
         existing.setEnfermedad(mascotaDetails.getEnfermedad());
         existing.setObservaciones(mascotaDetails.getObservaciones());
-        existing.setVeterinarioAsignado(mascotaDetails.getVeterinarioAsignado());
-        
+
         if (mascotaDetails.getEstado() != null) {
             existing.setEstado(mascotaDetails.getEstado());
         }

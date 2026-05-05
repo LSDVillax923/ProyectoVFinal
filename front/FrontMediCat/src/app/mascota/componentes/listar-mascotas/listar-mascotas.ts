@@ -103,6 +103,26 @@ export class ListarMascotas implements OnInit {
     });
   }
 
+  reactivarMascota(mascota: Mascota): void {
+    if (!confirm(`¿Reactivar a ${mascota.nombre}? Volverá al estado Activa.`)) return;
+    this.mascotaRestService.patch(mascota.id, { estado: 'ACTIVA' }).subscribe({
+      next: () => {
+        this.mensaje = `${mascota.nombre} fue reactivada correctamente.`;
+        this.error = '';
+        this.cargarMascotas();
+      },
+      error: () => { this.error = 'No se pudo reactivar la mascota.'; },
+    });
+  }
+
+  toggleEstadoMascota(mascota: Mascota): void {
+    if (mascota.estado === 'INACTIVA') {
+      this.reactivarMascota(mascota);
+    } else {
+      this.desactivarMascota(mascota);
+    }
+  }
+
   eliminarMascotaPermanente(mascota: Mascota): void {
     if (!confirm(`¿Eliminar permanentemente a ${mascota.nombre}?`)) return;
     this.mascotaRestService.delete(mascota.id).subscribe({

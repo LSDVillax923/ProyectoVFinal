@@ -75,7 +75,6 @@ public class Mascota {
     private String enfermedad;
     private String observaciones;
     private String tratamiento;
-    private String veterinarioAsignado;
     
     // Relación con cliente (muchas mascotas pertenecen a un cliente)
     @ManyToOne(fetch = FetchType.LAZY)
