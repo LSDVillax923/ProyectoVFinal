@@ -171,11 +171,11 @@ Repositorio gestionado con Git, utilizando las siguientes ramas:
 
 En desarrollo como proyecto académico.
 
-back/demo : ./mvnw spring-boot:run
-frint/FrontMediCat: ng serve -o
+-> back/demo : ./mvnw spring-boot:run
+-> front/FrontMediCat: ng serve -o
 
 
-para las pruebas 
+## Para las pruebas
 
 Desde la carpeta backend: 
 -> cd back/veterinaria/demo

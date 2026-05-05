@@ -21,7 +21,7 @@ public interface DrogaRepository extends JpaRepository<Droga, Long> {
     List<Droga> findByUnidadesDisponiblesGreaterThan(int cantidad);
 
     // Descontar stock y aumentar unidades vendidas si hay disponibilidad
-    @Modifying
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             UPDATE Droga d
             SET d.unidadesDisponibles = d.unidadesDisponibles - :cantidad,
