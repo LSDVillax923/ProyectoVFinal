@@ -63,9 +63,9 @@ export const routes: Routes = [
   // Clientes — admin y veterinario (crear), admin (gestión completa)
   { path: 'clientes',                component: ListarCliente,      canActivate: [authGuard, veterinarioGuard] },
   { path: 'clientes/nuevo',          component: NuevoCliente,       canActivate: [authGuard, veterinarioGuard] },
-  { path: 'clientes/:id',            component: VerCliente,         canActivate: [authGuard, adminGuard] },
-  { path: 'clientes/:id/editar',     component: EditarCliente,      canActivate: [authGuard, adminGuard] },
-  { path: 'clientes/:id/mismascotas',component: ListarMascotas,     canActivate: [authGuard, adminGuard] },
+  { path: 'clientes/:id',            component: VerCliente,         canActivate: [authGuard, veterinarioGuard] },
+  { path: 'clientes/:id/editar',     component: EditarCliente,      canActivate: [authGuard, veterinarioGuard] },
+  { path: 'clientes/:id/mismascotas',component: ListarMascotas,     canActivate: [authGuard, veterinarioGuard] },
 
   // Veterinarios — solo admin
   { path: 'veterinarios',            component: ListarVeterinarios, canActivate: [authGuard, adminGuard] },
