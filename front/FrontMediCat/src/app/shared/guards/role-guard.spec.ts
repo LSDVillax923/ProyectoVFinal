@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
-import { roleGuard, adminGuard } from './role-guard.guard';
+import { adminGuard, veterinarioGuard } from './role-guard.guard';
 
 describe('Guards', () => {
 
@@ -8,9 +8,9 @@ describe('Guards', () => {
     TestBed.configureTestingModule({});
   });
 
-  it('roleGuard should be defined', () => {
+  it('veterinarioGuard should be defined', () => {
     const executeGuard: CanActivateFn = (...guardParameters) =>
-      TestBed.runInInjectionContext(() => roleGuard(...guardParameters));
+      TestBed.runInInjectionContext(() => veterinarioGuard(...guardParameters));
 
     expect(executeGuard).toBeTruthy();
   });
