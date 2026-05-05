@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { VerCitaComponent } from './ver-cita';
 
-import { VerCita } from './ver-cita';
-
-describe('VerCita', () => {
-  let component: VerCita;
-  let fixture: ComponentFixture<VerCita>;
+describe('VerCitaComponent', () => {
+  let component: VerCitaComponent;
+  let fixture: ComponentFixture<VerCitaComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VerCita],
+      imports: [VerCitaComponent], // si es standalone
     }).compileComponents();
 
-    fixture = TestBed.createComponent(VerCita);
+    fixture = TestBed.createComponent(VerCitaComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EditarCitaComponent } from './editar-cita';
 
-import { EditarCita } from './editar-cita';
-
-describe('EditarCita', () => {
-  let component: EditarCita;
-  let fixture: ComponentFixture<EditarCita>;
+describe('EditarCitaComponent', () => {
+  let component: EditarCitaComponent;
+  let fixture: ComponentFixture<EditarCitaComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditarCita],
+      imports: [EditarCitaComponent], // si es standalone
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditarCita);
+    fixture = TestBed.createComponent(EditarCitaComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

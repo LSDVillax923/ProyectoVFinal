@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ListarClienteComponent } from './listar-cliente';
 
-import { ListarCliente } from './listar-cliente';
-
-describe('ListarCliente', () => {
-  let component: ListarCliente;
-  let fixture: ComponentFixture<ListarCliente>;
+describe('ListarClienteComponent', () => {
+  let component: ListarClienteComponent;
+  let fixture: ComponentFixture<ListarClienteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListarCliente],
+      imports: [ListarClienteComponent], // si es standalone
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ListarCliente);
+    fixture = TestBed.createComponent(ListarClienteComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
