@@ -1,16 +1,19 @@
 package com.example.demo.repository;
 
-import com.example.demo.entities.Droga;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
+import com.example.demo.entities.Droga;
 
 
 @DataJpaTest
@@ -22,8 +25,6 @@ class DrogaRepositoryCrudTest {
 
     @BeforeEach
     void setUp() {
-        // Se insertan los datos de prueba antes de cada prueba.
-        // @DataJpaTest limpia la BD entre tests, por eso es seguro hacerlo aquí.
         Droga amoxicilina = new Droga(null, "Amoxicilina", 5.0f, 12.0f, 100, 0);
         Droga ibuprofeno  = new Droga(null, "Ibuprofeno",  3.0f,  8.0f,  50, 10);
         drogaRepository.save(amoxicilina);
@@ -55,11 +56,10 @@ class DrogaRepositoryCrudTest {
         List<Droga> drogas = drogaRepository.findAll();
 
         //Assert
-        // el @BeforeEach insertó 2 drogas
         assertEquals(2, drogas.size());
     }
 
-    // ── READ BY ID 
+    // ── READ BY ID
 
     @Test
     void testFindById() {
@@ -74,8 +74,7 @@ class DrogaRepositoryCrudTest {
         assertEquals(existente.getNombre(), resultado.get().getNombre());
     }
 
-    // ── UPDATE
-
+    // ── UPDATE 
     @Test
     void testUpdate() {
         //Arrange
@@ -105,6 +104,62 @@ class DrogaRepositoryCrudTest {
         //Assert
         Optional<Droga> eliminada = drogaRepository.findById(id);
         assertFalse(eliminada.isPresent());
-        assertEquals(1, drogaRepository.count()); // quedó solo la otra
+        assertEquals(1, drogaRepository.count());
+    }
+
+    @Test
+    void testFindById_idInexistente_retornaVacio() {
+        //Arrange
+        Long idInexistente = 999L;
+
+        //Act
+        Optional<Droga> resultado = drogaRepository.findById(idInexistente);
+
+        //Assert
+        assertFalse(resultado.isPresent());
+    }
+
+    @Test
+    void testFindAll_cuandoNoHayRegistros_retornaListaVacia() {
+        //Arrange
+        drogaRepository.deleteAll();
+
+        //Act
+        List<Droga> resultado = drogaRepository.findAll();
+
+        //Assert
+        assertNotNull(resultado);
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void testUpdate_modificarUnidadesVendidas_actualizaContador() {
+        //Arrange
+        Droga droga = drogaRepository.findAll().get(0); 
+        int cantidadVendida = 15;
+
+        droga.setUnidadesDisponibles(droga.getUnidadesDisponibles() - cantidadVendida);
+        droga.setUnidadesVendidas(droga.getUnidadesVendidas() + cantidadVendida);
+
+        //Act
+        Droga actualizada = drogaRepository.save(droga);
+
+        //Assert
+        assertEquals(85, actualizada.getUnidadesDisponibles()); // 100 - 15
+        assertEquals(15, actualizada.getUnidadesVendidas());    // 0 + 15
+    }
+
+    @Test
+    void testCreate_precioVentaMenorQueCompra_sePersiste() {
+        //Arrange
+        Droga drogaConPrecioCruzado = new Droga(null, "TestDroga", 10.0f, 5.0f, 50, 0);
+
+        //Act
+        Droga guardada = drogaRepository.save(drogaConPrecioCruzado);
+
+        //Assert
+        assertNotNull(guardada.getId());
+        assertEquals(10.0f, guardada.getPrecioCompra());
+        assertEquals(5.0f,  guardada.getPrecioVenta());
     }
 }
