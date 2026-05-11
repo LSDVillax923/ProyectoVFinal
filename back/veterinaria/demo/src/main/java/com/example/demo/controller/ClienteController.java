@@ -54,8 +54,13 @@ public class ClienteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Cliente> login(@RequestParam String correo, @RequestParam String contrasenia) {
-        Cliente cliente = clienteService.login(correo, contrasenia);
+    public ResponseEntity<Cliente> login(
+            @RequestParam(required = false) String identificador,
+            @RequestParam(required = false) String correo,
+            @RequestParam String contrasenia) {
+        // Compat: si llega 'correo' (clientes antiguos), se usa como identificador.
+        String id = (identificador != null && !identificador.isBlank()) ? identificador : correo;
+        Cliente cliente = clienteService.login(id, contrasenia);
         if (cliente == null) {
             throw new IllegalArgumentException("Credenciales inválidas");
         }

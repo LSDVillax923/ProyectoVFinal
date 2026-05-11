@@ -39,6 +39,11 @@ public class Cliente {
     @NotBlank(message = "El apellido no puede estar vacío")
     private String apellido;
 
+    // Cédula del cliente (única y obligatoria)
+    @NotBlank(message = "La cédula no puede estar vacía")
+    @Column(unique = true, nullable = false)
+    private String cedula;
+
     // Correo único y válido
     @NotBlank(message = "El correo no puede estar vacío")
     @Email(message = "El correo debe contener '@' y un dominio válido")
@@ -64,10 +69,12 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Cita> citas = new ArrayList<>();
     
-    // Constructor personalizado
-    public Cliente(String nombre, String apellido, String correo, String contrasenia, String celular) {
+    // Constructor personalizado con cédula
+    public Cliente(String nombre, String apellido, String cedula, String correo,
+                   String contrasenia, String celular) {
         this.nombre = nombre;
         this.apellido = apellido;
+        this.cedula = cedula;
         this.correo = correo;
         this.contrasenia = contrasenia;
         this.celular = celular;

@@ -26,21 +26,35 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      correo: ['', [Validators.required, Validators.email]],
+      correo: ['', [Validators.required]],
       contrasenia: ['', Validators.required]
     });
   }
 
+  /**
+   * Para clientes el campo "correo" acepta también la cédula. Para
+   * veterinarios/admins se exige correo electrónico válido.
+   */
+  private validarIdentificador(valor: string): boolean {
+    if (!valor) return false;
+    if (this.tipoUsuario === 'CLIENTE') return true;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+  }
+
   onSubmit(): void {
-    if (this.loginForm.invalid) {
+    const identificador = (this.loginForm.value.correo ?? '').toString().trim();
+    if (this.loginForm.invalid || !this.validarIdentificador(identificador)) {
       this.loginForm.markAllAsTouched();
+      this.error = this.tipoUsuario === 'CLIENTE'
+        ? 'Ingresa tu correo o cédula y tu contraseña.'
+        : 'Ingresa un correo válido y tu contraseña.';
       return;
     }
 
     this.loading = true;
     this.error = null;
 
-    const credentials = this.loginForm.value;
+    const credentials = { ...this.loginForm.value, correo: identificador };
 
     this.authService.login(credentials, this.tipoUsuario).subscribe({
       next: (sesion) => {

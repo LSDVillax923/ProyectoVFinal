@@ -9,6 +9,7 @@ import { ClienteRestService } from '../../services/cliente.service';
 interface NuevoClienteForm {
   nombre: string;
   apellido: string;
+  cedula: string;
   correo: string;
   celular: string;
   contrasenia: string;
@@ -28,6 +29,7 @@ export class NuevoCliente {
   formData: NuevoClienteForm = {
     nombre: '',
     apellido: '',
+    cedula: '',
     correo: '',
     celular: '',
     contrasenia: '',
@@ -36,20 +38,20 @@ export class NuevoCliente {
   constructor(private readonly clienteRestService: ClienteRestService) {}
 
   guardarCliente(): void {
-    const { nombre, apellido, correo, celular, contrasenia } = this.formData;
+    const { nombre, apellido, cedula, correo, celular, contrasenia } = this.formData;
 
-    if (!nombre || !apellido || !correo || !celular || !contrasenia) {
+    if (!nombre || !apellido || !cedula || !correo || !celular || !contrasenia) {
       this.error = 'Todos los campos son obligatorios.';
       this.mensaje = '';
       return;
     }
 
-    const payload: ClienteRequest = { nombre, apellido, correo, celular, contrasenia };
+    const payload: ClienteRequest = { nombre, apellido, cedula, correo, celular, contrasenia };
     this.clienteRestService.create(payload).subscribe({
       next: () => {
         this.mensaje = `${nombre} ${apellido} se registró correctamente.`;
         this.error = '';
-        this.formData = { nombre: '', apellido: '', correo: '', celular: '', contrasenia: '' };
+        this.formData = { nombre: '', apellido: '', cedula: '', correo: '', celular: '', contrasenia: '' };
       },
       error: (err) => {
         this.error = this.extraerMensajeError(err) || 'No se pudo registrar el cliente.';

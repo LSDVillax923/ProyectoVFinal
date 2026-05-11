@@ -28,8 +28,11 @@
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label>Correo electrónico</label>
-          <input type="email" formControlName="correo" placeholder="tu@correo.com" />
+          <label>{{ tipoUsuario === 'CLIENTE' ? 'Correo o cédula' : 'Correo electrónico' }}</label>
+          <input
+            [type]="tipoUsuario === 'CLIENTE' ? 'text' : 'email'"
+            formControlName="correo"
+            [placeholder]="tipoUsuario === 'CLIENTE' ? 'tu@correo.com o 1234567890' : 'tu@correo.com'" />
         </div>
 
         <div class="form-group">

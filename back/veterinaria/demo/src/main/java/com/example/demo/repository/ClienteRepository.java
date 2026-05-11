@@ -16,6 +16,12 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     // Buscar cliente por correo
     Optional<Cliente> findByCorreo(String correo);
 
+    // Buscar cliente por cédula
+    Optional<Cliente> findByCedula(String cedula);
+
+    // Verificar si existe un cliente con esa cédula
+    boolean existsByCedula(String cedula);
+
     // Buscar clientes por coincidencia en el nombre (sin distinguir mayúsculas/minúsculas)
     List<Cliente> findByNombreContainingIgnoreCase(String nombre);
 
@@ -24,10 +30,11 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
         String nombre, String apellido
     );
 
-    // Búsqueda general por varios campos (nombre, apellido, correo, celular)
+    // Búsqueda general por varios campos (nombre, apellido, cedula, correo, celular)
     @Query("SELECT c FROM Cliente c WHERE " +
            "(:query IS NULL OR LOWER(c.nombre) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(c.apellido) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(COALESCE(c.cedula,'')) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(c.correo) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(c.celular) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<Cliente> buscarPorFiltros(@Param("query") String query);

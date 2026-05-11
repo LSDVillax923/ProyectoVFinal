@@ -107,10 +107,13 @@ login(credentials: LoginRequest, tipoUsuario: 'CLIENTE' | 'VETERINARIO' | 'ADMIN
   }
 
   loginCliente(credentials: LoginRequest): Observable<SesionActiva> {
+    // El back acepta 'identificador' (correo o cédula). Se envía también
+    // 'correo' por compatibilidad con clientes anteriores del backend.
     const params = new HttpParams()
+      .set('identificador', credentials.correo)
       .set('correo', credentials.correo)
       .set('contrasenia', credentials.contrasenia);
-    
+
     return this.http.post<Cliente>(ENDPOINTS.CLIENTES_LOGIN, null, { params }).pipe(
       map(cliente => ({
         id: cliente.id,

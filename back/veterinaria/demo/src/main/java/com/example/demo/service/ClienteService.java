@@ -24,8 +24,11 @@ public interface ClienteService {
     /** Elimina un cliente */
     void delete(Long id);
 
-    /** Login de cliente */
-    Cliente login(String correo, String contrasenia);
+    /**
+     * Login de cliente. El identificador puede ser su correo o su cédula:
+     * si contiene '@' se interpreta como correo, en caso contrario como cédula.
+     */
+    Cliente login(String identificador, String contrasenia);
 
     /** Busca clientes por filtros */
     List<Cliente> buscarPorFiltros(String query);

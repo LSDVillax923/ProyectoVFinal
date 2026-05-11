@@ -21,6 +21,7 @@ export interface Cliente {
   id: number;
   nombre: string;
   apellido: string;
+  cedula?: string;
   correo: string;
   contrasenia: string;
   celular: string;
@@ -31,6 +32,7 @@ export interface Cliente {
 export interface ClienteRequest {
   nombre: string;
   apellido: string;
+  cedula?: string;
   correo: string;
   contrasenia?: string;
   celular: string;
@@ -177,6 +179,7 @@ export interface CitaRequest {
 // LOGIN / AUTENTICACIÓN
 // ============================================
 export interface LoginRequest {
+  // Para veterinarios/admins: correo. Para clientes: correo o cédula.
   correo: string;
   contrasenia: string;
 }

@@ -41,9 +41,9 @@ class ConsultasQueryTest {
         drogaRepository.save(new Droga(null, "Paracetamol", 5.0f, 10.0f, 100, 5));
 
         // Clientes para prueba de búsqueda
-        clienteRepository.save(new Cliente("Ana",  "García", "ana.garcia@gmail.com",  "pass", "3001111111"));
-        clienteRepository.save(new Cliente("Luis", "Pérez",  "luis.perez@hotmail.com","pass", "3002222222"));
-        clienteRepository.save(new Cliente("Marta","Leal",   "marta@clinica.com",     "pass", "3003333333"));
+        clienteRepository.save(new Cliente("Ana",  "García", "2000000001", "ana.garcia@gmail.com",  "pass", "3001111111"));
+        clienteRepository.save(new Cliente("Luis", "Pérez",  "2000000002", "luis.perez@hotmail.com","pass", "3002222222"));
+        clienteRepository.save(new Cliente("Marta","Leal",   "2000000003", "marta@clinica.com",     "pass", "3003333333"));
 
         // Datos para prueba de tratamientos programados
         Cliente cliente = clienteRepository.findAll().get(0);

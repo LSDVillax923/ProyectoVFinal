@@ -128,9 +128,10 @@ public class DataLoader implements CommandLineRunner {
         for (int i = 1; i <= 30; i++) {
             String nombre = NOMBRES[rnd.nextInt(NOMBRES.length)];
             String apellido = APELLIDOS[rnd.nextInt(APELLIDOS.length)];
+            String cedula = String.format("10%08d", 1000000 + i);
             String correo = nombre.toLowerCase() + i + "@email.com";
             String celular = "31" + String.format("%08d", rnd.nextInt(100000000));
-            clienteRepository.save(new Cliente(nombre, apellido, correo, "pass" + i, celular));
+            clienteRepository.save(new Cliente(nombre, apellido, cedula, correo, "pass" + i, celular));
         }
         System.out.println("DataLoader: 30 clientes generados.");
 

@@ -10,6 +10,7 @@ import { Navbar } from '../../../shared/components/navbar/navbar';
 interface ClienteForm {
   nombre: string;
   apellido: string;
+  cedula: string;
   correo: string;
   celular: string;
   contrasenia: string;
@@ -24,7 +25,7 @@ interface ClienteForm {
 })
 export class EditarClienteComponent implements OnInit {
 
-  formData: ClienteForm = { nombre: '', apellido: '', correo: '', celular: '', contrasenia: '' };
+  formData: ClienteForm = { nombre: '', apellido: '', cedula: '', correo: '', celular: '', contrasenia: '' };
   contraseniaOriginal = '';
   loading = false;
   error: string | null = null;
@@ -64,6 +65,7 @@ export class EditarClienteComponent implements OnInit {
         this.formData = {
           nombre: cliente.nombre,
           apellido: cliente.apellido,
+          cedula: cliente.cedula ?? '',
           correo: cliente.correo,
           celular: cliente.celular,
           contrasenia: '',
@@ -88,6 +90,7 @@ export class EditarClienteComponent implements OnInit {
     const payload: ClienteRequest = {
       nombre: this.formData.nombre,
       apellido: this.formData.apellido,
+      cedula: this.formData.cedula,
       correo: this.formData.correo,
       celular: this.formData.celular,
       contrasenia: this.formData.contrasenia || this.contraseniaOriginal,

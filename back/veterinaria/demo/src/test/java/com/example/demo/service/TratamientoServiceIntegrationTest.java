@@ -48,7 +48,7 @@ class TratamientoServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        Cliente cliente = clienteRepository.save(new Cliente("Juan","Torres","juan@test.com","pass123","3001234567"));
+        Cliente cliente = clienteRepository.save(new Cliente("Juan","Torres","1000000001","juan@test.com","pass123","3001234567"));
 
         mascota = mascotaRepository.save(new Mascota("Rex","Perro","Pastor","M",LocalDate.of(2019,3,15), 5, 30.0, null,Mascota.EstadoMascota.ACTIVA, null, null, cliente));
 
@@ -300,7 +300,7 @@ class TratamientoServiceIntegrationTest {
     void testFindByMascotaId() {
         //Arrange
         Cliente cliente2 = clienteRepository.save(
-            new Cliente("Laura","Niño","laura@test.com","pass","3112233445"));
+            new Cliente("Laura","Niño","1000000002","laura@test.com","pass","3112233445"));
         Mascota otraMascota = mascotaRepository.save(new Mascota(
             "Luna","Gato","Persa","F",
             LocalDate.of(2021,6,1),3,4.0,null,

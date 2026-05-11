@@ -37,8 +37,14 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Cliente save(Cliente cliente) {
         validarCliente(cliente);
-        if (cliente.getId() == null && clienteRepository.existsByCorreo(cliente.getCorreo())) {
-            throw new IllegalArgumentException("Correo ya registrado");
+        if (cliente.getId() == null) {
+            if (clienteRepository.existsByCorreo(cliente.getCorreo())) {
+                throw new IllegalArgumentException("Correo ya registrado");
+            }
+            if (cliente.getCedula() != null && !cliente.getCedula().isBlank()
+                    && clienteRepository.existsByCedula(cliente.getCedula())) {
+                throw new IllegalArgumentException("Cédula ya registrada");
+            }
         }
         return clienteRepository.save(cliente);
     }
@@ -49,6 +55,7 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente existing = findById(id);
         existing.setNombre(clienteDetails.getNombre());
         existing.setApellido(clienteDetails.getApellido());
+        existing.setCedula(clienteDetails.getCedula());
         existing.setCorreo(clienteDetails.getCorreo());
         existing.setContrasenia(clienteDetails.getContrasenia());
         existing.setCelular(clienteDetails.getCelular());
@@ -62,11 +69,27 @@ public class ClienteServiceImpl implements ClienteService {
         clienteRepository.delete(cliente);
     }
 
-    /** Login de cliente */
+    /**
+     * Login de cliente. El identificador puede ser su correo o su cédula:
+     * - si contiene '@' se interpreta como correo,
+     * - en caso contrario se intenta como cédula y, si no se encuentra, como correo.
+     */
     @Override
-    public Cliente login(String correo, String contrasenia) {
-        return clienteRepository.findByCorreo(correo)
-                .filter(c -> c.getContrasenia().equals(contrasenia))
+    public Cliente login(String identificador, String contrasenia) {
+        if (identificador == null || identificador.isBlank()) {
+            return null;
+        }
+        java.util.Optional<Cliente> encontrado;
+        if (identificador.contains("@")) {
+            encontrado = clienteRepository.findByCorreo(identificador);
+        } else {
+            encontrado = clienteRepository.findByCedula(identificador);
+            if (encontrado.isEmpty()) {
+                encontrado = clienteRepository.findByCorreo(identificador);
+            }
+        }
+        return encontrado
+                .filter(c -> c.getContrasenia() != null && c.getContrasenia().equals(contrasenia))
                 .orElse(null);
     }
 
@@ -92,6 +115,9 @@ public class ClienteServiceImpl implements ClienteService {
         }
         if (cliente.getApellido() == null || cliente.getApellido().isBlank()) {
             throw new IllegalArgumentException("Apellido obligatorio");
+        }
+        if (cliente.getCedula() == null || cliente.getCedula().isBlank()) {
+            throw new IllegalArgumentException("Cédula obligatoria");
         }
         if (cliente.getCorreo() == null || !cliente.getCorreo().contains("@")) {
             throw new IllegalArgumentException("Correo inválido");
