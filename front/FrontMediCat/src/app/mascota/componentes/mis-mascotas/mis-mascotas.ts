@@ -6,6 +6,7 @@ import { MascotaRestService } from '../../services/mascota.service';
 import { Mascota } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { urlFotoMascota } from '../../../shared/utils/helpers';
+import { ClienteRestService } from '../../../cliente/services/cliente.service';
 
 @Component({
   selector: 'app-mis-mascotas',
@@ -21,6 +22,7 @@ export class MisMascotas implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private readonly mascotaService: MascotaRestService,
+    private readonly clienteService: ClienteRestService,
   ) {}
 
   ngOnInit(): void {
@@ -33,11 +35,43 @@ export class MisMascotas implements OnInit {
     }
 
     if (sesion) {
-      this.mascotaService.findByClienteId(sesion.id).subscribe({
-        next: (mascotas) => { this.mascotas = mascotas; },
-        error: () => { this.mascotas = []; },
-      });
+      this.cargarMascotasDeSesion(sesion.id, sesion.correo);
     }
+  }
+
+  private cargarMascotasDeSesion(clienteId: number, identificador: string): void {
+    this.mascotaService.findByClienteId(clienteId).subscribe({
+      next: (mascotas) => {
+        if (mascotas.length > 0) {
+          this.mascotas = mascotas;
+          return;
+        }
+        this.buscarMascotasPorIdentificador(identificador);
+      },
+      error: () => this.buscarMascotasPorIdentificador(identificador),
+    });
+  }
+
+  private buscarMascotasPorIdentificador(identificador: string): void {
+    if (!identificador) {
+      this.mascotas = [];
+      return;
+    }
+
+    this.clienteService.findAll({ query: identificador }).subscribe({
+      next: (clientes) => {
+        const cliente = clientes.find((c) => c.cedula === identificador || c.correo === identificador);
+        if (!cliente?.id) {
+          this.mascotas = [];
+          return;
+        }
+        this.mascotaService.findByClienteId(cliente.id).subscribe({
+          next: (mascotas) => { this.mascotas = mascotas; },
+          error: () => { this.mascotas = []; },
+        });
+      },
+      error: () => { this.mascotas = []; },
+    });
   }
 
   private esPerro(especie: string): boolean {
