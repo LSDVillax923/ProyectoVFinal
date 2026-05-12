@@ -17,9 +17,13 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.example.demo.entities.Veterinario;
+import com.example.demo.repository.VeterinarioRepository;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -50,8 +54,14 @@ public class C1RegistroClienteMascota {
     private WebDriver driver;
     private WebDriverWait wait;
 
+    // Repositorios inyectados para garantizar precondiciones del flujo
+    // (login del veterinario) sin depender de que el DataLoader corra.
+    @Autowired private VeterinarioRepository veterinarioRepository;
+
     @BeforeEach
     public void init() {
+        // Garantizar que el veterinario existe antes de abrir Chrome.
+        sembrarVeterinarioE2E();
 
         WebDriverManager.chromedriver().setup();
 
@@ -59,8 +69,18 @@ public class C1RegistroClienteMascota {
 
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--disable-extensions");
-        chromeOptions.addArguments("--start-maximized");
-        // chromeOptions.addArguments("--headless");
+        // Flags de estabilidad: previenen crashes esporádicos de Chrome
+        // ("session deleted as the browser has closed the connection")
+        // en Windows cuando el usuario interactúa con la ventana o cuando
+        // el GPU/sandbox del navegador entra en conflicto con el driver.
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--remote-allow-origins=*");
+        chromeOptions.addArguments("--window-size=1920,1080");
+        // Descomenta para correr sin ventana visible (recomendado para CI
+        // y para evitar que cerremos el navegador sin querer):
+        // chromeOptions.addArguments("--headless=new");
 
         this.driver = new ChromeDriver(chromeOptions);
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -253,5 +273,16 @@ public class C1RegistroClienteMascota {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    /**
+     * Garantiza que el veterinario "elena@vet.com" exista y esté activo.
+     * Idempotente: si el DataLoader ya lo creó, no hace nada.
+     */
+    private void sembrarVeterinarioE2E() {
+        if (veterinarioRepository.findByCorreo(VET_CORREO).isPresent()) return;
+        veterinarioRepository.save(new Veterinario(
+                "Elena Martínez", "10000001", "3101000001", VET_CORREO,
+                "Medicina General", VET_PASS, "default.jpg", "activo"));
     }
 }

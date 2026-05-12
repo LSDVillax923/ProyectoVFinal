@@ -1,6 +1,7 @@
 package com.example.demo.e2e;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -14,9 +15,19 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.example.demo.entities.Admin;
+import com.example.demo.entities.Cliente;
+import com.example.demo.entities.Mascota;
+import com.example.demo.entities.Veterinario;
+import com.example.demo.repository.AdminRepository;
+import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.MascotaRepository;
+import com.example.demo.repository.VeterinarioRepository;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -36,15 +47,30 @@ public class C2NuevoTratamientoAdmin {
     private WebDriver driver;
     private WebDriverWait wait;
 
+    @Autowired private ClienteRepository clienteRepository;
+    @Autowired private MascotaRepository mascotaRepository;
+    @Autowired private VeterinarioRepository veterinarioRepository;
+    @Autowired private AdminRepository adminRepository;
+
+    private static final String MASCOTA_E2E = "MaxE2E";
+
     @BeforeEach
     public void init() {
+        sembrarVeterinarioE2E();
+        sembrarAdminE2E();
+        sembrarMascotaE2E();
+
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--disable-notifications");
         chromeOptions.addArguments("--disable-extensions");
-        chromeOptions.addArguments("--start-maximized");
-        // chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--remote-allow-origins=*");
+        chromeOptions.addArguments("--window-size=1920,1080");
+        // chromeOptions.addArguments("--headless=new");
 
         this.driver = new ChromeDriver(chromeOptions);
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -75,7 +101,7 @@ public class C2NuevoTratamientoAdmin {
         WebElement buscador = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[contains(@placeholder,'Buscar por nombre')]")));
         buscador.clear();
-        buscador.sendKeys("Max");
+        buscador.sendKeys(MASCOTA_E2E);
 
         WebElement botonNuevoTratamiento = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//tbody/tr[1]//button[@title='Nuevo tratamiento']")));
@@ -162,5 +188,48 @@ public class C2NuevoTratamientoAdmin {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    /**
+     * Garantiza que el veterinario que loguea el test exista y esté activo.
+     * Idempotente.
+     */
+    private void sembrarVeterinarioE2E() {
+        if (veterinarioRepository.findByCorreo(VET_CORREO).isPresent()) return;
+        veterinarioRepository.save(new Veterinario(
+                "Elena Martínez", "10000001", "3101000001", VET_CORREO,
+                "Medicina General", VET_PASS, "default.jpg", "activo"));
+    }
+
+    /**
+     * Garantiza que el admin que loguea el test exista. Idempotente.
+     */
+    private void sembrarAdminE2E() {
+        if (adminRepository.findByCorreo(ADMIN_CORREO).isPresent()) return;
+        adminRepository.save(new Admin(null, "Carlos Admin", ADMIN_CORREO, ADMIN_PASS));
+    }
+
+    /**
+     * Garantiza que exista una mascota activa llamada "MaxE2E" propiedad de
+     * algún cliente. Si no hay clientes (DataLoader no corrió o falló), se
+     * crea uno propio. Idempotente: si ya existe la mascota, no hace nada.
+     */
+    private void sembrarMascotaE2E() {
+        boolean yaExiste = mascotaRepository.findAll().stream()
+                .anyMatch(m -> MASCOTA_E2E.equalsIgnoreCase(m.getNombre()));
+        if (yaExiste) return;
+
+        Cliente dueno = clienteRepository.findAll().stream().findFirst().orElseGet(() ->
+                clienteRepository.save(new Cliente(
+                        "Cliente", "E2E", "9999999999",
+                        "cliente.e2e@email.com", "passE2E", "3000000000")));
+
+        Mascota mascota = new Mascota(
+                MASCOTA_E2E, "Perro", "Labrador", "Macho",
+                LocalDate.now().minusYears(3),
+                3, 12.5, "default-pet.png",
+                Mascota.EstadoMascota.ACTIVA,
+                "Ninguna", "Sembrada por el test E2E", dueno);
+        mascotaRepository.save(mascota);
     }
 }
