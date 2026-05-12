@@ -40,7 +40,7 @@ import com.example.demo.repository.VeterinarioRepository;
 
 class TratamientoServiceMockTest {
 
-    // ── Mocks para TratamientoServiceImpl ─────────────────────────────────────
+    // ── Mocks para TratamientoServiceImpl
     @Mock
     private TratamientoRepository tratamientoRepository;
 
