@@ -1,8 +1,8 @@
 // ============================================
 // CONFIGURACIÓN BASE
 // ============================================
-export const API_BASE_URL = 'http://localhost:8080/api';
-export const STATIC_BASE_URL = 'http://localhost:8080';
+export const API_BASE_URL = 'http://localhost:8081/api';
+export const STATIC_BASE_URL = 'http://localhost:8081';
 export const MASCOTAS_FOTO_BASE = `${STATIC_BASE_URL}/img`;
 
 // ============================================
@@ -57,6 +57,9 @@ export const ENDPOINTS = {
   TRATAMIENTO_DROGAS: `${API_BASE_URL}/tratamiento-drogas`,
   TRATAMIENTO_DROGAS_BY_TRATAMIENTO: (tratamientoId: number) => `${API_BASE_URL}/tratamiento-drogas/tratamiento/${tratamientoId}`,
   TRATAMIENTO_DROGAS_MEDICAMENTOS_VENDIDOS: `${API_BASE_URL}/tratamiento-drogas/medicamentos-vendidos`,
+
+  // Análisis de audio de mascota (TarsosDSP)
+  ANALISIS_MASCOTA: `${API_BASE_URL}/analisis-mascota`,
 
   // Cita
   CITAS: `${API_BASE_URL}/citas`,

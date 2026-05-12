@@ -30,6 +30,23 @@ public class C1RegistroClienteMascota {
 
     private final String BASE_URL = "http://localhost:4200";
 
+    // ── Credenciales del veterinario sembradas por DataLoader.java:112 ─────
+    private static final String VET_CORREO    = "elena@vet.com";
+    private static final String VET_PASS      = "pass123";
+    private static final String VET_PASS_FAIL = "claveIncorrecta";
+
+    // ── Fix B: dataload por corrida — sufijo único para evitar choques
+    //          con datos persistidos en el back de producción.
+    private final String SUFIJO     = String.valueOf(System.currentTimeMillis());
+    private final String CLI_CEDULA = "1098" + SUFIJO.substring(SUFIJO.length() - 6); // 10 dígitos
+    private final String CLI_CORREO = "mariana." + SUFIJO + "@email.com";
+    private final String CLI_PASS   = "cliente123";
+    private final String CLI_NOMBRE   = "Mariana" + SUFIJO.substring(SUFIJO.length() - 4);
+    private final String CLI_APELLIDO = "Pérez";
+    private final String CLI_CELULAR  = "3001234567";
+
+    private final String MASCOTA_NOMBRE = "Firulais" + SUFIJO.substring(SUFIJO.length() - 4);
+
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -62,8 +79,8 @@ public class C1RegistroClienteMascota {
                 By.xpath("//input[@formcontrolname='correo']")));
         WebElement loginPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
 
-        loginCorreo.sendKeys("elena@vet.com");
-        loginPass.sendKeys("claveIncorrecta");
+        loginCorreo.sendKeys(VET_CORREO);
+        loginPass.sendKeys(VET_PASS_FAIL);
         driver.findElement(By.xpath("//button[contains(@class,'btn-login')]")).click();
 
         WebElement errorLogin = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -73,30 +90,41 @@ public class C1RegistroClienteMascota {
         loginCorreo = driver.findElement(By.xpath("//input[@formcontrolname='correo']"));
         loginPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
         loginCorreo.clear();
-        loginCorreo.sendKeys("elena@vet.com");
+        loginCorreo.sendKeys(VET_CORREO);
         loginPass.clear();
-        loginPass.sendKeys("pass123");
+        loginPass.sendKeys(VET_PASS);
         driver.findElement(By.xpath("//button[contains(@class,'btn-login')]")).click();
 
         wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/inicio/login")));
 
-        // ── 2) Registro de cliente ─────────────────────────────────────────────
+        // ── 2) Registro de cliente (1er intento falla, 2do acierta) ───────────
         driver.get(BASE_URL + "/clientes/nuevo");
 
-        WebElement inputNombre = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nombre")));
-        WebElement inputApellido = driver.findElement(By.id("apellido"));
-        WebElement inputCedula = driver.findElement(By.id("cedula"));
-        WebElement inputCorreo = driver.findElement(By.id("correo"));
-        WebElement inputCelular = driver.findElement(By.id("celular"));
-        WebElement inputContrasenia = driver.findElement(By.id("contrasenia"));
+        // Primer intento: nombre vacío → error
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nombre")));
+        driver.findElement(By.id("apellido")).sendKeys(CLI_APELLIDO);
+        driver.findElement(By.id("cedula")).sendKeys(CLI_CEDULA);
+        driver.findElement(By.id("correo")).sendKeys(CLI_CORREO);
+        driver.findElement(By.id("celular")).sendKeys(CLI_CELULAR);
+        driver.findElement(By.id("contrasenia")).sendKeys(CLI_PASS);
 
-        inputNombre.sendKeys("Mariana");
-        inputApellido.sendKeys("Pérez");
-        inputCedula.sendKeys("1098765432");
-        inputCorreo.sendKeys("mariana.cliente@email.com");
-        inputCelular.sendKeys("3001234567");
-        inputContrasenia.sendKeys("cliente123");
+        // Bypass de la validación HTML5 (atributo `required`) para que el
+        // submit llegue a Angular y dispare el `alert-error` del componente.
+        // Sin esto, el navegador bloquea el envío y nunca se ejecuta
+        // guardarCliente(), por lo que el test colgaría esperando el error.
+        ((JavascriptExecutor) driver).executeScript(
+                "var f = document.querySelector('form'); f.setAttribute('novalidate', 'true');");
+        driver.findElement(By.xpath("//button[contains(@class,'btn-guardar')]")).click();
 
+        WebElement errorCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//p[contains(@class,'alert-error')]")));
+        Assertions.assertThat(errorCliente.isDisplayed()).isTrue();
+
+        // Segundo intento: corrige el nombre (ya con novalidate desactivado
+        // o no, da igual porque el formulario ya es válido)
+        WebElement inputNombre = driver.findElement(By.id("nombre"));
+        inputNombre.clear();
+        inputNombre.sendKeys(CLI_NOMBRE);
         driver.findElement(By.xpath("//button[contains(@class,'btn-guardar')]")).click();
 
         WebElement okCliente = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -113,7 +141,7 @@ public class C1RegistroClienteMascota {
         WebElement mascEdad = driver.findElement(By.id("edad"));
         WebElement mascPeso = driver.findElement(By.id("peso"));
 
-        mascNombre.sendKeys("Firulais");
+        mascNombre.sendKeys(MASCOTA_NOMBRE);
         mascEspecie.sendKeys("Perro");
         mascRaza.sendKeys("Labrador");
 
@@ -137,13 +165,34 @@ public class C1RegistroClienteMascota {
         Select estado = new Select(driver.findElement(By.id("estado")));
         estado.selectByValue("ACTIVA");
 
-        Select clienteSel = new Select(driver.findElement(By.id("clienteId")));
-        clienteSel.getOptions().stream()
-                .filter(o -> o.getText().trim().toLowerCase().contains("mariana pérez"))
-                .findFirst()
-                .ifPresent(o -> clienteSel.selectByVisibleText(o.getText()));
+        // ── Fix A: esperar a que el dropdown de clientes esté poblado ANTES
+        //          de filtrar. El componente lo llena con findAll() async.
+        By selectorCliente = By.id("clienteId");
+        wait.until(d -> new Select(d.findElement(selectorCliente)).getOptions().size() > 1);
 
-        driver.findElement(By.xpath("//button[contains(@class,'btn-guardar')]")).click();
+        Select clienteSel = new Select(driver.findElement(selectorCliente));
+        String nombreEsperado = (CLI_NOMBRE + " " + CLI_APELLIDO).toLowerCase();
+
+        WebElement opcionCliente = clienteSel.getOptions().stream()
+                .filter(o -> o.getText().trim().toLowerCase().contains(nombreEsperado))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(
+                        "El cliente '" + CLI_NOMBRE + " " + CLI_APELLIDO +
+                        "' no apareció en el dropdown. Opciones: " +
+                        clienteSel.getOptions().stream().map(WebElement::getText).toList()));
+
+        clienteSel.selectByVisibleText(opcionCliente.getText().trim());
+
+        // Verifica que el binding NgModel se actualizó realmente
+        Assertions.assertThat(clienteSel.getFirstSelectedOption().getText().trim())
+                .containsIgnoringCase(CLI_NOMBRE + " " + CLI_APELLIDO);
+
+        // ── Fix C: asegurarse de que el botón quedó habilitado (es decir,
+        //          el formulario es válido) antes de hacer click.
+        WebElement btnGuardarMasc = driver.findElement(
+                By.xpath("//button[contains(@class,'btn-guardar')]"));
+        wait.until(d -> btnGuardarMasc.isEnabled());
+        btnGuardarMasc.click();
 
         WebElement okMascota = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//p[contains(@class,'alert-success')]")));
@@ -164,8 +213,8 @@ public class C1RegistroClienteMascota {
                 By.xpath("//input[@formcontrolname='correo']")));
         WebElement cliPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
 
-        cliCorreo.sendKeys("1098765432");
-        cliPass.sendKeys("cliente123");
+        cliCorreo.sendKeys(CLI_CEDULA);
+        cliPass.sendKeys(CLI_PASS);
         driver.findElement(By.xpath("//button[contains(@class,'btn-login')]")).click();
 
         wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/inicio/login")));
@@ -173,14 +222,30 @@ public class C1RegistroClienteMascota {
         // ── 5) El cliente ve su mascota en el portal ────────────────────────────
         driver.get(BASE_URL + "/mis-mascotas");
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//div[contains(@class,'mm-card')]//h3")));
+        // ── Fix D: esperar a que se pinten las tarjetas o el estado vacío,
+        //          así obtenemos un mensaje claro si Angular tarda o si el
+        //          cliente quedó sin mascotas.
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//div[contains(@class,'mm-card')]")),
+                ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//section[contains(@class,'mm-empty')]"))));
 
-        List<WebElement> tarjetas = driver.findElements(By.xpath("//div[contains(@class,'mm-card')]//h3"));
-        boolean apareceFirulais = tarjetas.stream()
-                .anyMatch(t -> t.getText() != null && t.getText().toLowerCase().contains("firulais"));
+        List<WebElement> tarjetas = driver.findElements(
+                By.xpath("//div[contains(@class,'mm-card')]//h3"));
 
-        Assertions.assertThat(apareceFirulais).isTrue();
+        Assertions.assertThat(tarjetas)
+                .as("El portal del cliente debe mostrar al menos una mascota registrada")
+                .isNotEmpty();
+
+        boolean apareceMascota = tarjetas.stream()
+                .anyMatch(t -> t.getText() != null
+                        && t.getText().toLowerCase().contains(MASCOTA_NOMBRE.toLowerCase()));
+
+        Assertions.assertThat(apareceMascota)
+                .as("La mascota '" + MASCOTA_NOMBRE + "' debe aparecer entre las tarjetas. Vistas: "
+                        + tarjetas.stream().map(WebElement::getText).toList())
+                .isTrue();
     }
 
     @AfterEach

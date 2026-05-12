@@ -27,6 +27,12 @@ public class C2NuevoTratamientoAdmin {
 
     private final String BASE_URL = "http://localhost:4200";
 
+    // ── Credenciales sembradas por DataLoader.java (líneas 106 y 112) ──────
+    private static final String VET_CORREO   = "elena@vet.com";
+    private static final String VET_PASS     = "pass123";
+    private static final String ADMIN_CORREO = "admin1@vet.com";
+    private static final String ADMIN_PASS   = "admin123";
+
     private WebDriver driver;
     private WebDriverWait wait;
 
@@ -56,8 +62,8 @@ public class C2NuevoTratamientoAdmin {
                 By.xpath("//input[@formcontrolname='correo']")));
         WebElement loginPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
 
-        loginCorreo.sendKeys("elena@vet.com");
-        loginPass.sendKeys("pass123");
+        loginCorreo.sendKeys(VET_CORREO);
+        loginPass.sendKeys(VET_PASS);
         driver.findElement(By.xpath("//button[contains(@class,'btn-login')]"))
                 .click();
 
@@ -131,12 +137,13 @@ public class C2NuevoTratamientoAdmin {
                 By.xpath("//input[@formcontrolname='correo']")));
         WebElement adminPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
 
-        adminCorreo.sendKeys("admin1@vet.com");
-        adminPass.sendKeys("admin123");
+        adminCorreo.sendKeys(ADMIN_CORREO);
+        adminPass.sendKeys(ADMIN_PASS);
         driver.findElement(By.xpath("//button[contains(@class,'btn-login')]"))
                 .click();
 
-        wait.until(ExpectedConditions.urlContains("/admin/dashboard"));
+        // El login del admin navega a /dashboard (ver LoginComponent.onSubmit).
+        wait.until(ExpectedConditions.urlContains("/dashboard"));
 
         WebElement cardGanancias = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[contains(@class,'stat-card')][.//div[contains(.,'Ganancias totales')]]//div[contains(@class,'stat-numero')]")));
