@@ -35,6 +35,7 @@ public class TratamientoDroga {
     @NotNull(message = "Debe indicarse una droga")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "droga_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Droga droga;
 
     // Cantidad de la droga (mínimo 1)

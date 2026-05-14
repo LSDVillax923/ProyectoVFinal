@@ -31,28 +31,33 @@ import com.example.demo.repository.VeterinarioRepository;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
+
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+
+
 public class C2NuevoTratamientoAdmin {
 
     private final String BASE_URL = "http://localhost:4200";
 
-    // ── Credenciales sembradas por DataLoader.java (líneas 106 y 112) ──────
+    // ── Credenciales sembradas por DataLoader.java (líneas 106 y 112) ───────
     private static final String VET_CORREO   = "elena@vet.com";
     private static final String VET_PASS     = "pass123";
     private static final String ADMIN_CORREO = "admin1@vet.com";
     private static final String ADMIN_PASS   = "admin123";
 
+    private static final String MASCOTA_E2E    = "MaxE2E";
+    private static final String DIAGNOSTICO_E2E = "Control postoperatorio caso 2";
+
     private WebDriver driver;
     private WebDriverWait wait;
 
-    @Autowired private ClienteRepository clienteRepository;
-    @Autowired private MascotaRepository mascotaRepository;
+    @Autowired private ClienteRepository     clienteRepository;
+    @Autowired private MascotaRepository     mascotaRepository;
     @Autowired private VeterinarioRepository veterinarioRepository;
-    @Autowired private AdminRepository adminRepository;
-
-    private static final String MASCOTA_E2E = "MaxE2E";
+    @Autowired private AdminRepository       adminRepository;
 
     @BeforeEach
     public void init() {
@@ -62,23 +67,23 @@ public class C2NuevoTratamientoAdmin {
 
         WebDriverManager.chromedriver().setup();
 
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--disable-notifications");
-        chromeOptions.addArguments("--disable-extensions");
-        chromeOptions.addArguments("--no-sandbox");
-        chromeOptions.addArguments("--disable-dev-shm-usage");
-        chromeOptions.addArguments("--disable-gpu");
-        chromeOptions.addArguments("--remote-allow-origins=*");
-        chromeOptions.addArguments("--window-size=1920,1080");
-        // chromeOptions.addArguments("--headless=new");
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--window-size=1920,1080");
 
-        this.driver = new ChromeDriver(chromeOptions);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        this.driver = new ChromeDriver(options);
+        this.wait   = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
     @Test
     public void caso2_nuevoTratamientoYValidacionAdmin() {
-        // 1) Login veterinario
+
+        // ── PASO 1: Login del veterinario ─────────────────────────────────────
         driver.get(BASE_URL + "/inicio/login");
 
         wait.until(ExpectedConditions.elementToBeClickable(
@@ -86,16 +91,17 @@ public class C2NuevoTratamientoAdmin {
 
         WebElement loginCorreo = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[@formcontrolname='correo']")));
-        WebElement loginPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
+        WebElement loginPass = driver.findElement(
+                By.xpath("//input[@formcontrolname='contrasenia']"));
 
         loginCorreo.sendKeys(VET_CORREO);
         loginPass.sendKeys(VET_PASS);
-        driver.findElement(By.xpath("//button[contains(@class,'btn-login')]"))
-                .click();
+        driver.findElement(By.xpath("//button[contains(@class,'btn-login')]")).click();
 
-        wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("/inicio/login")));
+        wait.until(ExpectedConditions.not(
+                ExpectedConditions.urlContains("/inicio/login")));
 
-        // 2) Buscar mascota y abrir creación de tratamiento desde el listado
+        // ── PASO 2: Buscar la mascota y abrir formulario de tratamiento ────────
         driver.get(BASE_URL + "/mascotas");
 
         WebElement buscador = wait.until(ExpectedConditions.visibilityOfElementLocated(
@@ -103,57 +109,65 @@ public class C2NuevoTratamientoAdmin {
         buscador.clear();
         buscador.sendKeys(MASCOTA_E2E);
 
-        WebElement botonNuevoTratamiento = wait.until(ExpectedConditions.elementToBeClickable(
+        // El botón "Nuevo tratamiento" de la primera fila
+        WebElement btnNuevoTratamiento = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//tbody/tr[1]//button[@title='Nuevo tratamiento']")));
-        botonNuevoTratamiento.click();
+        btnNuevoTratamiento.click();
 
-        // 3) Registrar nuevo tratamiento
+        // ── PASO 3: Registrar el tratamiento con un medicamento ────────────────
         wait.until(ExpectedConditions.urlContains("/tratamientos/nuevo"));
 
-        WebElement diagnostico = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("diagnostico")));
-        diagnostico.sendKeys("Control postoperatorio caso 2");
+        WebElement diagnostico = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("diagnostico")));
+        diagnostico.sendKeys(DIAGNOSTICO_E2E);
 
         WebElement observaciones = driver.findElement(By.id("observaciones"));
         observaciones.sendKeys("Evolución estable. Revisión en 7 días.");
 
-        driver.findElement(By.xpath("//button[contains(.,'Agregar medicamento')]"))
-                .click();
+        // Agregar un medicamento
+        driver.findElement(By.xpath("//button[contains(.,'Agregar medicamento')]")).click();
 
+        // Seleccionar la primera droga disponible en el select
         WebElement selectDroga = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'droga-row')][1]//select[contains(@name,'drogaId_')]")));
         selectDroga.click();
-        selectDroga.findElement(By.xpath(".//option[position()>1]"))
-                .click();
+        selectDroga.findElement(By.xpath(".//option[position()>1]")).click();
 
+        // Seleccionar cantidad 1
         WebElement selectCantidad = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//div[contains(@class,'droga-row')][1]//select[contains(@name,'drogaCantidad_')]")));
         selectCantidad.click();
-        selectCantidad.findElement(By.xpath(".//option[@value='1' or normalize-space()='1']"))
-                .click();
+        selectCantidad.findElement(By.xpath(".//option[@value='1' or normalize-space()='1']")).click();
 
-        driver.findElement(By.xpath("//button[contains(@class,'btn-guardar') and contains(.,'Guardar Tratamiento')]"))
-                .click();
+        // Guardar tratamiento
+        driver.findElement(By.xpath(
+                "//button[contains(@class,'btn-guardar') and contains(.,'Guardar Tratamiento')]")).click();
 
         WebElement okTratamiento = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//p[contains(@class,'alert-success') and contains(.,'tratamiento fue registrado')]")));
-        Assertions.assertThat(okTratamiento.isDisplayed()).isTrue();
+        Assertions.assertThat(okTratamiento.isDisplayed())
+                .as("Paso 3: el tratamiento debe registrarse correctamente")
+                .isTrue();
 
-        // 4) Verificar en listado de tratamientos que quedó guardado
+        // ── PASO 4: Verificar que el tratamiento quedó en el listado ──────────
         driver.get(BASE_URL + "/tratamientos");
 
         WebElement filtro = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[contains(@placeholder,'Buscar por mascota, veterinario o diagnóstico')]")));
         filtro.clear();
-        filtro.sendKeys("Control postoperatorio caso 2");
+        filtro.sendKeys(DIAGNOSTICO_E2E);
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//tbody/tr[not(contains(@style,'display: none'))]")));
 
         List<WebElement> coincidencias = driver.findElements(
-                By.xpath("//tbody/tr/td[contains(@class,'diagnostico-cell') and contains(.,'Control postoperatorio caso 2')]"));
-        Assertions.assertThat(coincidencias.size()).isGreaterThan(0);
+                By.xpath("//tbody/tr/td[contains(@class,'diagnostico-cell') " +
+                         "and contains(.,'" + DIAGNOSTICO_E2E + "')]"));
+        Assertions.assertThat(coincidencias.size())
+                .as("Paso 4: el tratamiento '" + DIAGNOSTICO_E2E + "' debe aparecer en el listado")
+                .isGreaterThan(0);
 
-        // 5) Login administrador y validar métricas de dashboard
+        // ── PASO 5: Login del administrador ───────────────────────────────────
         driver.get(BASE_URL + "/inicio/login");
 
         wait.until(ExpectedConditions.elementToBeClickable(
@@ -161,39 +175,59 @@ public class C2NuevoTratamientoAdmin {
 
         WebElement adminCorreo = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//input[@formcontrolname='correo']")));
-        WebElement adminPass = driver.findElement(By.xpath("//input[@formcontrolname='contrasenia']"));
+        WebElement adminPass = driver.findElement(
+                By.xpath("//input[@formcontrolname='contrasenia']"));
 
         adminCorreo.sendKeys(ADMIN_CORREO);
         adminPass.sendKeys(ADMIN_PASS);
-        driver.findElement(By.xpath("//button[contains(@class,'btn-login')]"))
-                .click();
+        driver.findElement(By.xpath("//button[contains(@class,'btn-login')]")).click();
 
-        // El login del admin navega a /dashboard (ver LoginComponent.onSubmit).
+        // El login del admin redirige a /dashboard
         wait.until(ExpectedConditions.urlContains("/dashboard"));
 
+        // ── PASO 6: Verificar métricas de medicamentos y ganancias en dashboard
         WebElement cardGanancias = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[contains(@class,'stat-card')][.//div[contains(.,'Ganancias totales')]]//div[contains(@class,'stat-numero')]")));
-        WebElement cardTratamientos = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//div[contains(@class,'stat-card')][.//div[contains(.,'Tratamientos administrados')]]//div[contains(@class,'stat-numero')]")));
+                By.xpath("//div[contains(@class,'stat-card')]" +
+                         "[.//div[contains(.,'Ganancias totales')]]" +
+                         "//div[contains(@class,'stat-numero')]")));
 
-        String gananciasTexto = cardGanancias.getText().trim();
+        WebElement cardTratamientos = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//div[contains(@class,'stat-card')]" +
+                         "[.//div[contains(.,'Tratamientos administrados')]]" +
+                         "//div[contains(@class,'stat-numero')]")));
+
+        String gananciasTexto    = cardGanancias.getText().trim();
         String tratamientosTexto = cardTratamientos.getText().trim();
 
-        Assertions.assertThat(gananciasTexto).isNotBlank();
-        Assertions.assertThat(tratamientosTexto).isNotBlank();
+        Assertions.assertThat(gananciasTexto)
+                .as("Paso 6: el card de Ganancias totales debe mostrar un valor")
+                .isNotBlank();
+
+        Assertions.assertThat(tratamientosTexto)
+                .as("Paso 6: el card de Tratamientos administrados debe mostrar un valor")
+                .isNotBlank();
+
+        // Los valores numéricos deben ser mayores a 0 (hubo al menos un tratamiento con droga)
+        double ganancias = parsearNumero(gananciasTexto);
+        int tratamientos  = (int) parsearNumero(tratamientosTexto);
+
+        Assertions.assertThat(ganancias)
+                .as("Las ganancias totales deben ser > 0 tras registrar el tratamiento con medicamento")
+                .isGreaterThan(0);
+
+        Assertions.assertThat(tratamientos)
+                .as("Los tratamientos administrados deben ser > 0")
+                .isGreaterThan(0);
     }
 
     @AfterEach
     void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        if (driver != null) driver.quit();
     }
 
-    /**
-     * Garantiza que el veterinario que loguea el test exista y esté activo.
-     * Idempotente.
-     */
+    // ── Helpers de siembra ────────────────────────────────────────────────────
+
+    /** Garantiza que el veterinario de prueba exista. Idempotente. */
     private void sembrarVeterinarioE2E() {
         if (veterinarioRepository.findByCorreo(VET_CORREO).isPresent()) return;
         veterinarioRepository.save(new Veterinario(
@@ -201,18 +235,16 @@ public class C2NuevoTratamientoAdmin {
                 "Medicina General", VET_PASS, "default.jpg", "activo"));
     }
 
-    /**
-     * Garantiza que el admin que loguea el test exista. Idempotente.
-     */
+    /** Garantiza que el admin de prueba exista. Idempotente. */
     private void sembrarAdminE2E() {
         if (adminRepository.findByCorreo(ADMIN_CORREO).isPresent()) return;
         adminRepository.save(new Admin(null, "Carlos Admin", ADMIN_CORREO, ADMIN_PASS));
     }
 
     /**
-     * Garantiza que exista una mascota activa llamada "MaxE2E" propiedad de
-     * algún cliente. Si no hay clientes (DataLoader no corrió o falló), se
-     * crea uno propio. Idempotente: si ya existe la mascota, no hace nada.
+     * Garantiza que exista una mascota activa llamada "MaxE2E" asociada a
+     * algún cliente. Si no hay clientes disponibles, crea uno propio.
+     * Idempotente: si la mascota ya existe no hace nada.
      */
     private void sembrarMascotaE2E() {
         boolean yaExiste = mascotaRepository.findAll().stream()
@@ -231,5 +263,23 @@ public class C2NuevoTratamientoAdmin {
                 Mascota.EstadoMascota.ACTIVA,
                 "Ninguna", "Sembrada por el test E2E", dueno);
         mascotaRepository.save(mascota);
+    }
+
+    /**
+     * Extrae el primer número (entero o decimal) de un texto del dashboard.
+     * Ejemplos: "$ 14.000" → 14000.0 | "12" → 12.0 | "$ 0,00" → 0.0
+     */
+    private double parsearNumero(String texto) {
+        if (texto == null || texto.isBlank()) return 0;
+        // Eliminar símbolos de moneda, espacios y separadores de miles (punto/coma cuando no son decimales)
+        String limpio = texto.replaceAll("[^0-9.,]", "")
+                             .replaceAll("\\.", "")   // quitar puntos de miles
+                             .replace(",", ".");       // normalizar decimal
+        if (limpio.isBlank()) return 0;
+        try {
+            return Double.parseDouble(limpio);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

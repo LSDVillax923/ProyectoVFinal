@@ -79,7 +79,7 @@ public class Mascota {
     // Relación con cliente (muchas mascotas pertenecen a un cliente)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
-    @JsonIgnoreProperties({"mascotas", "citas"})
+    @JsonIgnoreProperties({"mascotas", "citas", "hibernateLazyInitializer", "handler"})
     private Cliente cliente;
 
     // Lista de tratamientos

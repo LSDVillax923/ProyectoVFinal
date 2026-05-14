@@ -34,19 +34,19 @@ public class Cita {
     // Relación con Cliente
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
-    @JsonIgnoreProperties({"mascotas", "citas"})
+    @JsonIgnoreProperties({"mascotas", "citas", "hibernateLazyInitializer", "handler"})
     private Cliente cliente;
 
     // Relación con Mascota
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mascota_id", nullable = false)
-    @JsonIgnoreProperties({"cliente", "tratamientos", "citas"})
+    @JsonIgnoreProperties({"cliente", "tratamientos", "citas", "hibernateLazyInitializer", "handler"})
     private Mascota mascota;
 
     // Relación con Veterinario
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "veterinario_id", nullable = false)
-    @JsonIgnoreProperties({"tratamientos", "citas"})
+    @JsonIgnoreProperties({"tratamientos", "citas", "hibernateLazyInitializer", "handler"})
     private Veterinario veterinario;
 
     public Cita(LocalDateTime fechaInicio, LocalDateTime fechaFin, String motivo,
