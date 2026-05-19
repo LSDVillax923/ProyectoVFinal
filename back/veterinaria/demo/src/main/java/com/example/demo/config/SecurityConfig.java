@@ -42,4 +42,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-back/veterinaria/demo/src/main/java/com/example/demo/controller/AuthController.java
