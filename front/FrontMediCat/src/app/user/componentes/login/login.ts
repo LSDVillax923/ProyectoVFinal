@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthRestService } from '../../services/auth-rest.service';
@@ -73,9 +74,12 @@ export class LoginComponent {
             this.router.navigate(['/inicio']);
         }
       },
-      error: (err: { error?: { message?: string } } & Error) => {
+       error: (err: HttpErrorResponse) => {
+      
         const backendMessage = err?.error?.message;
-        if (backendMessage && backendMessage.toLowerCase().includes('desactivad')) {
+         if (err.status === 0) {
+          this.error = 'No se pudo conectar con el servidor. Verifica que el backend esté ejecutándose en http://localhost:8080.';
+        } else if (backendMessage && backendMessage.toLowerCase().includes('desactivad')) {
           this.error = backendMessage;
         } else {
           this.error = 'Credenciales inválidas. Intenta de nuevo.';
