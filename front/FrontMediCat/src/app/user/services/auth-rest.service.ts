@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { LoginRequest, Cliente, ClienteRequest, Veterinario, Admin } from '../../shared/api/backend-contracts';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { LoginRequest, Cliente, ClienteRequest, LoginResponse } from '../../shared/api/backend-contracts';
 import { ENDPOINTS } from '../../shared/api/rest-endpoints';
 
 export interface SesionActiva {
@@ -13,6 +13,7 @@ export interface SesionActiva {
 }
 
 const STORAGE_KEY = 'vet_session';
+const TOKEN_KEY = 'vet_token';
 const COOKIE_VET_KEY = 'vet_logueado';
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 8;
 
@@ -20,6 +21,7 @@ const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 8;
 export class AuthRestService {
 
   private sesion: SesionActiva | null = null;
+  private token: string | null = null;
 
   constructor(private http: HttpClient) {
     this.cargarSesionDesdeStorage();
@@ -34,6 +36,7 @@ export class AuthRestService {
         this.sesion = null;
       }
     }
+    this.token = sessionStorage.getItem(TOKEN_KEY);
   }
 
   private guardarSesion(sesion: SesionActiva): void {
@@ -84,82 +87,49 @@ export class AuthRestService {
     this.guardarSesion(sesion);
   }
 
+  getToken(): string | null {
+    return this.token;
+  }
+
 // Agregar este método a AuthRestService
 
 /**
  * Login unificado - detecta automáticamente el tipo de usuario
  */
 login(credentials: LoginRequest, tipoUsuario: 'CLIENTE' | 'VETERINARIO' | 'ADMIN'): Observable<SesionActiva> {
-  switch (tipoUsuario) {
-    case 'CLIENTE':
-      return this.loginCliente(credentials);
-    case 'VETERINARIO':
-      return this.loginVeterinario(credentials);
-    case 'ADMIN':
-      return this.loginAdmin(credentials);
-    default:
-      throw new Error('Tipo de usuario no válido');
-  }
+   return this.http.post<LoginResponse>(ENDPOINTS.AUTH_LOGIN, credentials).pipe(
+    tap((response) => {
+      this.token = response.token ?? null;
+      if (this.token) {
+        sessionStorage.setItem(TOKEN_KEY, this.token);
+      } else {
+        sessionStorage.removeItem(TOKEN_KEY);
+      }
+    }),
+    map((response) => ({
+      id: response.id,
+      nombre: response.nombre,
+      correo: response.correo,
+      rol: response.rol
+    })),
+    tap((sesion) => {
+      if (sesion.rol !== tipoUsuario) {
+        throw new Error('El tipo de usuario no coincide con la cuenta.');
+      }
+      this.guardarSesion(sesion);
+    })
+  );
 }
 
   register(data: ClienteRequest): Observable<Cliente> {
     return this.http.post<Cliente>(ENDPOINTS.CLIENTES, data);
   }
 
-  loginCliente(credentials: LoginRequest): Observable<SesionActiva> {
-    // El back acepta 'identificador' (correo o cédula). Se envía también
-    // 'correo' por compatibilidad con clientes anteriores del backend.
-    const params = new HttpParams()
-      .set('identificador', credentials.correo)
-      .set('correo', credentials.correo)
-      .set('contrasenia', credentials.contrasenia);
-
-    return this.http.post<Cliente>(ENDPOINTS.CLIENTES_LOGIN, null, { params }).pipe(
-      map(cliente => ({
-        id: cliente.id,
-        nombre: `${cliente.nombre} ${cliente.apellido}`,
-        correo: cliente.correo,
-        rol: 'CLIENTE' as const
-      })),
-      tap(sesion => this.guardarSesion(sesion))
-    );
-  }
-
-  loginVeterinario(credentials: LoginRequest): Observable<SesionActiva> {
-    const params = new HttpParams()
-      .set('correo', credentials.correo)
-      .set('contrasenia', credentials.contrasenia);
-    
-    return this.http.post<Veterinario>(ENDPOINTS.VETERINARIOS_LOGIN, null, { params }).pipe(
-      map(vet => ({
-        id: vet.id,
-        nombre: vet.nombre,
-        correo: vet.correo,
-        rol: 'VETERINARIO' as const
-      })),
-      tap(sesion => this.guardarSesion(sesion))
-    );
-  }
-
-  loginAdmin(credentials: LoginRequest): Observable<SesionActiva> {
-    const params = new HttpParams()
-      .set('correo', credentials.correo)
-      .set('contrasenia', credentials.contrasenia);
-    
-    return this.http.post<Admin>(ENDPOINTS.ADMINS_LOGIN, null, { params }).pipe(
-      map(admin => ({
-        id: admin.id,
-        nombre: admin.nombre,
-        correo: admin.correo,
-        rol: 'ADMIN' as const
-      })),
-      tap(sesion => this.guardarSesion(sesion))
-    );
-  }
-
-  logout(): void {
+   logout(): void {
     this.sesion = null;
+    this.token = null;
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
     this.borrarVeterinarioCookie();
   }
 
