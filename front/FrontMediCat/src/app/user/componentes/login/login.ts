@@ -4,6 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthRestService } from '../../services/auth-rest.service';
+import { API_BASE_URL } from '../../../shared/api/rest-endpoints';
 
 
 @Component({
@@ -75,10 +76,11 @@ export class LoginComponent {
         }
       },
        error: (err: HttpErrorResponse) => {
-      
         const backendMessage = err?.error?.message;
-         if (err.status === 0) {
-          this.error = 'No se pudo conectar con el servidor. Verifica que el backend esté ejecutándose en http://localhost:8080.';
+         const apiHost = API_BASE_URL.replace('/api', '');
+
+        if (err.status === 0) {
+          this.error = `No se pudo conectar con el servidor en ${apiHost}. Verifica que el backend esté ejecutándose y que el puerto sea correcto.`;
         } else if (backendMessage && backendMessage.toLowerCase().includes('desactivad')) {
           this.error = backendMessage;
         } else {
