@@ -1,0 +1,29 @@
+{
+  "info": {
+    "name": "MediCat Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth Login JWT",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "url": {"raw":"{{baseUrl}}/api/auth/login","host":["{{baseUrl}}"],"path":["api","auth","login"]},
+        "body": {"mode":"raw","raw":"{\n  \"correo\": \"admin1@vet.com\",\n  \"contrasenia\": \"admin123\"\n}"}
+      }
+    },
+    {
+      "name": "Listar Clientes (GET)",
+      "request": {
+        "method": "GET",
+        "header": [{"key":"Authorization","value":"Bearer {{jwt}}"}],
+        "url": {"raw":"{{baseUrl}}/api/clientes","host":["{{baseUrl}}"],"path":["api","clientes"]}
+      }
+    }
+  ],
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:8080"},
+    {"key":"jwt","value":""}
+  ]
+}

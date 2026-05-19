@@ -27,6 +27,9 @@ import com.example.demo.repository.MascotaRepository;
 import com.example.demo.repository.TratamientoDrogaRepository;
 import com.example.demo.repository.TratamientoRepository;
 import com.example.demo.repository.VeterinarioRepository;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.entities.UserEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.demo.util.FechaUtils;
 
 import jakarta.transaction.Transactional;
@@ -44,6 +47,8 @@ public class DataLoader implements CommandLineRunner {
     @Autowired private TratamientoDrogaRepository tratamientoDrogaRepository;
     @Autowired private VeterinarioRepository veterinarioRepository;
     @Autowired private CitaRepository citaRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     // ─────────────────────────────────────────────────────────────────────────
     // Datos de prueba
@@ -135,7 +140,15 @@ public class DataLoader implements CommandLineRunner {
         }
         System.out.println("DataLoader: 30 clientes generados.");
 
-        List<Cliente> clientes = clienteRepository.findAll();
+                List<Cliente> clientes = clienteRepository.findAll();
+        // ─── 2.1 Usuarios centralizados ───────────────────────────────────────────
+        userRepository.deleteAll();
+        adminRepository.findAll().forEach(a -> userRepository.save(UserEntity.deAdmin(a, passwordEncoder.encode(a.getContrasenia()))));
+        veterinarioRepository.findAll().forEach(v -> userRepository.save(UserEntity.deVeterinario(v, passwordEncoder.encode(v.getContrasenia()))));
+        clienteRepository.findAll().forEach(c -> userRepository.save(UserEntity.deCliente(c, passwordEncoder.encode(c.getContrasenia()))));
+        System.out.println("DataLoader: UserEntity sincronizado para ADMIN/VETERINARIO/CLIENTE.");
+
+        
 
         // ─── 5. Mascotas ────────────────────────────────────────────────────────
     for (int i = 1; i <= 60; i++) {
