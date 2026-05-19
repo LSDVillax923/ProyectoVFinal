@@ -1,18 +1,19 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entities.Cliente;
+import com.example.demo.entities.UserEntity;
 import com.example.demo.errors.ClienteException;
 import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.UserRepository;
 
-/**
- * Implementación del servicio de clientes.
- */
 @Service
 @Transactional
 public class ClienteServiceImpl implements ClienteService {
@@ -20,110 +21,185 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    /** Busca un cliente por ID */
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    /** Buscar cliente por ID */
     @Override
     public Cliente findById(Long id) {
         return clienteRepository.findById(id)
-                .orElseThrow(() -> new ClienteException("Cliente no encontrado con ID: " + id));
+                .orElseThrow(() ->
+                        new ClienteException("Cliente no encontrado con ID: " + id));
     }
 
-    /** Lista todos los clientes */
+    /** Listar todos */
     @Override
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
     }
 
-    /** Guarda un cliente con validaciones */
+    /** Guardar cliente */
     @Override
     public Cliente save(Cliente cliente) {
+
         validarCliente(cliente);
+
         if (cliente.getId() == null) {
+
             if (clienteRepository.existsByCorreo(cliente.getCorreo())) {
                 throw new IllegalArgumentException("Correo ya registrado");
             }
-            if (cliente.getCedula() != null && !cliente.getCedula().isBlank()
+
+            if (cliente.getCedula() != null
+                    && !cliente.getCedula().isBlank()
                     && clienteRepository.existsByCedula(cliente.getCedula())) {
+
                 throw new IllegalArgumentException("Cédula ya registrada");
             }
         }
-        return clienteRepository.save(cliente);
+
+        Cliente guardado = clienteRepository.save(cliente);
+
+        sincronizarUsuarioCliente(guardado);
+
+        return guardado;
     }
 
-    /** Actualiza un cliente */
+    /** Actualizar cliente */
     @Override
     public Cliente update(Long id, Cliente clienteDetails) {
+
         Cliente existing = findById(id);
+
         existing.setNombre(clienteDetails.getNombre());
         existing.setApellido(clienteDetails.getApellido());
         existing.setCedula(clienteDetails.getCedula());
         existing.setCorreo(clienteDetails.getCorreo());
         existing.setContrasenia(clienteDetails.getContrasenia());
         existing.setCelular(clienteDetails.getCelular());
-        return clienteRepository.save(existing);
+
+        Cliente actualizado = clienteRepository.save(existing);
+
+        sincronizarUsuarioCliente(actualizado);
+
+        return actualizado;
     }
 
-    /** Elimina un cliente */
+    /** Eliminar cliente */
     @Override
     public void delete(Long id) {
+
         Cliente cliente = findById(id);
+
         clienteRepository.delete(cliente);
     }
 
-    /**
-     * Login de cliente. El identificador puede ser su correo o su cédula:
-     * - si contiene '@' se interpreta como correo,
-     * - en caso contrario se intenta como cédula y, si no se encuentra, como correo.
-     */
+    /** Login */
     @Override
     public Cliente login(String identificador, String contrasenia) {
+
         if (identificador == null || identificador.isBlank()) {
             return null;
         }
-        java.util.Optional<Cliente> encontrado;
+
+        Optional<Cliente> encontrado;
+
         if (identificador.contains("@")) {
+
             encontrado = clienteRepository.findByCorreo(identificador);
+
         } else {
+
             encontrado = clienteRepository.findByCedula(identificador);
+
             if (encontrado.isEmpty()) {
                 encontrado = clienteRepository.findByCorreo(identificador);
             }
         }
+
         return encontrado
-                .filter(c -> c.getContrasenia() != null && c.getContrasenia().equals(contrasenia))
+                .filter(c ->
+                        c.getContrasenia() != null
+                                && c.getContrasenia().equals(contrasenia))
                 .orElse(null);
     }
 
-    /** Busca clientes por filtros */
+    /** Buscar por filtros */
     @Override
     public List<Cliente> buscarPorFiltros(String query) {
+
         if (query == null || query.isBlank()) {
             return findAll();
         }
+
         return clienteRepository.buscarPorFiltros(query);
     }
 
-    /** KPI dashboard: total de clientes registrados */
+    /** Contar clientes */
     @Override
     public long contar() {
         return clienteRepository.count();
     }
 
-    /** Validaciones básicas del cliente */
+    /** Validaciones */
     private void validarCliente(Cliente cliente) {
+
         if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
             throw new IllegalArgumentException("Nombre obligatorio");
         }
+
         if (cliente.getApellido() == null || cliente.getApellido().isBlank()) {
             throw new IllegalArgumentException("Apellido obligatorio");
         }
+
         if (cliente.getCedula() == null || cliente.getCedula().isBlank()) {
             throw new IllegalArgumentException("Cédula obligatoria");
         }
-        if (cliente.getCorreo() == null || !cliente.getCorreo().contains("@")) {
+
+        if (cliente.getCorreo() == null
+                || !cliente.getCorreo().contains("@")) {
+
             throw new IllegalArgumentException("Correo inválido");
         }
-        if (cliente.getCelular() == null || cliente.getCelular().length() < 10) {
+
+        if (cliente.getCelular() == null
+                || cliente.getCelular().length() < 10) {
+
             throw new IllegalArgumentException("Celular inválido");
         }
+    }
+
+    /** Sincronizar con usuarios */
+    private void sincronizarUsuarioCliente(Cliente cliente) {
+
+        userRepository.findByCorreo(cliente.getCorreo())
+                .ifPresentOrElse(user -> {
+
+                    user.setNombre(
+                            cliente.getNombre() + " "
+                                    + cliente.getApellido());
+
+                    user.setCliente(cliente);
+
+                    user.setRol(UserEntity.RolUsuario.CLIENTE);
+
+                    user.setContrasenia(
+                            passwordEncoder.encode(
+                                    cliente.getContrasenia()));
+
+                    user.setActivo(true);
+
+                    userRepository.save(user);
+
+                }, () -> userRepository.save(
+                        UserEntity.deCliente(
+                                cliente,
+                                passwordEncoder.encode(
+                                        cliente.getContrasenia())
+                        )
+                ));
     }
 }
