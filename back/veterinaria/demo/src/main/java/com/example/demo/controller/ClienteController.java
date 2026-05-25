@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import com.example.demo.dto.ClienteDto;
 import com.example.demo.dto.DtoMapper;
 import com.example.demo.dto.MascotaDto;
 import com.example.demo.entities.Cliente;
+import com.example.demo.repository.MascotaRepository;
 import com.example.demo.service.ClienteService;
 import com.example.demo.service.MascotaService;
 
@@ -26,28 +29,40 @@ public class ClienteController {
     @Autowired
     private MascotaService mascotaService;
 
+    @Autowired
+    private MascotaRepository mascotaRepository;
+
     @GetMapping
     public ResponseEntity<List<ClienteDto>> findAll(@RequestParam(required = false) String query) {
         List<Cliente> resultado = (query != null && !query.isBlank())
                 ? clienteService.buscarPorFiltros(query)
                 : clienteService.findAll();
-        return ResponseEntity.ok(DtoMapper.toClienteDtoList(resultado));
+
+        Map<Long, Long> mascotasPorCliente = new HashMap<>();
+        for (Cliente c : resultado) {
+            mascotasPorCliente.put(c.getId(), mascotaRepository.countByCliente_Id(c.getId()));
+        }
+        return ResponseEntity.ok(DtoMapper.toClienteDtoList(resultado, mascotasPorCliente));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(DtoMapper.toClienteDto(clienteService.findById(id)));
+        Cliente c = clienteService.findById(id);
+        long count = mascotaRepository.countByCliente_Id(id);
+        return ResponseEntity.ok(DtoMapper.toClienteDto(c, count));
     }
 
     @PostMapping
     public ResponseEntity<ClienteDto> create(@Valid @RequestBody Cliente cliente) {
         Cliente guardado = clienteService.save(cliente);
-        return new ResponseEntity<>(DtoMapper.toClienteDto(guardado), HttpStatus.CREATED);
+        return new ResponseEntity<>(DtoMapper.toClienteDto(guardado, 0L), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ClienteDto> update(@PathVariable Long id, @Valid @RequestBody Cliente cliente) {
-        return ResponseEntity.ok(DtoMapper.toClienteDto(clienteService.update(id, cliente)));
+        Cliente actualizado = clienteService.update(id, cliente);
+        long count = mascotaRepository.countByCliente_Id(id);
+        return ResponseEntity.ok(DtoMapper.toClienteDto(actualizado, count));
     }
 
     @DeleteMapping("/{id}")
@@ -67,7 +82,8 @@ public class ClienteController {
         if (cliente == null) {
             throw new IllegalArgumentException("Credenciales inválidas");
         }
-        return ResponseEntity.ok(DtoMapper.toClienteDto(cliente));
+        long count = mascotaRepository.countByCliente_Id(cliente.getId());
+        return ResponseEntity.ok(DtoMapper.toClienteDto(cliente, count));
     }
 
     @GetMapping("/{id}/mascotas")

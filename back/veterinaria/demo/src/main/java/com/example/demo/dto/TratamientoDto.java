@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record TratamientoDto(
         Long id,
@@ -9,5 +10,9 @@ public record TratamientoDto(
         LocalDate fecha,
         String estado,
         Long mascotaId,
-        Long veterinarioId
+        String mascotaNombre,
+        Long clienteId,
+        Long veterinarioId,
+        String veterinarioNombre,
+        List<TratamientoDrogaResumenDto> drogas
 ) {}

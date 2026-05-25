@@ -16,5 +16,6 @@ public record MascotaDto(
         String enfermedad,
         String observaciones,
         String tratamiento,
-        Long clienteId
+        Long clienteId,
+        String clienteNombre
 ) {}

@@ -547,6 +547,11 @@ export const ClienteMapper = {
 export const MascotaMapper = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fromDto(dto: BackendMascota): any {
+    // El backend nuevo expone clienteId / clienteNombre planos.
+    // Se mantiene fallback al objeto `cliente` para no romper respuestas legacy.
+    const clienteId = dto.clienteId ?? dto.cliente?.id ?? 0;
+    const propietario = dto.clienteNombre
+      ?? (dto.cliente ? `${dto.cliente.nombre} ${dto.cliente.apellido}`.trim() : '');
     return {
       id: dto.id,
       nombre: dto.nombre,
@@ -560,10 +565,8 @@ export const MascotaMapper = {
       observaciones: dto.observaciones ?? '',
       foto: dto.foto,
       estado: dto.estado ?? 'ACTIVA',
-      clienteId: dto.cliente?.id ?? 0,
-      propietario: dto.cliente
-        ? `${dto.cliente.nombre} ${dto.cliente.apellido}`.trim()
-        : '',
+      clienteId,
+      propietario,
     };
   },
 };
@@ -603,21 +606,31 @@ export const DrogaMapper = {
 export const TratamientoMapper = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fromDto(dto: BackendTratamiento): any {
+    // El backend nuevo expone planos: mascotaId/mascotaNombre, veterinarioId/veterinarioNombre, clienteId, drogas.
+    // Se mantiene fallback al objeto anidado para respuestas legacy.
+    const mascotaId = dto.mascotaId ?? dto.mascota?.id ?? 0;
+    const mascotaNombre = dto.mascotaNombre ?? dto.mascota?.nombre ?? '';
+    const veterinarioId = dto.veterinarioId ?? dto.veterinario?.id ?? 0;
+    const veterinarioNombre = dto.veterinarioNombre ?? dto.veterinario?.nombre ?? '';
+    const clienteId = dto.clienteId ?? dto.mascota?.cliente?.id ?? 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const drogasRaw: any[] = dto.drogas ?? [];
     return {
       id: dto.id,
-      mascotaId: dto.mascota?.id ?? 0,
-      mascota: dto.mascota?.nombre ?? '',
-      clienteId: dto.mascota?.cliente?.id ?? 0,
-      veterinarioId: dto.veterinario?.id ?? 0,
-      veterinario: dto.veterinario?.nombre ?? '',
+      mascotaId,
+      mascota: mascotaNombre,
+      clienteId,
+      veterinarioId,
+      veterinario: veterinarioNombre,
       diagnostico: dto.diagnostico,
       observaciones: dto.observaciones,
       fecha: dto.fecha,
       estado: dto.estado ?? 'PENDIENTE',
-      drogas: (dto.drogas ?? []).map((td) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      drogas: drogasRaw.map((td: any) => ({
         id: td.id,
-        drogaId: td.droga?.id ?? 0,
-        nombreDroga: td.droga?.nombre ?? '',
+        drogaId: td.drogaId ?? td.droga?.id ?? 0,
+        nombreDroga: td.nombreDroga ?? td.droga?.nombre ?? '',
         cantidad: td.cantidad,
       })),
     };

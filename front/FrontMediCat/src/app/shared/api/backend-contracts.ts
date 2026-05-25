@@ -23,8 +23,9 @@ export interface Cliente {
   apellido: string;
   cedula?: string;
   correo: string;
-  contrasenia: string;
+  contrasenia?: string; // El backend NO la serializa (WRITE_ONLY); solo se envía al crear/editar.
   celular: string;
+  mascotasCount?: number; // Lo expone ClienteDto.
   mascotas?: Mascota[];
   citas?: Cita[];
 }
@@ -81,7 +82,11 @@ export interface Mascota {
   observaciones: string;
   foto: string;
   estado: 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA';
-  cliente: Cliente | null;
+  // El backend ahora expone solo el id y el nombre del cliente, no el objeto anidado.
+  clienteId?: number;
+  clienteNombre?: string;
+  /** @deprecated mantenido para compatibilidad con respuestas antiguas. */
+  cliente?: Cliente | null;
 }
 
 export interface MascotaRequest {
@@ -120,15 +125,29 @@ export interface DrogaRequest {
 // ============================================
 // ENTIDAD: Tratamiento
 // ============================================
+export interface TratamientoDrogaResumen {
+  id: number;
+  drogaId: number;
+  nombreDroga: string;
+  cantidad: number;
+}
+
 export interface Tratamiento {
   id: number;
   diagnostico: string;
   observaciones: string;
   fecha: string;  // ISO Date: "YYYY-MM-DD"
   estado: 'PENDIENTE' | 'COMPLETADO' | 'CANCELADO';
-  mascota: Mascota;
-  veterinario: Veterinario;
-  drogas: TratamientoDroga[];
+  mascotaId?: number;
+  mascotaNombre?: string;
+  clienteId?: number;
+  veterinarioId?: number;
+  veterinarioNombre?: string;
+  drogas?: TratamientoDrogaResumen[];
+  /** @deprecated solo se queda para no romper componentes legacy. */
+  mascota?: Mascota;
+  /** @deprecated solo se queda para no romper componentes legacy. */
+  veterinario?: Veterinario;
 }
 
 export interface TratamientoRequest {
