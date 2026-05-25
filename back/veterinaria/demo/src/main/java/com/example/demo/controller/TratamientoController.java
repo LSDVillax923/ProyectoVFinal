@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.DtoMapper;
+import com.example.demo.dto.TratamientoDto;
 import com.example.demo.entities.Tratamiento;
 import com.example.demo.service.TratamientoService;
 
@@ -22,38 +24,39 @@ public class TratamientoController {
     private TratamientoService tratamientoService;
 
     @GetMapping
-    public ResponseEntity<List<Tratamiento>> findAll(@RequestParam(required = false) Boolean programados) {
-        if (Boolean.TRUE.equals(programados)) {
-            return ResponseEntity.ok(tratamientoService.findProgramados());
-        }
-        return ResponseEntity.ok(tratamientoService.findAll());
+    public ResponseEntity<List<TratamientoDto>> findAll(@RequestParam(required = false) Boolean programados) {
+        List<Tratamiento> resultado = Boolean.TRUE.equals(programados)
+                ? tratamientoService.findProgramados()
+                : tratamientoService.findAll();
+        return ResponseEntity.ok(DtoMapper.toTratamientoDtoList(resultado));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tratamiento> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(tratamientoService.findById(id));
+    public ResponseEntity<TratamientoDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(DtoMapper.toTratamientoDto(tratamientoService.findById(id)));
     }
 
     @GetMapping("/mascota/{mascotaId}")
-    public ResponseEntity<List<Tratamiento>> findByMascotaId(@PathVariable Long mascotaId) {
-        return ResponseEntity.ok(tratamientoService.findByMascotaId(mascotaId));
+    public ResponseEntity<List<TratamientoDto>> findByMascotaId(@PathVariable Long mascotaId) {
+        return ResponseEntity.ok(DtoMapper.toTratamientoDtoList(tratamientoService.findByMascotaId(mascotaId)));
     }
 
     @GetMapping("/veterinario/{veterinarioId}")
-    public ResponseEntity<List<Tratamiento>> findByVeterinarioId(@PathVariable Long veterinarioId) {
-        return ResponseEntity.ok(tratamientoService.findByVeterinarioId(veterinarioId));
+    public ResponseEntity<List<TratamientoDto>> findByVeterinarioId(@PathVariable Long veterinarioId) {
+        return ResponseEntity.ok(DtoMapper.toTratamientoDtoList(tratamientoService.findByVeterinarioId(veterinarioId)));
     }
 
     @PostMapping
-    public ResponseEntity<Tratamiento> create(@Valid @RequestBody Tratamiento tratamiento,
-                                              @RequestParam Long mascotaId,
-                                              @RequestParam Long veterinarioId) {
-        return new ResponseEntity<>(tratamientoService.save(tratamiento, mascotaId, veterinarioId), HttpStatus.CREATED);
+    public ResponseEntity<TratamientoDto> create(@Valid @RequestBody Tratamiento tratamiento,
+                                                 @RequestParam Long mascotaId,
+                                                 @RequestParam Long veterinarioId) {
+        Tratamiento guardado = tratamientoService.save(tratamiento, mascotaId, veterinarioId);
+        return new ResponseEntity<>(DtoMapper.toTratamientoDto(guardado), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tratamiento> update(@PathVariable Long id, @Valid @RequestBody Tratamiento tratamiento) {
-        return ResponseEntity.ok(tratamientoService.update(id, tratamiento));
+    public ResponseEntity<TratamientoDto> update(@PathVariable Long id, @Valid @RequestBody Tratamiento tratamiento) {
+        return ResponseEntity.ok(DtoMapper.toTratamientoDto(tratamientoService.update(id, tratamiento)));
     }
 
     @DeleteMapping("/{id}")

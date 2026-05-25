@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +30,8 @@ public class Admin {
     @Column(unique = true, nullable = false)
     private String correo;
 
-    // Contraseña (no vacía)
+    // Contraseña (no vacía). WRITE_ONLY: se acepta en POST/PUT pero nunca se serializa al frontend.
     @NotBlank(message = "La contraseña no puede estar vacía")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasenia;
 }

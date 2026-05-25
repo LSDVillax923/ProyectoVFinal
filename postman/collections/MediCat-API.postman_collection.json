@@ -1,0 +1,403 @@
+{
+  "info": {
+    "name": "MediCat API",
+    "description": "Colección completa para probar la API de MediCat con JWT. Ejecutar primero 'Auth / Login' para poblar {{token}}. Cubre todos los verbos (GET/POST/PUT/PATCH/DELETE) declarados en los controllers.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (pm.response.code === 401) {",
+          "  console.warn('401: token ausente o expirado. Re-ejecuta Auth / Login.');",
+          "} else if (pm.response.code === 403) {",
+          "  console.warn('403: el rol ' + pm.environment.get('rol') + ' no tiene acceso a este endpoint.');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (guarda token)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"{{correo}}\",\n  \"contrasenia\": \"{{contrasenia}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const data = pm.response.json();",
+                  "pm.test('respuesta trae token', () => pm.expect(data.token).to.be.a('string').and.not.empty);",
+                  "pm.environment.set('token', data.token);",
+                  "pm.environment.set('rol', data.rol);",
+                  "pm.environment.set('userId', data.id);",
+                  "console.log('Logueado como', data.correo, '(' + data.rol + ') id=' + data.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admins",
+      "item": [
+        { "name": "GET /api/admins (Listar)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/admins", "host": ["{{baseUrl}}"], "path": ["api", "admins"] } } },
+        { "name": "GET /api/admins/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/admins/1", "host": ["{{baseUrl}}"], "path": ["api", "admins", "1"] } } },
+        {
+          "name": "POST /api/admins (Crear)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nuevo Admin\",\n  \"correo\": \"nuevo-admin@vet.com\",\n  \"contrasenia\": \"admin123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/admins", "host": ["{{baseUrl}}"], "path": ["api", "admins"] }
+          }
+        },
+        {
+          "name": "PUT /api/admins/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Carlos Admin (editado)\",\n  \"correo\": \"admin1@vet.com\",\n  \"contrasenia\": \"admin123\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/admins/1", "host": ["{{baseUrl}}"], "path": ["api", "admins", "1"] }
+          }
+        },
+        { "name": "DELETE /api/admins/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/admins/99", "host": ["{{baseUrl}}"], "path": ["api", "admins", "99"] } } },
+        {
+          "name": "POST /api/admins/login (legacy)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/admins/login?correo=admin1@vet.com&contrasenia=admin123",
+              "host": ["{{baseUrl}}"], "path": ["api", "admins", "login"],
+              "query": [
+                { "key": "correo", "value": "admin1@vet.com" },
+                { "key": "contrasenia", "value": "admin123" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Veterinarios",
+      "item": [
+        { "name": "GET /api/veterinarios", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/veterinarios", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios"] } } },
+        { "name": "GET /api/veterinarios?estado=activo", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/veterinarios?estado=activo", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios"], "query": [{ "key": "estado", "value": "activo" }] } } },
+        { "name": "GET /api/veterinarios/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/veterinarios/1", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios", "1"] } } },
+        { "name": "GET /api/veterinarios/count?estado=activo", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/veterinarios/count?estado=activo", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios", "count"], "query": [{ "key": "estado", "value": "activo" }] } } },
+        {
+          "name": "POST /api/veterinarios (Crear)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Vet Nuevo\",\n  \"cedula\": \"10000099\",\n  \"celular\": \"3100000099\",\n  \"correo\": \"vet-nuevo@vet.com\",\n  \"especialidad\": \"Medicina General\",\n  \"contrasenia\": \"pass123\",\n  \"imageUrl\": \"default.jpg\",\n  \"estado\": \"activo\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/veterinarios", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios"] }
+          }
+        },
+        {
+          "name": "PUT /api/veterinarios/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Elena Martínez (editada)\",\n  \"cedula\": \"10000001\",\n  \"celular\": \"3101000001\",\n  \"correo\": \"elena@vet.com\",\n  \"especialidad\": \"Medicina General\",\n  \"contrasenia\": \"pass123\",\n  \"imageUrl\": \"default.jpg\",\n  \"estado\": \"activo\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/veterinarios/1", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios", "1"] }
+          }
+        },
+        {
+          "name": "PATCH /api/veterinarios/{id}/estado",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/veterinarios/1/estado?estado=inactivo",
+              "host": ["{{baseUrl}}"], "path": ["api", "veterinarios", "1", "estado"],
+              "query": [{ "key": "estado", "value": "inactivo" }]
+            }
+          }
+        },
+        { "name": "DELETE /api/veterinarios/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/veterinarios/99", "host": ["{{baseUrl}}"], "path": ["api", "veterinarios", "99"] } } },
+        {
+          "name": "POST /api/veterinarios/login (legacy)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/veterinarios/login?correo=elena@vet.com&contrasenia=pass123",
+              "host": ["{{baseUrl}}"], "path": ["api", "veterinarios", "login"],
+              "query": [
+                { "key": "correo", "value": "elena@vet.com" },
+                { "key": "contrasenia", "value": "pass123" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "item": [
+        { "name": "GET /api/clientes", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api", "clientes"] } } },
+        { "name": "GET /api/clientes?query=...", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clientes?query=Andres", "host": ["{{baseUrl}}"], "path": ["api", "clientes"], "query": [{ "key": "query", "value": "Andres" }] } } },
+        { "name": "GET /api/clientes/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clientes/1", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "1"] } } },
+        { "name": "GET /api/clientes/{id}/mascotas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clientes/1/mascotas", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "1", "mascotas"] } } },
+        { "name": "GET /api/clientes/count", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clientes/count", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "count"] } } },
+        {
+          "name": "POST /api/clientes (Sign-up, público)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Nuevo\",\n  \"apellido\": \"Cliente\",\n  \"cedula\": \"99999999\",\n  \"correo\": \"nuevo-cliente@email.com\",\n  \"contrasenia\": \"pass123\",\n  \"celular\": \"3101111111\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/clientes", "host": ["{{baseUrl}}"], "path": ["api", "clientes"] }
+          }
+        },
+        {
+          "name": "PUT /api/clientes/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Andres\",\n  \"apellido\": \"García (editado)\",\n  \"cedula\": \"1001000001\",\n  \"correo\": \"andres1@email.com\",\n  \"contrasenia\": \"pass1\",\n  \"celular\": \"3100000000\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/clientes/1", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "1"] }
+          }
+        },
+        { "name": "DELETE /api/clientes/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/clientes/99", "host": ["{{baseUrl}}"], "path": ["api", "clientes", "99"] } } },
+        {
+          "name": "POST /api/clientes/login (legacy)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/login?identificador=andres1@email.com&contrasenia=pass1",
+              "host": ["{{baseUrl}}"], "path": ["api", "clientes", "login"],
+              "query": [
+                { "key": "identificador", "value": "andres1@email.com" },
+                { "key": "contrasenia", "value": "pass1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mascotas",
+      "item": [
+        { "name": "GET /api/mascotas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/mascotas", "host": ["{{baseUrl}}"], "path": ["api", "mascotas"] } } },
+        { "name": "GET /api/mascotas?query=...&estado=ACTIVA", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/mascotas?query=Max&estado=ACTIVA", "host": ["{{baseUrl}}"], "path": ["api", "mascotas"], "query": [{ "key": "query", "value": "Max" }, { "key": "estado", "value": "ACTIVA" }] } } },
+        { "name": "GET /api/mascotas/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/mascotas/1", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "1"] } } },
+        { "name": "GET /api/mascotas/cliente/{clienteId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/mascotas/cliente/1", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "cliente", "1"] } } },
+        { "name": "GET /api/mascotas/count", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/mascotas/count", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "count"] } } },
+        {
+          "name": "POST /api/mascotas?clienteId=...",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Firulais\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Labrador\",\n  \"sexo\": \"Macho\",\n  \"fechaNacimiento\": \"2022-03-15\",\n  \"edad\": 3,\n  \"peso\": 12.5,\n  \"estado\": \"ACTIVA\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/mascotas?clienteId=1",
+              "host": ["{{baseUrl}}"], "path": ["api", "mascotas"],
+              "query": [{ "key": "clienteId", "value": "1" }]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/mascotas/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Firulais (editado)\",\n  \"especie\": \"Perro\",\n  \"raza\": \"Labrador\",\n  \"sexo\": \"Macho\",\n  \"fechaNacimiento\": \"2022-03-15\",\n  \"edad\": 3,\n  \"peso\": 13.0,\n  \"estado\": \"ACTIVA\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/mascotas/1", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "1"] }
+          }
+        },
+        {
+          "name": "PATCH /api/mascotas/{id}",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"peso\": 14.2\n}" },
+            "url": { "raw": "{{baseUrl}}/api/mascotas/1", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "1"] }
+          }
+        },
+        { "name": "PATCH /api/mascotas/{id}/deactivate", "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/mascotas/1/deactivate", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "1", "deactivate"] } } },
+        { "name": "DELETE /api/mascotas/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/mascotas/99", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "99"] } } },
+        {
+          "name": "POST /api/mascotas/{id}/foto (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "archivo", "type": "file", "src": [] }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/mascotas/1/foto", "host": ["{{baseUrl}}"], "path": ["api", "mascotas", "1", "foto"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Citas",
+      "item": [
+        { "name": "GET /api/citas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas", "host": ["{{baseUrl}}"], "path": ["api", "citas"] } } },
+        { "name": "GET /api/citas?inicio=&fin=", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas?inicio=2026-01-01T00:00:00&fin=2026-12-31T23:59:59", "host": ["{{baseUrl}}"], "path": ["api", "citas"], "query": [{ "key": "inicio", "value": "2026-01-01T00:00:00" }, { "key": "fin", "value": "2026-12-31T23:59:59" }] } } },
+        { "name": "GET /api/citas/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/1", "host": ["{{baseUrl}}"], "path": ["api", "citas", "1"] } } },
+        { "name": "GET /api/citas/veterinario/{veterinarioId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/veterinario/1", "host": ["{{baseUrl}}"], "path": ["api", "citas", "veterinario", "1"] } } },
+        { "name": "GET /api/citas/mascota/{mascotaId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/mascota/1", "host": ["{{baseUrl}}"], "path": ["api", "citas", "mascota", "1"] } } },
+        { "name": "GET /api/citas/cliente/{clienteId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/cliente/1", "host": ["{{baseUrl}}"], "path": ["api", "citas", "cliente", "1"] } } },
+        { "name": "GET /api/citas/count?inicio=&fin=", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/count?inicio=2026-01-01T00:00:00&fin=2026-12-31T23:59:59", "host": ["{{baseUrl}}"], "path": ["api", "citas", "count"], "query": [{ "key": "inicio", "value": "2026-01-01T00:00:00" }, { "key": "fin", "value": "2026-12-31T23:59:59" }] } } },
+        { "name": "GET /api/citas/proximas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/proximas?inicio=2026-05-24T00:00:00&fin=2026-06-30T23:59:59&limite=5", "host": ["{{baseUrl}}"], "path": ["api", "citas", "proximas"], "query": [{ "key": "inicio", "value": "2026-05-24T00:00:00" }, { "key": "fin", "value": "2026-06-30T23:59:59" }, { "key": "limite", "value": "5" }] } } },
+        {
+          "name": "POST /api/citas",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fechaInicio\": \"2026-06-10T09:00:00\",\n  \"fechaFin\": \"2026-06-10T09:30:00\",\n  \"motivo\": \"Vacunación\",\n  \"estado\": \"PENDIENTE\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/citas?clienteId=1&mascotaId=1&veterinarioId=1",
+              "host": ["{{baseUrl}}"], "path": ["api", "citas"],
+              "query": [
+                { "key": "clienteId", "value": "1" },
+                { "key": "mascotaId", "value": "1" },
+                { "key": "veterinarioId", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/citas/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fechaInicio\": \"2026-06-10T10:00:00\",\n  \"fechaFin\": \"2026-06-10T10:30:00\",\n  \"motivo\": \"Vacunación (reprogramada)\",\n  \"estado\": \"CONFIRMADA\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/citas/1", "host": ["{{baseUrl}}"], "path": ["api", "citas", "1"] }
+          }
+        },
+        { "name": "PATCH /api/citas/{id}/cancelar", "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/citas/1/cancelar", "host": ["{{baseUrl}}"], "path": ["api", "citas", "1", "cancelar"] } } },
+        { "name": "DELETE /api/citas/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/citas/99", "host": ["{{baseUrl}}"], "path": ["api", "citas", "99"] } } }
+      ]
+    },
+    {
+      "name": "Tratamientos",
+      "item": [
+        { "name": "GET /api/tratamientos", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamientos", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos"] } } },
+        { "name": "GET /api/tratamientos?programados=true", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamientos?programados=true", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos"], "query": [{ "key": "programados", "value": "true" }] } } },
+        { "name": "GET /api/tratamientos/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamientos/1", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos", "1"] } } },
+        { "name": "GET /api/tratamientos/mascota/{mascotaId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamientos/mascota/1", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos", "mascota", "1"] } } },
+        { "name": "GET /api/tratamientos/veterinario/{veterinarioId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamientos/veterinario/1", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos", "veterinario", "1"] } } },
+        { "name": "GET /api/tratamientos/count", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamientos/count?inicio=2026-01-01&fin=2026-12-31", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos", "count"], "query": [{ "key": "inicio", "value": "2026-01-01" }, { "key": "fin", "value": "2026-12-31" }] } } },
+        {
+          "name": "POST /api/tratamientos",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"diagnostico\": \"Otitis\",\n  \"observaciones\": \"Aplicar gotas durante 7 días\",\n  \"fecha\": \"2026-05-24\",\n  \"estado\": \"PENDIENTE\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/tratamientos?mascotaId=1&veterinarioId=1",
+              "host": ["{{baseUrl}}"], "path": ["api", "tratamientos"],
+              "query": [
+                { "key": "mascotaId", "value": "1" },
+                { "key": "veterinarioId", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /api/tratamientos/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"diagnostico\": \"Otitis (revisado)\",\n  \"observaciones\": \"Continuar 3 días más\",\n  \"fecha\": \"2026-05-24\",\n  \"estado\": \"COMPLETADO\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/tratamientos/1", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos", "1"] }
+          }
+        },
+        { "name": "DELETE /api/tratamientos/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/tratamientos/99", "host": ["{{baseUrl}}"], "path": ["api", "tratamientos", "99"] } } }
+      ]
+    },
+    {
+      "name": "Drogas",
+      "item": [
+        { "name": "GET /api/drogas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drogas", "host": ["{{baseUrl}}"], "path": ["api", "drogas"] } } },
+        { "name": "GET /api/drogas?disponibles=true", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drogas?disponibles=true", "host": ["{{baseUrl}}"], "path": ["api", "drogas"], "query": [{ "key": "disponibles", "value": "true" }] } } },
+        { "name": "GET /api/drogas/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drogas/1", "host": ["{{baseUrl}}"], "path": ["api", "drogas", "1"] } } },
+        { "name": "GET /api/drogas/ventas-totales", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drogas/ventas-totales", "host": ["{{baseUrl}}"], "path": ["api", "drogas", "ventas-totales"] } } },
+        { "name": "GET /api/drogas/ganancias-totales", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drogas/ganancias-totales", "host": ["{{baseUrl}}"], "path": ["api", "drogas", "ganancias-totales"] } } },
+        { "name": "GET /api/drogas/top-mas-vendidos", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/drogas/top-mas-vendidos?limite=3", "host": ["{{baseUrl}}"], "path": ["api", "drogas", "top-mas-vendidos"], "query": [{ "key": "limite", "value": "3" }] } } },
+        {
+          "name": "POST /api/drogas (solo ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Amoxicilina 500mg\",\n  \"precioCompra\": 1500.0,\n  \"precioVenta\": 3500.0,\n  \"unidadesDisponibles\": 50,\n  \"unidadesVendidas\": 0\n}" },
+            "url": { "raw": "{{baseUrl}}/api/drogas", "host": ["{{baseUrl}}"], "path": ["api", "drogas"] }
+          }
+        },
+        {
+          "name": "PUT /api/drogas/{id}",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Amoxicilina 500mg (editada)\",\n  \"precioCompra\": 1700.0,\n  \"precioVenta\": 3800.0,\n  \"unidadesDisponibles\": 45,\n  \"unidadesVendidas\": 5\n}" },
+            "url": { "raw": "{{baseUrl}}/api/drogas/1", "host": ["{{baseUrl}}"], "path": ["api", "drogas", "1"] }
+          }
+        },
+        {
+          "name": "PATCH /api/drogas/{id}/descontar",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/drogas/1/descontar?cantidad=2",
+              "host": ["{{baseUrl}}"], "path": ["api", "drogas", "1", "descontar"],
+              "query": [{ "key": "cantidad", "value": "2" }]
+            }
+          }
+        },
+        { "name": "DELETE /api/drogas/{id} (solo ADMIN)", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/drogas/99", "host": ["{{baseUrl}}"], "path": ["api", "drogas", "99"] } } }
+      ]
+    },
+    {
+      "name": "Tratamiento-Drogas",
+      "item": [
+        { "name": "GET /api/tratamiento-drogas/{id}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamiento-drogas/1", "host": ["{{baseUrl}}"], "path": ["api", "tratamiento-drogas", "1"] } } },
+        { "name": "GET /api/tratamiento-drogas/tratamiento/{tratamientoId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamiento-drogas/tratamiento/1", "host": ["{{baseUrl}}"], "path": ["api", "tratamiento-drogas", "tratamiento", "1"] } } },
+        { "name": "GET /api/tratamiento-drogas/medicamentos-vendidos", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/tratamiento-drogas/medicamentos-vendidos?inicio=2026-01-01&fin=2026-12-31", "host": ["{{baseUrl}}"], "path": ["api", "tratamiento-drogas", "medicamentos-vendidos"], "query": [{ "key": "inicio", "value": "2026-01-01" }, { "key": "fin", "value": "2026-12-31" }] } } },
+        {
+          "name": "POST /api/tratamiento-drogas",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/tratamiento-drogas?tratamientoId=1&drogaId=1&cantidad=2",
+              "host": ["{{baseUrl}}"], "path": ["api", "tratamiento-drogas"],
+              "query": [
+                { "key": "tratamientoId", "value": "1" },
+                { "key": "drogaId", "value": "1" },
+                { "key": "cantidad", "value": "2" }
+              ]
+            }
+          }
+        },
+        { "name": "DELETE /api/tratamiento-drogas/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/tratamiento-drogas/99", "host": ["{{baseUrl}}"], "path": ["api", "tratamiento-drogas", "99"] } } }
+      ]
+    }
+  ]
+}

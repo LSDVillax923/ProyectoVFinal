@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.DtoMapper;
+import com.example.demo.dto.VeterinarioDto;
 import com.example.demo.entities.Veterinario;
 import com.example.demo.service.VeterinarioService;
 
@@ -20,32 +22,33 @@ public class VeterinarioController {
     private VeterinarioService veterinarioService;
 
     @GetMapping
-    public ResponseEntity<List<Veterinario>> findAll(@RequestParam(required = false) String estado) {
-        if ("activo".equalsIgnoreCase(estado)) {
-            return ResponseEntity.ok(veterinarioService.findActivos());
-        }
-        return ResponseEntity.ok(veterinarioService.findAll());
+    public ResponseEntity<List<VeterinarioDto>> findAll(@RequestParam(required = false) String estado) {
+        List<Veterinario> resultado = "activo".equalsIgnoreCase(estado)
+                ? veterinarioService.findActivos()
+                : veterinarioService.findAll();
+        return ResponseEntity.ok(DtoMapper.toVeterinarioDtoList(resultado));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Veterinario> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(veterinarioService.findById(id));
+    public ResponseEntity<VeterinarioDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(DtoMapper.toVeterinarioDto(veterinarioService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<Veterinario> create(@Valid @RequestBody Veterinario veterinario) {
-        return new ResponseEntity<>(veterinarioService.save(veterinario), HttpStatus.CREATED);
+    public ResponseEntity<VeterinarioDto> create(@Valid @RequestBody Veterinario veterinario) {
+        Veterinario guardado = veterinarioService.save(veterinario);
+        return new ResponseEntity<>(DtoMapper.toVeterinarioDto(guardado), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Veterinario> update(@PathVariable Long id, @Valid @RequestBody Veterinario veterinario) {
-        return ResponseEntity.ok(veterinarioService.update(id, veterinario));
+    public ResponseEntity<VeterinarioDto> update(@PathVariable Long id, @Valid @RequestBody Veterinario veterinario) {
+        return ResponseEntity.ok(DtoMapper.toVeterinarioDto(veterinarioService.update(id, veterinario)));
     }
 
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<Veterinario> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
+    public ResponseEntity<VeterinarioDto> cambiarEstado(@PathVariable Long id, @RequestParam String estado) {
         veterinarioService.cambiarEstado(id, estado);
-        return ResponseEntity.ok(veterinarioService.findById(id));
+        return ResponseEntity.ok(DtoMapper.toVeterinarioDto(veterinarioService.findById(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -55,12 +58,12 @@ public class VeterinarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Veterinario> login(@RequestParam String correo, @RequestParam String contrasenia) {
+    public ResponseEntity<VeterinarioDto> login(@RequestParam String correo, @RequestParam String contrasenia) {
         Veterinario vet = veterinarioService.login(correo, contrasenia);
         if (vet == null) {
             throw new IllegalArgumentException("Credenciales inválidas");
         }
-        return ResponseEntity.ok(vet);
+        return ResponseEntity.ok(DtoMapper.toVeterinarioDto(vet));
     }
 
     @GetMapping("/count")

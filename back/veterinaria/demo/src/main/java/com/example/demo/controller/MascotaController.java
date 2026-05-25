@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.DtoMapper;
+import com.example.demo.dto.MascotaDto;
 import com.example.demo.entities.Mascota;
 import com.example.demo.service.MascotaService;
 
@@ -21,34 +23,35 @@ public class MascotaController {
     private MascotaService mascotaService;
 
     @GetMapping
-    public ResponseEntity<List<Mascota>> findAll(
+    public ResponseEntity<List<MascotaDto>> findAll(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String estado) {
-        if ((query != null && !query.isBlank()) || (estado != null && !estado.isBlank())) {
-            return ResponseEntity.ok(mascotaService.buscarPorFiltros(query, estado));
-        }
-        return ResponseEntity.ok(mascotaService.findAll());
+        List<Mascota> resultado = ((query != null && !query.isBlank()) || (estado != null && !estado.isBlank()))
+                ? mascotaService.buscarPorFiltros(query, estado)
+                : mascotaService.findAll();
+        return ResponseEntity.ok(DtoMapper.toMascotaDtoList(resultado));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Mascota> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(mascotaService.findById(id));
+    public ResponseEntity<MascotaDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(DtoMapper.toMascotaDto(mascotaService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<Mascota> create(@Valid @RequestBody Mascota mascota,
-                                          @RequestParam Long clienteId) {
-        return new ResponseEntity<>(mascotaService.save(mascota, clienteId), HttpStatus.CREATED);
+    public ResponseEntity<MascotaDto> create(@Valid @RequestBody Mascota mascota,
+                                             @RequestParam Long clienteId) {
+        Mascota guardada = mascotaService.save(mascota, clienteId);
+        return new ResponseEntity<>(DtoMapper.toMascotaDto(guardada), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Mascota> update(@PathVariable Long id, @Valid @RequestBody Mascota mascota) {
-        return ResponseEntity.ok(mascotaService.update(id, mascota));
+    public ResponseEntity<MascotaDto> update(@PathVariable Long id, @Valid @RequestBody Mascota mascota) {
+        return ResponseEntity.ok(DtoMapper.toMascotaDto(mascotaService.update(id, mascota)));
     }
 
-     @PatchMapping("/{id}")
-    public ResponseEntity<Mascota> patch(@PathVariable Long id, @RequestBody Mascota mascota) {
-        return ResponseEntity.ok(mascotaService.patch(id, mascota));
+    @PatchMapping("/{id}")
+    public ResponseEntity<MascotaDto> patch(@PathVariable Long id, @RequestBody Mascota mascota) {
+        return ResponseEntity.ok(DtoMapper.toMascotaDto(mascotaService.patch(id, mascota)));
     }
 
     @PatchMapping("/{id}/deactivate")
@@ -64,14 +67,14 @@ public class MascotaController {
     }
 
     @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<Mascota>> findByClienteId(@PathVariable Long clienteId) {
-        return ResponseEntity.ok(mascotaService.findByClienteId(clienteId));
+    public ResponseEntity<List<MascotaDto>> findByClienteId(@PathVariable Long clienteId) {
+        return ResponseEntity.ok(DtoMapper.toMascotaDtoList(mascotaService.findByClienteId(clienteId)));
     }
 
     @PostMapping(value = "/{id}/foto", consumes = "multipart/form-data")
-    public ResponseEntity<Mascota> subirFoto(@PathVariable Long id,
-                                             @RequestParam("archivo") MultipartFile archivo) {
-        return ResponseEntity.ok(mascotaService.subirFoto(id, archivo));
+    public ResponseEntity<MascotaDto> subirFoto(@PathVariable Long id,
+                                                @RequestParam("archivo") MultipartFile archivo) {
+        return ResponseEntity.ok(DtoMapper.toMascotaDto(mascotaService.subirFoto(id, archivo)));
     }
 
     @GetMapping("/count")

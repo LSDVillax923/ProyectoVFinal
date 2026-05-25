@@ -6,6 +6,5 @@ public record ClienteDto(
         String apellido,
         String cedula,
         String correo,
-        String contrasenia,
         String celular
 ) {}

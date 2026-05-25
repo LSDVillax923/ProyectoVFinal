@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -60,6 +61,7 @@ public class Tratamiento {
     private Veterinario veterinario;
 
     // Lista de drogas asociadas al tratamiento
+    @JsonIgnore
     @OneToMany(mappedBy = "tratamiento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TratamientoDroga> drogas = new ArrayList<>();
 

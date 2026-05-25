@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -52,8 +53,9 @@ public class Cliente {
     @Column(unique = true, nullable = false)
     private String correo;
 
-    // Contraseña (no vacía)
+    // Contraseña (no vacía). WRITE_ONLY: aceptada en POST/PUT, nunca serializada al frontend.
     @NotBlank(message = "La contraseña no puede estar vacía")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasenia;
 
     // Celular con mínimo 10 caracteres

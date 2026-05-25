@@ -22,10 +22,12 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.Cliente;
+import com.example.demo.entities.Droga;
 import com.example.demo.entities.Mascota;
 import com.example.demo.entities.Veterinario;
 import com.example.demo.repository.AdminRepository;
 import com.example.demo.repository.ClienteRepository;
+import com.example.demo.repository.DrogaRepository;
 import com.example.demo.repository.MascotaRepository;
 import com.example.demo.repository.VeterinarioRepository;
 
@@ -50,6 +52,7 @@ public class C2NuevoTratamientoAdmin {
 
     private static final String MASCOTA_E2E    = "MaxE2E";
     private static final String DIAGNOSTICO_E2E = "Control postoperatorio caso 2";
+    private static final String DROGA_E2E      = "DrogaE2E";
 
     private WebDriver driver;
     private WebDriverWait wait;
@@ -58,12 +61,14 @@ public class C2NuevoTratamientoAdmin {
     @Autowired private MascotaRepository     mascotaRepository;
     @Autowired private VeterinarioRepository veterinarioRepository;
     @Autowired private AdminRepository       adminRepository;
+    @Autowired private DrogaRepository       drogaRepository;
 
     @BeforeEach
     public void init() {
         sembrarVeterinarioE2E();
         sembrarAdminE2E();
         sembrarMascotaE2E();
+        sembrarDrogaE2E();
 
         WebDriverManager.chromedriver().setup();
 
@@ -124,20 +129,54 @@ public class C2NuevoTratamientoAdmin {
         WebElement observaciones = driver.findElement(By.id("observaciones"));
         observaciones.sendKeys("Evolución estable. Revisión en 7 días.");
 
-        // Agregar un medicamento
-        driver.findElement(By.xpath("//button[contains(.,'Agregar medicamento')]")).click();
+        // Esperar a que termine la carga de catálogos (cargando = false).
+        // Mientras 'cargando' sea true, drogas aún no se han cargado y
+        // hacer click en "Agregar medicamento" puede dejar el select disabled.
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath("//p[contains(@class,'alert') and contains(.,'Procesando solicitud')]")));
 
-        // Seleccionar la primera droga disponible en el select
+        // Confirmar que no aparece el mensaje "No hay drogas disponibles"
+        Assertions.assertThat(driver.findElements(
+                By.xpath("//*[contains(.,'No hay drogas disponibles')]")).isEmpty())
+                .as("El backend debe devolver al menos una droga disponible para el test")
+                .isTrue();
+
+        // Agregar un medicamento (botón habilitado porque hay drogas disponibles)
+        WebElement btnAgregar = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[contains(.,'Agregar medicamento') and not(@disabled)]")));
+        ((org.openqa.selenium.JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView({block:'center'});", btnAgregar);
+        btnAgregar.click();
+
+        // Esperar a que la fila de droga se renderice (Angular *ngFor)
+        wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(".droga-row")));
+
+        // Localizar el select de Medicamento (primer <select> dentro de la primera fila).
+        // Se usa ((...)[1]//select)[1] para evitar depender del atributo @name, que con
+        // [name]="'drogaId_' + i" no siempre se refleja como atributo HTML en Angular.
+        // Nota: //select[1] (sin paréntesis) significa "select que es el 1er hijo select
+        // de su padre", no "el 1er select en la fila", así que envolvemos con paréntesis.
         WebElement selectDroga = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//div[contains(@class,'droga-row')][1]//select[contains(@name,'drogaId_')]")));
-        selectDroga.click();
-        selectDroga.findElement(By.xpath(".//option[position()>1]")).click();
+                By.xpath("((//div[contains(@class,'droga-row')])[1]//select)[1]")));
+        ((org.openqa.selenium.JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView({block:'center'});", selectDroga);
 
-        // Seleccionar cantidad 1
+        // Seleccionar la primera droga real (la opción 0 es el placeholder "Selecciona una droga")
+        org.openqa.selenium.support.ui.Select selectorDroga =
+                new org.openqa.selenium.support.ui.Select(selectDroga);
+        // Esperar a que existan opciones válidas (más de solo el placeholder)
+        wait.until(d -> selectorDroga.getOptions().size() > 1);
+        selectorDroga.selectByIndex(1);
+
         WebElement selectCantidad = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//div[contains(@class,'droga-row')][1]//select[contains(@name,'drogaCantidad_')]")));
-        selectCantidad.click();
-        selectCantidad.findElement(By.xpath(".//option[@value='1' or normalize-space()='1']")).click();
+                By.xpath("((//div[contains(@class,'droga-row')])[1]//select)[2]")));
+        ((org.openqa.selenium.JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView({block:'center'});", selectCantidad);
+        org.openqa.selenium.support.ui.Select selectorCantidad =
+                new org.openqa.selenium.support.ui.Select(selectCantidad);
+        wait.until(d -> selectorCantidad.getOptions().size() > 1);
+        selectorCantidad.selectByVisibleText("1");
 
         // Guardar tratamiento
         driver.findElement(By.xpath(
@@ -239,6 +278,25 @@ public class C2NuevoTratamientoAdmin {
     private void sembrarAdminE2E() {
         if (adminRepository.findByCorreo(ADMIN_CORREO).isPresent()) return;
         adminRepository.save(new Admin(null, "Carlos Admin", ADMIN_CORREO, ADMIN_PASS));
+    }
+
+    /**
+     * Garantiza que exista una droga con stock disponible para el test.
+     * Sin esto, el formulario marca noHayDrogasDisponibles=true y el botón
+     * "Agregar medicamento" queda deshabilitado.
+     */
+    private void sembrarDrogaE2E() {
+        boolean yaExiste = drogaRepository.findAll().stream()
+                .anyMatch(d -> DROGA_E2E.equalsIgnoreCase(d.getNombre())
+                            && d.getUnidadesDisponibles() > 0);
+        if (yaExiste) return;
+        Droga droga = new Droga();
+        droga.setNombre(DROGA_E2E);
+        droga.setPrecioCompra(500f);
+        droga.setPrecioVenta(1000f);
+        droga.setUnidadesDisponibles(50);
+        droga.setUnidadesVendidas(0);
+        drogaRepository.save(droga);
     }
 
     /**
