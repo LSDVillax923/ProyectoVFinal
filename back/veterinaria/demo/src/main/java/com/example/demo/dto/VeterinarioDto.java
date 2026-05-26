@@ -7,7 +7,6 @@ public record VeterinarioDto(
         String celular,
         String correo,
         String especialidad,
-        String imageUrl,
         String estado,
         Integer numAtenciones
 ) {}

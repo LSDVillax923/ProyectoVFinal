@@ -23,10 +23,15 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
     // Obtener citas por ID del cliente
     List<Cita> findByClienteId(Long clienteId);
 
-    // Buscar citas que se solapan en un rango de fechas (validar disponibilidad)
-    @Query("SELECT c FROM Cita c WHERE c.veterinario.id = :vetId AND " +
-           "((c.fechaInicio BETWEEN :inicio AND :fin) OR (c.fechaFin BETWEEN :inicio AND :fin) OR " +
-           "(c.fechaInicio <= :inicio AND c.fechaFin >= :fin))")
+    /**
+     * Citas del veterinario cuyo intervalo se cruza con [inicio, fin). Usa la regla
+     * estándar de solapamiento abierto: A overlaps B  iff  A.inicio < B.fin AND B.inicio < A.fin.
+     * Esto permite que dos citas adyacentes (ej. 9:00-9:30 y 9:30-10:00) NO se consideren
+     * solapadas — únicamente las que realmente se cruzan.
+     * El estado CANCELADA se filtra en el servicio para que un slot liberado vuelva a quedar libre.
+     */
+    @Query("SELECT c FROM Cita c WHERE c.veterinario.id = :vetId " +
+           "AND c.fechaInicio < :fin AND c.fechaFin > :inicio")
     List<Cita> findCitasSolapadas(@Param("vetId") Long vetId,
                                   @Param("inicio") LocalDateTime inicio,
                                   @Param("fin") LocalDateTime fin);

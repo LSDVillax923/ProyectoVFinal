@@ -56,6 +56,32 @@
               }
             }
           ]
+        },
+        {
+          "name": "POST /api/auth/forgot-password",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin1@vet.com\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["api", "auth", "forgot-password"] }
+          }
+        },
+        {
+          "name": "POST /api/auth/reset-password",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<TOKEN-DEL-EMAIL>\",\n  \"contrasenia\": \"nueva123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/reset-password", "host": ["{{baseUrl}}"], "path": ["api", "auth", "reset-password"] }
+          }
         }
       ]
     },
@@ -294,7 +320,71 @@
           }
         },
         { "name": "PATCH /api/citas/{id}/cancelar", "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/citas/1/cancelar", "host": ["{{baseUrl}}"], "path": ["api", "citas", "1", "cancelar"] } } },
-        { "name": "DELETE /api/citas/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/citas/99", "host": ["{{baseUrl}}"], "path": ["api", "citas", "99"] } } }
+        { "name": "DELETE /api/citas/{id}", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/citas/99", "host": ["{{baseUrl}}"], "path": ["api", "citas", "99"] } } },
+
+        { "name": "GET /api/citas/pendientes (solo ADMIN)", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/citas/pendientes", "host": ["{{baseUrl}}"], "path": ["api", "citas", "pendientes"] } } },
+
+        {
+          "name": "GET /api/citas/disponibilidad?veterinarioId=&fecha=",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/citas/disponibilidad?veterinarioId=1&fecha=2026-06-10",
+              "host": ["{{baseUrl}}"], "path": ["api", "citas", "disponibilidad"],
+              "query": [
+                { "key": "veterinarioId", "value": "1" },
+                { "key": "fecha", "value": "2026-06-10" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "POST /api/citas/solicitar (CLIENTE)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fechaInicio\": \"2026-06-10T09:00:00\",\n  \"fechaFin\": \"2026-06-10T09:30:00\",\n  \"motivo\": \"Vacunación\"\n}" },
+            "url": {
+              "raw": "{{baseUrl}}/api/citas/solicitar?clienteId=1&mascotaId=1&veterinarioId=1",
+              "host": ["{{baseUrl}}"], "path": ["api", "citas", "solicitar"],
+              "query": [
+                { "key": "clienteId", "value": "1" },
+                { "key": "mascotaId", "value": "1" },
+                { "key": "veterinarioId", "value": "1" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "PATCH /api/citas/{id}/aprobar (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/citas/1/aprobar", "host": ["{{baseUrl}}"], "path": ["api", "citas", "1", "aprobar"] }
+          }
+        },
+
+        {
+          "name": "PATCH /api/citas/{id}/rechazar?motivo=... (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/citas/1/rechazar?motivo=Horario no disponible",
+              "host": ["{{baseUrl}}"], "path": ["api", "citas", "1", "rechazar"],
+              "query": [{ "key": "motivo", "value": "Horario no disponible" }]
+            }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Notificaciones",
+      "item": [
+        { "name": "GET /api/notificaciones/cliente/{clienteId}", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/notificaciones/cliente/{{userId}}", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones", "cliente", "{{userId}}"] } } },
+        { "name": "GET /api/notificaciones/cliente/{clienteId}/no-leidas", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/notificaciones/cliente/{{userId}}/no-leidas", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones", "cliente", "{{userId}}", "no-leidas"] } } },
+        { "name": "PATCH /api/notificaciones/{id}/leida", "request": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/notificaciones/1/leida", "host": ["{{baseUrl}}"], "path": ["api", "notificaciones", "1", "leida"] } } }
       ]
     },
     {

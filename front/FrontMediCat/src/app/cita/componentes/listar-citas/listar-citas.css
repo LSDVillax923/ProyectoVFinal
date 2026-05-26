@@ -317,6 +317,127 @@
   }
 }
 
+/* ===== TOGGLE LISTA / HORARIO ===== */
+.vista-toggle {
+  display: inline-flex;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 2px;
+  margin-right: 0.5rem;
+}
+.vista-btn {
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.vista-btn:hover { color: #111827; }
+.vista-btn--activa {
+  background: white;
+  color: #111827;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* ===== VISTA HORARIO (grid semanal tipo horario escolar) ===== */
+.horario-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.horario-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+.horario-rango {
+  margin-left: auto;
+  font-weight: 600;
+  color: #374151;
+}
+
+.horario-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(5, 1fr);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.horario-celda {
+  border-right: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f3f4f6;
+  min-height: 56px;
+  padding: 4px;
+  position: relative;
+}
+.horario-celda:nth-child(6n) { border-right: none; }
+
+.horario-celda--cabecera {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.85rem;
+  text-align: center;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.horario-celda--cabecera small { color: #6b7280; font-weight: 500; font-size: 0.7rem; }
+
+.horario-celda--hora {
+  background: #fafafa;
+  font-size: 0.78rem;
+  color: #6b7280;
+  text-align: right;
+  padding-right: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.horario-celda--slot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.horario-cita {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: #dbeafe;
+  color: #1e3a8a;
+  font-size: 0.72rem;
+  text-decoration: none;
+  border-left: 3px solid #3b82f6;
+  cursor: pointer;
+}
+.horario-cita:hover { filter: brightness(0.96); }
+
+.horario-cita__mascota { font-weight: 600; }
+.horario-cita__vet { color: #1f2937; opacity: 0.7; font-size: 0.66rem; }
+.horario-cita__motivo { color: #1f2937; opacity: 0.8; }
+
+/* Colores por estado: usan las clases que genera getClaseEstadoCita() */
+.horario-cita.badge-warning { background: #fef3c7; color: #92400e; border-left-color: #f59e0b; }
+.horario-cita.badge-info    { background: #dbeafe; color: #1e3a8a; border-left-color: #3b82f6; }
+.horario-cita.badge-success { background: #d1fae5; color: #065f46; border-left-color: #10b981; }
+.horario-cita.badge-danger  { background: #fee2e2; color: #991b1b; border-left-color: #ef4444; text-decoration: line-through; }
+
 @media (max-width: 480px) {
   .filtros-grid {
     grid-template-columns: 1fr;

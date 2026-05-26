@@ -53,8 +53,9 @@ public class Cliente {
     @Column(unique = true, nullable = false)
     private String correo;
 
-    // Contraseña (no vacía). WRITE_ONLY: aceptada en POST/PUT, nunca serializada al frontend.
-    @NotBlank(message = "La contraseña no puede estar vacía")
+    // Contraseña: WRITE_ONLY (aceptada en POST/PUT, nunca serializada al frontend).
+    // No se valida con @NotBlank porque en el PUT puede llegar vacía si el usuario no la
+    // está cambiando; la validación de obligatoriedad para el create se hace en el service.
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasenia;
 

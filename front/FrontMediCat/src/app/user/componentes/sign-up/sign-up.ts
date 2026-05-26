@@ -7,6 +7,7 @@ import { AuthRestService } from '../../services/auth-rest.service';
 interface RegistroForm {
   nombre: string;
   apellido: string;
+  cedula: string;
   correo: string;
   celular: string;
   contrasenia: string;
@@ -25,6 +26,7 @@ export class SignUp {
   form: RegistroForm = {
     nombre: '',
     apellido: '',
+    cedula: '',
     correo: '',
     celular: '',
     contrasenia: '',
@@ -56,6 +58,7 @@ export class SignUp {
       .register({
         nombre: this.form.nombre.trim(),
         apellido: this.form.apellido.trim(),
+        cedula: this.form.cedula.trim(),
         correo: this.form.correo.trim().toLowerCase(),
         celular: this.form.celular.trim(),
         contrasenia: this.form.contrasenia,
@@ -68,8 +71,8 @@ export class SignUp {
             this.router.navigate(['/inicio/login']);
           }, 1000);
         },
-        error: () => {
-          this.error = 'No fue posible crear la cuenta. Verifica tus datos e intenta de nuevo.';
+        error: (err) => {
+          this.error = err?.error?.message || 'No fue posible crear la cuenta. Verifica tus datos e intenta de nuevo.';
           this.cargando = false;
         },
       });

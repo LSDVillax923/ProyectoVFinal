@@ -59,6 +59,11 @@ public class ClienteServiceImpl implements ClienteService {
 
                 throw new IllegalArgumentException("Cédula ya registrada");
             }
+
+            // En la creación la contraseña sí es obligatoria (en update puede venir vacía).
+            if (cliente.getContrasenia() == null || cliente.getContrasenia().isBlank()) {
+                throw new IllegalArgumentException("La contraseña es obligatoria al crear el cliente");
+            }
         }
 
         Cliente guardado = clienteRepository.save(cliente);
@@ -78,7 +83,12 @@ public class ClienteServiceImpl implements ClienteService {
         existing.setApellido(clienteDetails.getApellido());
         existing.setCedula(clienteDetails.getCedula());
         existing.setCorreo(clienteDetails.getCorreo());
-        existing.setContrasenia(clienteDetails.getContrasenia());
+        // La contraseña solo se actualiza si llega una nueva (no vacía); de lo contrario
+        // conservamos la existente. Esto soporta el flujo en el que el frontend ya no
+        // recibe la contraseña (WRITE_ONLY) y el usuario solo cambia datos del perfil.
+        if (clienteDetails.getContrasenia() != null && !clienteDetails.getContrasenia().isBlank()) {
+            existing.setContrasenia(clienteDetails.getContrasenia());
+        }
         existing.setCelular(clienteDetails.getCelular());
 
         Cliente actualizado = clienteRepository.save(existing);

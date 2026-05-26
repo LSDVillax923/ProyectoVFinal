@@ -54,7 +54,7 @@ class TratamientoServiceIntegrationTest {
 
         veterinario = veterinarioRepository.save(new Veterinario(
             "Dra. Ruiz","CC123","3109876543",
-            "ruiz@vet.com","Cirugía","secret",null,"ACTIVO"));
+            "ruiz@vet.com","Cirugía","secret","ACTIVO"));
 
         amoxicilina = drogaRepository.save(new Droga(null,"Amoxicilina",5.0f,12.0f,100,0));
     }

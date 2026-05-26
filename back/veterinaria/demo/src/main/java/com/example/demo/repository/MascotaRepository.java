@@ -29,4 +29,10 @@ public interface MascotaRepository extends JpaRepository<Mascota, Long> {
 
     // KPI dashboard: cuenta mascotas por estado (TRATAMIENTO, ACTIVA, INACTIVA)
     long countByEstado(Mascota.EstadoMascota estado);
+
+    // Conteo agregado de mascotas por cliente — alimenta ClienteDto.mascotasCount
+    @Query("SELECT m.cliente.id, COUNT(m) FROM Mascota m GROUP BY m.cliente.id")
+    List<Object[]> contarMascotasPorCliente();
+
+    long countByCliente_Id(Long clienteId);
 }

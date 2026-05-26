@@ -47,10 +47,11 @@ public class Veterinario {
 
     private String especialidad;
 
-    @NotBlank(message = "La contraseña no puede estar vacía")
+    // Contraseña: WRITE_ONLY (aceptada en POST/PUT, nunca serializada al frontend).
+    // No se valida con @NotBlank porque en el PUT puede llegar vacía si el admin no
+    // está cambiando la contraseña; la obligatoriedad en el create vive en el service.
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasenia;
-    private String imageUrl;
     private String estado;
     private int numAtenciones;
 
@@ -63,14 +64,13 @@ public class Veterinario {
     private List<Cita> citas = new ArrayList<>();    
 
     public Veterinario(String nombre, String cedula, String celular, String correo,
-                       String especialidad, String contrasenia, String imageUrl, String estado) {
+                       String especialidad, String contrasenia, String estado) {
         this.nombre = nombre;
         this.cedula = cedula;
         this.celular = celular;
         this.correo = correo;
         this.especialidad = especialidad;
         this.contrasenia = contrasenia;
-        this.imageUrl = imageUrl;
         this.estado = estado;
         this.tratamientos = new ArrayList<>();
         this.citas = new ArrayList<>();

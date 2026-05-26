@@ -1,8 +1,10 @@
+<app-navbar></app-navbar>
+
 <div class="page-container">
-  
+
   <div class="page-header">
     <h1>Detalle de Cita</h1>
-    <a routerLink="/citas" class="btn btn-secondary">← Volver</a>
+    <a [routerLink]="rutaListado" class="btn btn-secondary">← Volver</a>
   </div>
 
   <div *ngIf="loading" class="loading-state">
@@ -12,11 +14,11 @@
 
   <div *ngIf="error" class="error-state">
     <p>{{ error }}</p>
-    <a routerLink="/citas" class="btn btn-primary">Volver al listado</a>
+    <a [routerLink]="rutaListado" class="btn btn-primary">Volver al listado</a>
   </div>
 
   <div *ngIf="cita && !loading" class="detail-card">
-    
+
     <div class="detail-header">
       <h2>Cita #{{ cita.id }}</h2>
       <span class="estado-badge estado-large" [ngClass]="getClaseEstado(cita.estado)">
@@ -28,8 +30,12 @@
       <h3>Información de la Cita</h3>
       <div class="detail-grid">
         <div class="detail-item">
-          <span class="detail-label">Fecha:</span>
-          <span class="detail-value">{{ formatearFecha(cita.fechaInicio) }}</span>
+          <span class="detail-label">Fecha de inicio:</span>
+          <span class="detail-value">{{ formatearFecha(cita.fechaInicio) }} · {{ formatearHora(cita.fechaInicio) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Fecha de fin:</span>
+          <span class="detail-value">{{ formatearFecha(cita.fechaFin) }} · {{ formatearHora(cita.fechaFin) }}</span>
         </div>
         <div class="detail-item">
           <span class="detail-label">Motivo:</span>
@@ -43,29 +49,23 @@
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-label">Nombre:</span>
-          <span class="detail-value">{{ cita.mascota.nombre || 'N/A' }}</span>
+          <span class="detail-value">{{ cita.mascotaNombre || cita.mascota?.nombre || 'N/A' }}</span>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">Especie/Raza:</span>
-          <span class="detail-value">{{ cita.mascota.especie }} - {{ cita.mascota.raza }}</span>
+        <div class="detail-item" *ngIf="cita.mascotaId && !esCliente">
+          <a [routerLink]="['/mascotas', cita.mascotaId]" class="detail-value">Ver ficha de la mascota →</a>
         </div>
       </div>
     </div>
 
-    <div class="detail-section">
+    <div class="detail-section" *ngIf="!esCliente">
       <h3>Cliente</h3>
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-label">Nombre:</span>
-          <span class="detail-value">{{ nombreCompleto(cita.cliente) }}</span>
+          <span class="detail-value">{{ cita.clienteNombre || nombreCompleto(cita.cliente) }}</span>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">Correo:</span>
-          <span class="detail-value">{{ cita.cliente.correo || 'N/A' }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="detail-label">Celular:</span>
-          <span class="detail-value">{{ cita.cliente.celular || 'N/A' }}</span>
+        <div class="detail-item" *ngIf="cita.clienteId">
+          <a [routerLink]="['/clientes', cita.clienteId]" class="detail-value">Ver ficha del cliente →</a>
         </div>
       </div>
     </div>
@@ -75,19 +75,23 @@
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-label">Nombre:</span>
-          <span class="detail-value">{{ cita.veterinario.nombre || 'No asignado' }}</span>
+          <span class="detail-value">{{ cita.veterinarioNombre || cita.veterinario?.nombre || 'No asignado' }}</span>
         </div>
-        <div class="detail-item">
-          <span class="detail-label">Especialidad:</span>
-          <span class="detail-value">{{ cita.veterinario.especialidad || 'N/A' }}</span>
+        <div class="detail-item" *ngIf="cita.veterinarioId && !esCliente">
+          <a [routerLink]="['/veterinarios', cita.veterinarioId]" class="detail-value">Ver ficha del veterinario →</a>
         </div>
       </div>
     </div>
 
+    <div class="detail-section" *ngIf="cita.motivoRechazo">
+      <h3>Motivo del rechazo</h3>
+      <p class="motivo-rechazo">{{ cita.motivoRechazo }}</p>
+    </div>
+
     <div class="detail-actions">
-      <a [routerLink]="['/citas', cita.id, 'editar']" class="btn btn-primary">Editar</a>
+      <a *ngIf="puedeEditar()" [routerLink]="['/citas', cita.id, 'editar']" class="btn btn-primary">Editar</a>
       <button *ngIf="puedeCancelar()" class="btn btn-warning" (click)="cancelarCita()">Cancelar Cita</button>
-      <a routerLink="/citas" class="btn btn-secondary">Volver</a>
+      <a [routerLink]="rutaListado" class="btn btn-secondary">Volver</a>
     </div>
   </div>
 </div>

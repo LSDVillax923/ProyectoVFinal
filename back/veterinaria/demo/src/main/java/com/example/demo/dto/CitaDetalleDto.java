@@ -8,6 +8,7 @@ public record CitaDetalleDto(
         LocalDateTime fechaFin,
         String motivo,
         String estado,
+        String motivoRechazo,
         Long clienteId,
         String clienteNombre,
         Long mascotaId,

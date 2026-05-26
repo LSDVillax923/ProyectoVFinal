@@ -125,6 +125,16 @@ login(credentials: LoginRequest, tipoUsuario: 'CLIENTE' | 'VETERINARIO' | 'ADMIN
     return this.http.post<Cliente>(ENDPOINTS.CLIENTES, data);
   }
 
+  /** Inicia el flujo "olvidé mi contraseña". El backend siempre devuelve 200. */
+  forgotPassword(correo: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(ENDPOINTS.AUTH_FORGOT_PASSWORD, { correo });
+  }
+
+  /** Completa el reset con el token recibido por email. */
+  resetPassword(token: string, contrasenia: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(ENDPOINTS.AUTH_RESET_PASSWORD, { token, contrasenia });
+  }
+
    logout(): void {
     this.sesion = null;
     this.token = null;

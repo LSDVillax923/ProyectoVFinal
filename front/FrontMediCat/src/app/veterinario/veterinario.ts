@@ -6,7 +6,6 @@ export interface Veterinario {
   correo: string;
   especialidad: string;
   contrasenia?: string;
-  imageUrl?: string;
   estado: 'activo' | 'inactivo';
   numAtenciones?: number;
 }

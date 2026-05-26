@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Subject, Subscription, interval, takeUntil } from 'rxjs';
 import { AuthService } from '../../../user/services/auth.service';
 import { MascotaRestService } from '../../services/mascota.service';
-import { Mascota } from '../../../shared/api/backend-contracts';
+import { Cita, Mascota } from '../../../shared/api/backend-contracts';
 import { Navbar } from '../../../shared/components/navbar/navbar';
 import { urlFotoMascota } from '../../../shared/utils/helpers';
 import { ClienteRestService } from '../../../cliente/services/cliente.service';
+import { CitaRestService } from '../../../cita/services/cita-rest.service';
 
 @Component({
   selector: 'app-mis-mascotas',
@@ -15,14 +17,20 @@ import { ClienteRestService } from '../../../cliente/services/cliente.service';
   templateUrl: './mis-mascotas.html',
   styleUrl: './mis-mascotas.css',
 })
-export class MisMascotas implements OnInit {
+export class MisMascotas implements OnInit, OnDestroy {
   mascotas: Mascota[] = [];
+  citasProximas = 0;
   navBotones: { label: string; ruta: string; tipo: 'primary' | 'secondary' }[] = [];
+
+  private clienteIdActivo: number | null = null;
+  private readonly destroy$ = new Subject<void>();
+  private refreshSub?: Subscription;
 
   constructor(
     private readonly authService: AuthService,
     private readonly mascotaService: MascotaRestService,
     private readonly clienteService: ClienteRestService,
+    private readonly citaService: CitaRestService,
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +45,18 @@ export class MisMascotas implements OnInit {
     if (sesion) {
       this.cargarMascotasDeSesion(sesion.id, sesion.correo);
     }
+
+    // Refresca la tarjeta de citas próximas cada 30s para que el cliente la
+    // vea actualizada cuando admin/vet le asignen o muevan una cita.
+    this.refreshSub = interval(30_000)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.recargarCitasProximas());
+  }
+
+  ngOnDestroy(): void {
+    this.refreshSub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private cargarMascotasDeSesion(clienteId: number, identificador: string): void {
@@ -44,6 +64,7 @@ export class MisMascotas implements OnInit {
       next: (mascotas) => {
         if (mascotas.length > 0) {
           this.mascotas = mascotas;
+          this.fijarClienteActivo(clienteId);
           return;
         }
         this.buscarMascotasPorIdentificador(identificador);
@@ -66,11 +87,33 @@ export class MisMascotas implements OnInit {
           return;
         }
         this.mascotaService.findByClienteId(cliente.id).subscribe({
-          next: (mascotas) => { this.mascotas = mascotas; },
+          next: (mascotas) => {
+            this.mascotas = mascotas;
+            this.fijarClienteActivo(cliente.id!);
+          },
           error: () => { this.mascotas = []; },
         });
       },
       error: () => { this.mascotas = []; },
+    });
+  }
+
+  private fijarClienteActivo(clienteId: number): void {
+    this.clienteIdActivo = clienteId;
+    this.recargarCitasProximas();
+  }
+
+  private recargarCitasProximas(): void {
+    if (this.clienteIdActivo == null) return;
+    this.citaService.findByClienteId(this.clienteIdActivo).subscribe({
+      next: (citas: Cita[]) => {
+        const ahora = new Date();
+        this.citasProximas = citas.filter((c) =>
+          (c.estado === 'PENDIENTE' || c.estado === 'CONFIRMADA') &&
+          new Date(c.fechaInicio) >= ahora,
+        ).length;
+      },
+      error: () => { /* mantenemos el último valor conocido */ },
     });
   }
 

@@ -1,1 +1,104 @@
-<p>editar-cita works!</p>
+<main class="page-container">
+
+  <header class="page-header">
+    <h1>Editar cita</h1>
+    <a routerLink="/citas" class="btn btn-secondary">← Volver</a>
+  </header>
+
+  <p *ngIf="loading" class="alert alert-info" role="status">Cargando cita...</p>
+
+  <section class="form-card" *ngIf="!loading">
+    <p *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</p>
+    <p *ngIf="mensaje" class="alert alert-success" role="status">{{ mensaje }}</p>
+
+    <form [formGroup]="citaForm" (ngSubmit)="onSubmit()" *ngIf="cita" novalidate>
+
+      <section class="form-section" aria-labelledby="seccion-cita">
+        <h2 id="seccion-cita" class="form-section__titulo">Detalles de la cita</h2>
+
+        <dl class="form-resumen">
+          <div class="form-resumen__fila">
+            <dt>Cliente</dt>
+            <dd>{{ cita.clienteNombre || '—' }}</dd>
+          </div>
+          <div class="form-resumen__fila">
+            <dt>Mascota</dt>
+            <dd>{{ cita.mascotaNombre || '—' }}</dd>
+          </div>
+          <div class="form-resumen__fila">
+            <dt>Veterinario</dt>
+            <dd>{{ cita.veterinarioNombre || '—' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fecha">Fecha *</label>
+          <input
+            type="date"
+            id="fecha"
+            formControlName="fecha"
+            class="form-control"
+            [min]="minFecha"
+            [class.is-invalid]="isInvalid('fecha') || !!errorFecha" />
+          <small *ngIf="errorFecha" class="text-warning" role="alert">{{ errorFecha }}</small>
+          <small *ngIf="isInvalid('fecha') && !errorFecha" class="invalid-feedback">Seleccione una fecha</small>
+        </div>
+
+        <div class="form-group">
+          <label for="slot">Horario disponible *</label>
+          <select
+            id="slot"
+            formControlName="slot"
+            class="form-control"
+            [class.is-invalid]="isInvalid('slot')">
+            <option value="">{{ cargandoSlots ? 'Cargando disponibilidad...' : 'Selecciona un horario' }}</option>
+            <option *ngFor="let s of slots" [value]="s.inicio">{{ formatearSlot(s) }}</option>
+          </select>
+          <small
+            *ngIf="!cargandoSlots && !errorFecha && slots.length === 0"
+            class="text-warning">
+            No hay horarios libres ese día (jornada L-V 8:00–18:00, 30 min).
+          </small>
+          <small *ngIf="isInvalid('slot')" class="invalid-feedback">Selecciona un horario</small>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="motivo">Motivo *</label>
+          <select
+            id="motivo"
+            formControlName="motivo"
+            class="form-control"
+            [class.is-invalid]="isInvalid('motivo')">
+            <option value="">Seleccione un motivo</option>
+            <option *ngFor="let m of motivos" [value]="m">{{ m }}</option>
+          </select>
+          <small *ngIf="isInvalid('motivo')" class="invalid-feedback">Seleccione un motivo</small>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado *</label>
+          <select
+            id="estado"
+            formControlName="estado"
+            class="form-control"
+            [class.is-invalid]="isInvalid('estado')">
+            <option value="">Seleccione un estado</option>
+            <option *ngFor="let e of estados" [value]="e">{{ getTextoEstado(e) }}</option>
+          </select>
+          <small *ngIf="isInvalid('estado')" class="invalid-feedback">Seleccione un estado</small>
+        </div>
+      </div>
+
+      <footer class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+        <a routerLink="/citas" class="btn btn-secondary">Cancelar</a>
+      </footer>
+    </form>
+  </section>
+</main>

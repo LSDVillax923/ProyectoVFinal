@@ -66,7 +66,6 @@ export class NuevoVeterinario {
       celular,
       contrasenia,
       especialidad,
-      imageUrl: '',
       estado: 'activo',
     };
 

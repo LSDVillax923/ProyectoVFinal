@@ -105,9 +105,12 @@ export class NuevoTratamiento implements OnInit {
   }
 
   private aplicarVeterinarioLogueado(): void {
-    const vetCookie = this.authService.getVeterinarioLogueado();
-    if (!vetCookie) return;
-    const vet = this.veterinarios.find((v) => v.id === vetCookie.id);
+    // Si el usuario logueado es un VETERINARIO, pre-seleccionamos su propio id
+    // y bloqueamos el campo para que no pueda elegir a otro.
+    const sesion = this.authService.getSesion();
+    if (!sesion || sesion.rol !== 'VETERINARIO') return;
+
+    const vet = this.veterinarios.find((v) => v.id === sesion.id);
     if (!vet) return;
     this.formData.veterinarioId = vet.id;
     this.formData.veterinario = vet.nombre;

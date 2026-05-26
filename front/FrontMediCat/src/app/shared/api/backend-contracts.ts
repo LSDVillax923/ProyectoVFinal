@@ -5,7 +5,7 @@ export interface Admin {
   id: number;
   nombre: string;
   correo: string;
-  contrasenia: string;
+  contrasenia?: string;
 }
 
 export interface AdminRequest {
@@ -23,8 +23,9 @@ export interface Cliente {
   apellido: string;
   cedula?: string;
   correo: string;
-  contrasenia: string;
+  contrasenia?: string; // WRITE_ONLY en backend: solo se envía al crear/editar.
   celular: string;
+  mascotasCount?: number; // expuesto por ClienteDto
   mascotas?: Mascota[];
   citas?: Cita[];
 }
@@ -48,8 +49,7 @@ export interface Veterinario {
   celular: string;
   correo: string;
   especialidad: string;
-  contrasenia: string;
-  imageUrl: string;
+  contrasenia?: string;
   estado: 'activo' | 'inactivo';
   numAtenciones: number;
 }
@@ -61,7 +61,6 @@ export interface VeterinarioRequest {
   correo: string;
   especialidad: string;
   contrasenia: string;
-  imageUrl?: string;
   estado?: 'activo' | 'inactivo';
 }
 
@@ -81,7 +80,11 @@ export interface Mascota {
   observaciones: string;
   foto: string;
   estado: 'ACTIVA' | 'TRATAMIENTO' | 'INACTIVA';
-  cliente: Cliente | null;
+  // Campos planos expuestos por MascotaDto.
+  clienteId?: number;
+  clienteNombre?: string;
+  /** @deprecated mantenido por compatibilidad con respuestas/legados. */
+  cliente?: Cliente | null;
 }
 
 export interface MascotaRequest {
@@ -120,15 +123,30 @@ export interface DrogaRequest {
 // ============================================
 // ENTIDAD: Tratamiento
 // ============================================
+export interface TratamientoDrogaResumen {
+  id: number;
+  drogaId: number;
+  nombreDroga: string;
+  cantidad: number;
+}
+
 export interface Tratamiento {
   id: number;
   diagnostico: string;
   observaciones: string;
   fecha: string;  // ISO Date: "YYYY-MM-DD"
   estado: 'PENDIENTE' | 'COMPLETADO' | 'CANCELADO';
-  mascota: Mascota;
-  veterinario: Veterinario;
-  drogas: TratamientoDroga[];
+  // Campos planos expuestos por TratamientoDto.
+  mascotaId?: number;
+  mascotaNombre?: string;
+  clienteId?: number;
+  veterinarioId?: number;
+  veterinarioNombre?: string;
+  drogas?: TratamientoDrogaResumen[];
+  /** @deprecated mantenido por compatibilidad con respuestas/legados. */
+  mascota?: Mascota;
+  /** @deprecated mantenido por compatibilidad con respuestas/legados. */
+  veterinario?: Veterinario;
 }
 
 export interface TratamientoRequest {
@@ -139,7 +157,7 @@ export interface TratamientoRequest {
 }
 
 // ============================================
-// ENTIDAD: TratamientoDroga
+// ENTIDAD: TratamientoDroga (legacy, ya no la devuelve el backend)
 // ============================================
 export interface TratamientoDroga {
   id: number;
@@ -163,23 +181,52 @@ export interface Cita {
   fechaFin: string;     // ISO DateTime: "YYYY-MM-DDTHH:mm:ss"
   motivo: string;
   estado: 'PENDIENTE' | 'CONFIRMADA' | 'REALIZADA' | 'CANCELADA';
-  cliente: Cliente;
-  mascota: Mascota;
-  veterinario: Veterinario;
+  motivoRechazo?: string | null;
+  // Campos planos expuestos por CitaDetalleDto.
+  clienteId?: number;
+  clienteNombre?: string;
+  mascotaId?: number;
+  mascotaNombre?: string;
+  veterinarioId?: number;
+  veterinarioNombre?: string;
+  /** @deprecated mantenido por compatibilidad. */
+  cliente?: Cliente;
+  /** @deprecated mantenido por compatibilidad. */
+  mascota?: Mascota;
+  /** @deprecated mantenido por compatibilidad. */
+  veterinario?: Veterinario;
 }
 
 export interface CitaRequest {
-  fechaInicio: string;  // ISO DateTime: "YYYY-MM-DDTHH:mm:ss"
-  fechaFin: string;     // ISO DateTime: "YYYY-MM-DDTHH:mm:ss"
+  fechaInicio: string;
+  fechaFin: string;
   motivo: string;
   estado?: 'PENDIENTE' | 'CONFIRMADA' | 'REALIZADA' | 'CANCELADA';
+}
+
+// Slot devuelto por GET /api/citas/disponibilidad
+export interface SlotDisponible {
+  inicio: string;  // ISO DateTime
+  fin: string;     // ISO DateTime
+}
+
+// ============================================
+// ENTIDAD: Notificacion (campana del cliente)
+// ============================================
+export interface Notificacion {
+  id: number;
+  clienteId: number;
+  tipo: 'APROBADA' | 'RECHAZADA' | 'RECORDATORIO' | 'ASIGNADA';
+  mensaje: string;
+  leida: boolean;
+  citaId?: number | null;
+  createdAt: string;
 }
 
 // ============================================
 // LOGIN / AUTENTICACIÓN
 // ============================================
 export interface LoginRequest {
-  // Para veterinarios/admins: correo. Para clientes: correo o cédula.
   correo: string;
   contrasenia: string;
 }
@@ -189,11 +236,11 @@ export interface LoginResponse {
   nombre: string;
   correo: string;
   rol: 'ADMIN' | 'VETERINARIO' | 'CLIENTE';
-  token?: string;  // Para cuando implementemos JWT
+  token?: string;
 }
 
 // ============================================
-// RESPUESTAS DE ERROR (GlobalExceptionHandler)
+// RESPUESTAS DE ERROR
 // ============================================
 export interface ErrorResponse {
   timestamp: string;
@@ -208,7 +255,7 @@ export interface ValidationErrorResponse extends ErrorResponse {
 }
 
 // ============================================
-// DTOs DE AGREGACIÓN (compartidos por varios endpoints)
+// DTOs DE AGREGACIÓN
 // ============================================
 export interface MedicamentoCantidad {
   nombre: string;
@@ -244,7 +291,7 @@ export interface ClienteFiltros {
 }
 
 // ============================================
-// TIPOS PARA ACTUALIZACIÓN (PARCIAL)
+// TIPOS PARA ACTUALIZACIÓN PARCIAL
 // ============================================
 export type ClienteUpdateDto = Partial<ClienteRequest>;
 export type MascotaUpdateDto = Partial<MascotaRequest>;

@@ -51,6 +51,11 @@ export class ListarVeterinarios implements OnInit {
     );
   }
 
+  // ── Stats (tarjetas) ───────────────────────────────────────────────
+  get totalVeterinarios(): number { return this.veterinarios.length; }
+  get veterinariosActivos(): number { return this.veterinarios.filter((v) => v.estado === 'activo').length; }
+  get veterinariosInactivos(): number { return this.veterinarios.filter((v) => v.estado !== 'activo').length; }
+
   eliminarVeterinario(vet: Veterinario): void {
     if (!confirm(`¿Eliminar a ${vet.nombre}?`)) return;
 

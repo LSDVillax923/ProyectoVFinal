@@ -44,7 +44,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/veterinarios/**").authenticated()
                 .requestMatchers("/api/veterinarios/**").hasRole("ADMIN")
 
-                // ── Clientes (lectura/edición admin+vet, escrituras restantes admin+vet) ──
+                // ── Clientes ──────────────────────────────────────────────────
+                // Borrar un cliente: solo ADMIN. Veterinarios pueden listar/ver/editar.
+                .requestMatchers(HttpMethod.DELETE, "/api/clientes/**").hasRole("ADMIN")
                 .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "VETERINARIO")
 
                 // ── Mascotas: lectura cualquier autenticado; escritura ADMIN/VET; CLIENTE solo en sus propias mascotas (validar en service) ──
@@ -54,8 +56,22 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PATCH, "/api/mascotas/**").hasAnyRole("ADMIN", "VETERINARIO")
                 .requestMatchers(HttpMethod.DELETE, "/api/mascotas/**").hasAnyRole("ADMIN", "VETERINARIO")
 
-                // ── Citas: cualquier autenticado puede consultarlas/agendarlas ─
+                // ── Citas ────────────────────────────────────────────────────
+                // El cliente NO ve la agenda completa: GET /api/citas y /api/citas/pendientes son admin/vet.
+                .requestMatchers(HttpMethod.GET, "/api/citas/pendientes").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/citas").hasAnyRole("ADMIN", "VETERINARIO")
+                // Aprobación/rechazo solo admin.
+                .requestMatchers(HttpMethod.PATCH, "/api/citas/*/aprobar").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/citas/*/rechazar").hasRole("ADMIN")
+                // Solicitar es para CLIENTE (admin también puede usar el POST normal).
+                .requestMatchers(HttpMethod.POST, "/api/citas/solicitar").hasAnyRole("CLIENTE", "ADMIN")
+                // Crear directo (queda CONFIRMADA) solo admin.
+                .requestMatchers(HttpMethod.POST, "/api/citas").hasRole("ADMIN")
+                // Resto de operaciones requieren login (controllers/servicios filtran por id del rol).
                 .requestMatchers("/api/citas/**").authenticated()
+
+                // ── Notificaciones: cualquier autenticado, el servicio filtra por clienteId ──
+                .requestMatchers("/api/notificaciones/**").authenticated()
 
                 // ── Tratamientos: lectura cualquier autenticado; escritura ADMIN/VET ──
                 .requestMatchers(HttpMethod.GET, "/api/tratamientos/**").authenticated()

@@ -115,15 +115,15 @@ public class DataLoader implements CommandLineRunner {
 
         // ─── 2. Veterinarios ────────────────────────────────────────────────────
         veterinarioRepository.save(new Veterinario("Elena Martínez", "10000001", "3101000001", "elena@vet.com",
-                "Medicina General", "pass123", "default.jpg", "activo"));
+                "Medicina General", "pass123", "activo"));
         veterinarioRepository.save(new Veterinario("Ricardo Sánchez", "10000002", "3101000002", "ricardo@vet.com",
-                "Cirugía", "pass123", "default.jpg", "activo"));
+                "Cirugía", "pass123", "activo"));
         veterinarioRepository.save(new Veterinario("Carla Gómez", "10000003", "3101000003", "carla@vet.com",
-                "Dermatología", "pass123", "default.jpg", "activo"));
+                "Dermatología", "pass123", "activo"));
         veterinarioRepository.save(new Veterinario("Julián Ospina", "10000004", "3101000004", "julian@vet.com",
-                "Oftalmología", "pass123", "default.jpg", "activo"));
+                "Oftalmología", "pass123", "activo"));
         veterinarioRepository.save(new Veterinario("Marcela Rueda", "10000005", "3101000005", "marcela@vet.com",
-                "Odontología", "pass123", "default.jpg", "inactivo"));
+                "Odontología", "pass123", "inactivo"));
         System.out.println("DataLoader: 5 veterinarios generados.");
 
         // ─── 3. Drogas ──────────────────────────────────────────────────────────
@@ -226,7 +226,7 @@ if (drogas.isEmpty()) {
     System.out.println("DataLoader: 25 registros en TratamientoDroga generados.");
 }
         // ─── 8. Citas ───────────────────────────────────────────────────────────
-        for (int i = 1; i <= 30; i++) {
+        for (int i = 1; i <= 10; i++) {
             Cliente cliente = clientes.get(rnd.nextInt(clientes.size()));
             // Buscar una mascota que pertenezca a ese cliente
             List<Mascota> mascotasDelCliente = mascotaRepository.findByCliente_Id(cliente.getId());

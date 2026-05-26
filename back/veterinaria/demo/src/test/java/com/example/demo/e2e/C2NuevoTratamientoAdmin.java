@@ -271,7 +271,7 @@ public class C2NuevoTratamientoAdmin {
         if (veterinarioRepository.findByCorreo(VET_CORREO).isPresent()) return;
         veterinarioRepository.save(new Veterinario(
                 "Elena Martínez", "10000001", "3101000001", VET_CORREO,
-                "Medicina General", VET_PASS, "default.jpg", "activo"));
+                "Medicina General", VET_PASS, "activo"));
     }
 
     /** Garantiza que el admin de prueba exista. Idempotente. */

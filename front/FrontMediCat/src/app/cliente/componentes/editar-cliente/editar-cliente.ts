@@ -26,7 +26,6 @@ interface ClienteForm {
 export class EditarClienteComponent implements OnInit {
 
   formData: ClienteForm = { nombre: '', apellido: '', cedula: '', correo: '', celular: '', contrasenia: '' };
-  contraseniaOriginal = '';
   loading = false;
   error: string | null = null;
   mensaje = '';
@@ -62,6 +61,9 @@ export class EditarClienteComponent implements OnInit {
     this.loading = true;
     this.clienteService.findById(this.clienteId).subscribe({
       next: (cliente) => {
+        // El backend ya no expone contrasenia (WRITE_ONLY), por eso el campo del form
+        // empieza vacío. Si el usuario lo deja vacío al guardar, el backend conserva la
+        // contraseña existente; solo se cambia cuando se escribe algo nuevo.
         this.formData = {
           nombre: cliente.nombre,
           apellido: cliente.apellido,
@@ -70,7 +72,6 @@ export class EditarClienteComponent implements OnInit {
           celular: cliente.celular,
           contrasenia: '',
         };
-        this.contraseniaOriginal = cliente.contrasenia ?? '';
         this.loading = false;
       },
       error: () => {
@@ -93,8 +94,11 @@ export class EditarClienteComponent implements OnInit {
       cedula: this.formData.cedula,
       correo: this.formData.correo,
       celular: this.formData.celular,
-      contrasenia: this.formData.contrasenia || this.contraseniaOriginal,
     };
+    // Solo enviamos contrasenia si el usuario escribió una nueva.
+    if (this.formData.contrasenia && this.formData.contrasenia.trim().length > 0) {
+      payload.contrasenia = this.formData.contrasenia;
+    }
 
     this.clienteService.update(this.clienteId, payload).subscribe({
       next: () => {

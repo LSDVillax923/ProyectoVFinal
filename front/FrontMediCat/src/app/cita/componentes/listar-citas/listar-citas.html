@@ -1,8 +1,21 @@
+<app-navbar></app-navbar>
+
 <div class="page-container">
-  
+
   <div class="page-header">
-    <h1>Gestión de Citas</h1>
-    <a routerLink="/citas/nueva" class="btn btn-primary">+ Nueva Cita</a>
+    <h1>{{ esCliente ? 'Mis Citas' : 'Gestión de Citas' }}</h1>
+    <div class="header-actions">
+      <!-- Toggle de vista: solo admin/vet, el cliente no tiene vista horario -->
+      <div class="vista-toggle" *ngIf="!esCliente">
+        <button type="button" class="vista-btn" [class.vista-btn--activa]="vista === 'lista'" (click)="cambiarVista('lista')">📋 Lista</button>
+        <button type="button" class="vista-btn" [class.vista-btn--activa]="vista === 'horario'" (click)="cambiarVista('horario')">🗓 Horario</button>
+      </div>
+
+      <a *ngIf="esAdmin" routerLink="/citas/pendientes" class="btn btn-secondary">📥 Solicitudes pendientes</a>
+      <a *ngIf="!esVeterinario" [routerLink]="esCliente ? '/mis-citas/nueva' : '/citas/nueva'" class="btn btn-primary">
+        + {{ esCliente ? 'Solicitar cita' : 'Nueva Cita' }}
+      </a>
+    </div>
   </div>
 
   <!-- Filtros -->
@@ -41,8 +54,8 @@
     <button class="btn btn-primary" (click)="cargarCitas()">Reintentar</button>
   </div>
 
-  <!-- Tabla de citas -->
-  <div *ngIf="!loading && !error" class="table-container">
+  <!-- Tabla de citas (vista lista) -->
+  <div *ngIf="!loading && !error && (vista === 'lista' || esCliente)" class="table-container">
     <table class="data-table">
       <thead>
         <tr>
@@ -60,9 +73,9 @@
         <tr *ngFor="let cita of citasFiltradas">
           <td>{{ formatearFecha(cita.fechaInicio).split(' ')[0] }}</td>
           <td>{{ formatearHora(cita.fechaInicio) }} - {{ formatearHora(cita.fechaFin) }}</td>
-          <td>{{ cita.mascota.nombre || 'N/A' }}</td>
-          <td>{{ nombreCompleto(cita.cliente) }}</td>
-          <td>{{ cita.veterinario.nombre || 'No asignado' }}</td>
+          <td>{{ nombreMascota(cita) }}</td>
+          <td>{{ nombreCliente(cita) || 'Sin cliente' }}</td>
+          <td>{{ nombreVeterinario(cita) }}</td>
           <td>{{ cita.motivo }}</td>
           <td>
             <span class="estado-badge" [ngClass]="getClaseEstado(cita.estado)">
@@ -70,13 +83,13 @@
             </span>
           </td>
           <td class="actions-cell">
-            <a [routerLink]="['/citas', cita.id]" class="btn-icono" title="Ver">
+            <a [routerLink]="esCliente ? ['/mis-citas', cita.id] : ['/citas', cita.id]" class="btn-icono" title="Ver">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
             </a>
-            <a [routerLink]="['/citas', cita.id, 'editar']" class="btn-icono" title="Editar">
+            <a *ngIf="!esCliente" [routerLink]="['/citas', cita.id, 'editar']" class="btn-icono" title="Editar">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/>
                 <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/>
@@ -90,7 +103,7 @@
                 <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-            <button class="btn-icono btn-danger" title="Eliminar" (click)="eliminarCita(cita.id)">
+            <button *ngIf="esAdmin" class="btn-icono btn-danger" title="Eliminar" (click)="eliminarCita(cita.id)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6"/>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -103,5 +116,44 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Vista horario (semana de L-V × slots de 30 min) -->
+  <div *ngIf="!loading && !error && vista === 'horario' && !esCliente" class="horario-card">
+    <div class="horario-toolbar">
+      <button class="btn btn-secondary" (click)="semanaAnterior()">← Semana anterior</button>
+      <button class="btn btn-secondary" (click)="semanaHoy()">Hoy</button>
+      <button class="btn btn-secondary" (click)="semanaSiguiente()">Semana siguiente →</button>
+      <span class="horario-rango">{{ rangoSemanaLabel }}</span>
+    </div>
+
+    <div class="horario-grid">
+      <!-- Encabezado: hora + días -->
+      <div class="horario-celda horario-celda--cabecera">Hora</div>
+      <div *ngFor="let d of diasSemana; let i = index" class="horario-celda horario-celda--cabecera">
+        <div>{{ d }}</div>
+        <small>{{ diaDeSemana(i) | date:'dd/MM' }}</small>
+      </div>
+
+      <!-- Filas por slot de 30 min -->
+      <ng-container *ngFor="let hora of horas">
+        <div class="horario-celda horario-celda--hora">{{ hora }}</div>
+        <div *ngFor="let _d of diasSemana; let i = index" class="horario-celda horario-celda--slot">
+          <a *ngFor="let c of citasEnSlot(i, hora)"
+             [routerLink]="['/citas', c.id]"
+             class="horario-cita"
+             [ngClass]="getClaseEstado(c.estado)"
+             [title]="nombreCliente(c) + ' / ' + nombreMascota(c) + ' — ' + c.motivo">
+            <span class="horario-cita__mascota">{{ nombreMascota(c) }}</span>
+            <span class="horario-cita__vet" *ngIf="!esVeterinario">Dr. {{ nombreVeterinario(c) }}</span>
+            <span class="horario-cita__motivo">{{ c.motivo }}</span>
+          </a>
+        </div>
+      </ng-container>
+    </div>
+
+    <p *ngIf="citasFiltradas.length === 0" class="empty-state">
+      No hay citas para los filtros aplicados.
+    </p>
   </div>
 </div>

@@ -1,0 +1,62 @@
+<app-navbar></app-navbar>
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h1>Solicitudes de cita</h1>
+      <p class="subtitle">Aprueba o rechaza las citas pendientes solicitadas por clientes.</p>
+    </div>
+    <a routerLink="/citas" class="btn btn-secondary">Ver agenda completa →</a>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div *ngIf="mensaje" class="alert alert-success">{{ mensaje }}</div>
+
+  <div *ngIf="cargando" class="info">Cargando solicitudes...</div>
+
+  <div *ngIf="!cargando && pendientes.length === 0" class="info">
+    No hay solicitudes pendientes en este momento.
+  </div>
+
+  <div *ngIf="!cargando && pendientes.length > 0" class="tabla-card">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Mascota</th>
+          <th>Veterinario</th>
+          <th>Fecha y hora</th>
+          <th>Motivo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of pendientes">
+          <td>{{ c.clienteNombre || '—' }}</td>
+          <td>{{ c.mascotaNombre || '—' }}</td>
+          <td>{{ c.veterinarioNombre || '—' }}</td>
+          <td>{{ c.fechaInicio | date:'short' }}</td>
+          <td>{{ c.motivo }}</td>
+          <td>
+            <button class="btn btn-success btn-sm" (click)="aprobar(c)">Aprobar</button>
+            <button class="btn btn-danger btn-sm" (click)="abrirRechazo(c)">Rechazar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal motivo de rechazo -->
+  <div class="modal-overlay" *ngIf="rechazoAbierto" (click)="cerrarRechazo()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <h3>Rechazar solicitud</h3>
+      <p>Opcionalmente indica el motivo (se enviará al cliente en la notificación).</p>
+      <textarea [(ngModel)]="rechazoMotivo" placeholder="Motivo del rechazo (opcional)" rows="3"></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="cerrarRechazo()">Cancelar</button>
+        <button class="btn btn-danger" (click)="confirmarRechazo()">Confirmar rechazo</button>
+      </div>
+    </div>
+  </div>
+</div>

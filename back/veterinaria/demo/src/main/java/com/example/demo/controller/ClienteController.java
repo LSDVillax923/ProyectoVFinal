@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import com.example.demo.dto.ClienteDto;
 import com.example.demo.dto.DtoMapper;
 import com.example.demo.dto.MascotaDto;
 import com.example.demo.entities.Cliente;
+import com.example.demo.repository.MascotaRepository;
 import com.example.demo.service.ClienteService;
 import com.example.demo.service.MascotaService;
 
@@ -26,17 +29,34 @@ public class ClienteController {
     @Autowired
     private MascotaService mascotaService;
 
+    @Autowired
+    private MascotaRepository mascotaRepository;
+
     @GetMapping
     public ResponseEntity<List<ClienteDto>> findAll(@RequestParam(required = false) String query) {
         List<Cliente> resultado = (query != null && !query.isBlank())
                 ? clienteService.buscarPorFiltros(query)
                 : clienteService.findAll();
-        return ResponseEntity.ok(DtoMapper.toClienteDtoList(resultado));
+        return ResponseEntity.ok(DtoMapper.toClienteDtoList(resultado, mascotasPorCliente()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(DtoMapper.toClienteDto(clienteService.findById(id)));
+        Cliente cliente = clienteService.findById(id);
+        long count = mascotaRepository.countByCliente_Id(cliente.getId());
+        return ResponseEntity.ok(DtoMapper.toClienteDto(cliente, count));
+    }
+
+    /**
+     * Carga el conteo de mascotas por cliente con una sola consulta agregada.
+     * Sin este map, el DtoMapper deja {@code mascotasCount = 0} en el listado.
+     */
+    private Map<Long, Long> mascotasPorCliente() {
+        Map<Long, Long> map = new HashMap<>();
+        for (Object[] row : mascotaRepository.contarMascotasPorCliente()) {
+            map.put((Long) row[0], (Long) row[1]);
+        }
+        return map;
     }
 
     @PostMapping

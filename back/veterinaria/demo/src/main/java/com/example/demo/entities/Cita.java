@@ -31,6 +31,10 @@ public class Cita {
     @Enumerated(EnumType.STRING)
     private EstadoCita estado = EstadoCita.PENDIENTE;
 
+    /** Motivo opcional de rechazo cuando un admin marca la cita como CANCELADA. */
+    @Column(length = 500)
+    private String motivoRechazo;
+
     // Relación con Cliente
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)

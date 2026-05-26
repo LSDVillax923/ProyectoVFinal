@@ -25,6 +25,47 @@
   margin-bottom: 30px;
 }
 
+/* ── Tarjetas de resumen (total / activos / inactivos) ────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 15px;
+  padding: 22px 20px;
+  box-shadow: var(--sombra-card);
+  border-left: 4px solid var(--color-primario);
+}
+
+.stat-card__label {
+  margin: 0 0 6px 0;
+  color: var(--color-texto-secundario);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.stat-card__value {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1;
+}
+
+.stat-card--total    { border-left-color: var(--color-primario); }
+.stat-card--activos  { border-left-color: #1aa04a; }
+.stat-card--inactivos { border-left-color: #c62828; }
+
+@media (max-width: 700px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+
 /* Barra de Búsqueda */
 .busqueda-card {
   background: white;

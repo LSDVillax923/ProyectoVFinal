@@ -6,9 +6,11 @@ import { adminGuard, veterinarioGuard, clienteGuard } from './shared/guards/role
 import { Inicio }             from './inicio/inicio/inicio';
 import { LoginComponent as Login } from './user/componentes/login/login';
 import { ForgotPassword }     from './user/componentes/forgot-password/forgot-password';
+import { ResetPassword }      from './user/componentes/reset-password/reset-password';
 import { SignUp }             from './user/componentes/sign-up/sign-up';
 
 import { Dashboard }          from './admin/componentes/dashboard/dashboard';
+import { NuevoAdmin }         from './admin/componentes/nuevo-admin/nuevo-admin';
 
 import { ListarClienteComponent as ListarCliente } from './cliente/componentes/listar-cliente/listar-cliente';
 import { NuevoCliente }       from './cliente/componentes/nuevo-cliente/nuevo-cliente';
@@ -40,6 +42,7 @@ import { ListarCitasComponent } from './cita/componentes/listar-citas/listar-cit
 import { NuevaCitaComponent } from './cita/componentes/nueva-cita/nueva-cita';
 import { VerCitaComponent } from './cita/componentes/ver-cita/ver-cita';
 import { EditarCitaComponent } from './cita/componentes/editar-cita/editar-cita';
+import { BandejaCitasComponent } from './cita/componentes/bandeja-citas/bandeja-citas';
 
 
 
@@ -51,6 +54,7 @@ export const routes: Routes = [
   { path: 'inicio/login',            component: Login },
   { path: 'inicio/registro',         component: SignUp },
   { path: 'inicio/forgot-password',  component: ForgotPassword },
+  { path: 'inicio/reset-password',   component: ResetPassword },
 
   // ── Perfiles propios (cada rol edita el suyo) ────────
   { path: 'perfil',                  component: EditarCliente,      canActivate: [authGuard, clienteGuard] },
@@ -59,6 +63,7 @@ export const routes: Routes = [
 
   // ── Admin ────────────────────────────────────────────
   { path: 'dashboard',               component: Dashboard,          canActivate: [authGuard, adminGuard] },
+  { path: 'admins/nuevo',            component: NuevoAdmin,         canActivate: [authGuard, adminGuard] },
 
   // Clientes — CRUD completo para admin y veterinario
   { path: 'clientes',                component: ListarCliente,      canActivate: [authGuard, veterinarioGuard] },
@@ -96,11 +101,17 @@ export const routes: Routes = [
   { path: 'tratamientos/:id/editar', component: EditarTratamiento,  canActivate: [authGuard, veterinarioGuard] },
 
 
-    // Citas
-  { path: 'citas', component: ListarCitasComponent },
-  { path: 'citas/nueva', component: NuevaCitaComponent },
-  { path: 'citas/:id', component: VerCitaComponent },
-  { path: 'citas/:id/editar', component: EditarCitaComponent },
+  // ── Citas — agenda completa solo admin y veterinario ──────────────────
+  { path: 'citas',                   component: ListarCitasComponent,   canActivate: [authGuard, veterinarioGuard] },
+  { path: 'citas/pendientes',        component: BandejaCitasComponent,  canActivate: [authGuard, adminGuard] },
+  { path: 'citas/nueva',             component: NuevaCitaComponent,     canActivate: [authGuard, adminGuard] },
+  { path: 'citas/:id',               component: VerCitaComponent,       canActivate: [authGuard, veterinarioGuard] },
+  { path: 'citas/:id/editar',        component: EditarCitaComponent,    canActivate: [authGuard, veterinarioGuard] },
+
+  // ── Mis citas — solo cliente (no ve la agenda global) ─────────────────
+  { path: 'mis-citas',               component: ListarCitasComponent,   canActivate: [authGuard, clienteGuard] },
+  { path: 'mis-citas/nueva',         component: NuevaCitaComponent,     canActivate: [authGuard, clienteGuard] },
+  { path: 'mis-citas/:id',           component: VerCitaComponent,       canActivate: [authGuard, clienteGuard] },
 
   
 

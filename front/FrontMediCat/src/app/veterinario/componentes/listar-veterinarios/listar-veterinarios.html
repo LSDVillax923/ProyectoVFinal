@@ -9,6 +9,22 @@
   <p *ngIf="mensaje" class="alert alert-success">{{ mensaje }}</p>
   <p *ngIf="error" class="alert alert-error">{{ error }}</p>
 
+  <!-- Tarjetas de resumen del equipo veterinario -->
+  <section class="stats-grid" aria-label="Resumen de veterinarios">
+    <article class="stat-card stat-card--total">
+      <p class="stat-card__label">Total veterinarios</p>
+      <p class="stat-card__value">{{ totalVeterinarios }}</p>
+    </article>
+    <article class="stat-card stat-card--activos">
+      <p class="stat-card__label">Activos</p>
+      <p class="stat-card__value">{{ veterinariosActivos }}</p>
+    </article>
+    <article class="stat-card stat-card--inactivos">
+      <p class="stat-card__label">Inactivos</p>
+      <p class="stat-card__value">{{ veterinariosInactivos }}</p>
+    </article>
+  </section>
+
   <section class="busqueda-card">
     <div class="busqueda-form">
       <div class="input-grupo">

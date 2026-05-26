@@ -49,7 +49,7 @@ class ConsultasQueryTest {
         Cliente cliente = clienteRepository.findAll().get(0);
         Veterinario vet = veterinarioRepository.save(
             new Veterinario("Dr. López","CC999","3009999999",
-                            "lopez@vet.com","General","secret",null,"ACTIVO"));
+                            "lopez@vet.com","General","secret","ACTIVO"));
         Mascota mascota = mascotaRepository.save(new Mascota(
             "Rex","Perro","Pastor","M",
             LocalDate.of(2020,1,1),4,30.0,null,

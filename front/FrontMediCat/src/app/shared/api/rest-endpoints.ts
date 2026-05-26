@@ -17,6 +17,8 @@ export const ENDPOINTS = {
   AUTH: `${API_BASE_URL}/auth`,
   AUTH_LOGIN: `${API_BASE_URL}/auth/login`,
   AUTH_REGISTER: `${API_BASE_URL}/auth/register`,
+  AUTH_FORGOT_PASSWORD: `${API_BASE_URL}/auth/forgot-password`,
+  AUTH_RESET_PASSWORD: `${API_BASE_URL}/auth/reset-password`,
 
   // Cliente
   CLIENTES: `${API_BASE_URL}/clientes`,
@@ -63,10 +65,20 @@ export const ENDPOINTS = {
 
   // Cita
   CITAS: `${API_BASE_URL}/citas`,
+  CITAS_PENDIENTES: `${API_BASE_URL}/citas/pendientes`,
+  CITAS_SOLICITAR: `${API_BASE_URL}/citas/solicitar`,
+  CITAS_APROBAR: (id: number) => `${API_BASE_URL}/citas/${id}/aprobar`,
+  CITAS_RECHAZAR: (id: number) => `${API_BASE_URL}/citas/${id}/rechazar`,
+  CITAS_DISPONIBILIDAD: `${API_BASE_URL}/citas/disponibilidad`,
   CITAS_BY_VETERINARIO: (veterinarioId: number) => `${API_BASE_URL}/citas/veterinario/${veterinarioId}`,
   CITAS_BY_MASCOTA: (mascotaId: number) => `${API_BASE_URL}/citas/mascota/${mascotaId}`,
   CITAS_BY_CLIENTE: (clienteId: number) => `${API_BASE_URL}/citas/cliente/${clienteId}`,
   CITAS_CANCELAR: (id: number) => `${API_BASE_URL}/citas/${id}/cancelar`,
   CITAS_COUNT: `${API_BASE_URL}/citas/count`,
   CITAS_PROXIMAS: `${API_BASE_URL}/citas/proximas`,
+
+  // Notificaciones (campana del cliente)
+  NOTIFICACIONES_BY_CLIENTE: (clienteId: number) => `${API_BASE_URL}/notificaciones/cliente/${clienteId}`,
+  NOTIFICACIONES_NO_LEIDAS: (clienteId: number) => `${API_BASE_URL}/notificaciones/cliente/${clienteId}/no-leidas`,
+  NOTIFICACIONES_MARCAR_LEIDA: (id: number) => `${API_BASE_URL}/notificaciones/${id}/leida`,
 };

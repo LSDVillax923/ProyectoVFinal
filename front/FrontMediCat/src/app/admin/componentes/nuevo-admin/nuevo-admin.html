@@ -1,0 +1,87 @@
+<app-navbar></app-navbar>
+
+<main class="dashboard">
+  <header class="dashboard-header">
+    <a routerLink="/dashboard" class="btn-volver">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Volver al dashboard
+    </a>
+    <h1 class="dashboard-title">Registrar Administrador</h1>
+    <p class="dashboard-subtitle">Agrega otra cuenta con permisos de administración</p>
+  </header>
+
+  <p *ngIf="mensaje" class="alert alert-success" role="status">{{ mensaje }}</p>
+  <p *ngIf="error" class="alert alert-error" role="alert">{{ error }}</p>
+
+  <section class="form-card" aria-labelledby="form-titulo">
+    <h2 id="form-titulo" class="form-card__titulo">Datos del nuevo administrador</h2>
+
+    <form (ngSubmit)="guardarAdmin()" novalidate>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="nombre">Nombre completo</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            [(ngModel)]="formData.nombre"
+            autocomplete="name"
+            required />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="correo">Correo electrónico</label>
+          <input
+            type="email"
+            id="correo"
+            name="correo"
+            [(ngModel)]="formData.correo"
+            autocomplete="email"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label for="contrasenia">Contraseña</label>
+          <input
+            type="password"
+            id="contrasenia"
+            name="contrasenia"
+            [(ngModel)]="formData.contrasenia"
+            autocomplete="new-password"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label for="confirmar">Confirmar contraseña</label>
+          <input
+            type="password"
+            id="confirmar"
+            name="confirmar"
+            [(ngModel)]="formData.confirmar"
+            autocomplete="new-password"
+            required />
+        </div>
+      </div>
+
+      <footer class="form-acciones">
+        <button type="submit" class="btn-guardar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          Guardar administrador
+        </button>
+        <a routerLink="/dashboard" class="btn-cancelar">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+          Cancelar
+        </a>
+      </footer>
+    </form>
+  </section>
+</main>
