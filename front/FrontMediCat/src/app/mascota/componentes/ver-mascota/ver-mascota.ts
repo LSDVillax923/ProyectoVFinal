@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TratamientoRestService } from '../../../tratamiento/services/tratamiento-rest.service';
 import { AuthService } from '../../../user/services/auth.service';
+import { HistorialPdfService } from '../../services/historial-pdf.service';
 import { MascotaRestService } from '../../services/mascota.service';
 import { Mascota } from '../../mascota';
 import { MascotaMapper, TratamientoMapper } from '../../../shared/api/model-mappers';
@@ -30,6 +31,7 @@ export class VerMascota implements OnInit {
   private readonly mascotaService = inject(MascotaRestService);
   private readonly tratamientoRestService = inject(TratamientoRestService);
   private readonly authService = inject(AuthService);
+  private readonly historialPdfService = inject(HistorialPdfService);
 
   mascota: Mascota | null = null;
   tratamientos: Tratamiento[] = [];
@@ -118,6 +120,11 @@ export class VerMascota implements OnInit {
         this.mensajeEstado = '';
       },
     });
+  }
+
+  descargarHistorial(): void {
+    if (!this.mascota) return;
+    this.historialPdfService.generar(this.mascota, this.tratamientos);
   }
 
   private textoEstado(estado: Mascota['estado']): string {
